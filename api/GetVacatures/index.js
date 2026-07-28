@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-// Deze 5 waarden komen NIET hier in de code, maar staan als
+// Deze 6 waarden komen NIET hier in de code, maar staan als
 // Application Settings in je Azure Static Web App (Configuratie).
 const TENANT_ID = process.env.SP_TENANT_ID;
 const CLIENT_ID = process.env.SP_CLIENT_ID;
@@ -9,23 +9,8 @@ const SITE_HOSTNAME = process.env.SP_SITE_HOSTNAME;
 const SITE_PATH = process.env.SP_SITE_PATH;
 const LIST_NAME = process.env.SP_LIST_NAME;
 
-// Zoekt een veldwaarde op basis van de weergavenaam, ongeacht of de
-// interne naam spaties heeft, _x0020_ codering gebruikt, of afwijkt
-// door hoofdletters. "Vacancy" matcht dus ook een interne naam "Title"
-// via de extra aliassen hieronder.
-function getField(fields, displayName, aliases = []) {
-  const targets = [displayName, ...aliases].map(t => t.toLowerCase());
-  for (const key of Object.keys(fields)) {
-    const decoded = key.replace(/_x0020_/g, " ").toLowerCase();
-    if (targets.includes(decoded) || targets.includes(key.toLowerCase())) {
-      return fields[key];
-    }
-  }
-  return undefined;
-}
-
-// Locatie kan een simpel tekstveld zijn, of een SharePoint "Location"
-// kolom die een object teruggeeft. Dit haalt er altijd leesbare tekst uit.
+// Location kan soms een object teruggeven in plaats van platte tekst,
+// dit haalt er altijd leesbare tekst uit, ongeacht het veldtype.
 function getLocationText(value) {
   if (!value) return "";
   if (typeof value === "string") return value;
@@ -36,6 +21,7 @@ function getLocationText(value) {
 
 module.exports = async function (context, req) {
   try {
+    // Stap 1: access token ophalen bij Microsoft Entra ID
     const tokenResponse = await fetch(
       `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`,
       {
@@ -58,6 +44,7 @@ module.exports = async function (context, req) {
 
     const headers = { Authorization: `Bearer ${tokenData.access_token}` };
 
+    // Stap 2: SharePoint site opzoeken
     const siteResponse = await fetch(
       `https://graph.microsoft.com/v1.0/sites/${SITE_HOSTNAME}:${SITE_PATH}`,
       { headers }
@@ -69,6 +56,7 @@ module.exports = async function (context, req) {
       return;
     }
 
+    // Stap 3: de juiste lijst opzoeken op naam
     const listsResponse = await fetch(
       `https://graph.microsoft.com/v1.0/sites/${siteData.id}/lists`,
       { headers }
@@ -84,33 +72,25 @@ module.exports = async function (context, req) {
       return;
     }
 
+    // Stap 4: items ophalen inclusief kolomwaarden
     const itemsResponse = await fetch(
       `https://graph.microsoft.com/v1.0/sites/${siteData.id}/lists/${targetList.id}/items?expand=fields`,
       { headers }
     );
     const itemsData = await itemsResponse.json();
 
-    // TIJDELIJK: ga naar ?keys=1 om alleen de kolomnamen te zien, dat is
-    // korter en makkelijker te plakken dan de volledige data.
-    if (req.query.keys) {
-      context.res = {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: itemsData.value[0] ? Object.keys(itemsData.value[0].fields) : []
-      };
-      return;
-    }
-
+    // Stap 5: omzetten naar de vaste, schone kolomnamen
     const vacatures = itemsData.value.map(item => {
       const f = item.fields;
       return {
-        titel: getField(f, "Vacancy", ["Title"]),
-        afdeling: getField(f, "Department"),
-        dienstverband: getField(f, "Employment"),
-        standplaats: getLocationText(getField(f, "Location")),
-        omschrijving: getField(f, "Description"),
-        salarisindicatie: getField(f, "Salary indication"),
-        actief: getField(f, "Active") === true || getField(f, "Active") === "Yes" || getField(f, "Active") === 1
+        titel: f.vacancy,
+        afdeling: f.department,
+        dienstverband: f.employment,
+        standplaats: getLocationText(f.location),
+        omschrijving: f.description,
+        salarisindicatie: f.salary_indication,
+        sluitingsdatum: f.closing_date,
+        actief: f.active === true || f.active === "Yes" || f.active === 1
       };
     });
 
