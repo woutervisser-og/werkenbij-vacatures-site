@@ -30,7 +30,7 @@ module.exports = async function (context, req) {
 
     if (!tokenData.access_token) {
       context.log.error("Geen token ontvangen:", tokenData);
-      context.res = { status: 500, body: { error: "Kon niet authenticeren bij Microsoft Graph" } };
+      context.res = { status: 500, body: { error: "Kon niet authenticeren bij Microsoft Graph", debug: tokenData } };
       return;
     }
 
@@ -46,7 +46,17 @@ module.exports = async function (context, req) {
 
     if (!siteData.id) {
       context.log.error("Site niet gevonden:", siteData);
-      context.res = { status: 500, body: { error: "SharePoint site niet gevonden" } };
+      // TIJDELIJK: geeft de echte Graph foutmelding terug, zodat we kunnen
+      // zien of dit een naamgevingsfout is of een ontbrekende consent.
+      // Zet dit terug naar de simpele foutmelding zodra dit is opgelost.
+      context.res = {
+        status: 500,
+        body: {
+          error: "SharePoint site niet gevonden",
+          debug: siteData,
+          gebruikte_url: `https://graph.microsoft.com/v1.0/sites/${SITE_HOSTNAME}:${SITE_PATH}`
+        }
+      };
       return;
     }
 
@@ -60,7 +70,13 @@ module.exports = async function (context, req) {
 
     if (!targetList) {
       context.log.error("Lijst niet gevonden, beschikbare lijsten:", listsData.value.map(l => l.displayName));
-      context.res = { status: 500, body: { error: `Lijst '${LIST_NAME}' niet gevonden` } };
+      context.res = {
+        status: 500,
+        body: {
+          error: `Lijst '${LIST_NAME}' niet gevonden`,
+          beschikbare_lijsten: listsData.value.map(l => l.displayName)
+        }
+      };
       return;
     }
 
@@ -91,6 +107,6 @@ module.exports = async function (context, req) {
     };
   } catch (error) {
     context.log.error("Onverwachte fout:", error);
-    context.res = { status: 500, body: { error: "Er ging iets mis bij het ophalen van de vacatures" } };
+    context.res = { status: 500, body: { error: "Er ging iets mis bij het ophalen van de vacatures", debug: error.message } };
   }
 };
