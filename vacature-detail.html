@@ -3,10 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vacatures | Werken bij OG Clean Fuels</title>
+<title>Vacature | Werken bij OG Clean Fuels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<style>
+  .header-afbeelding {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+  }
+  .detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .detail-omschrijving {
+    max-width: 720px;
+    font-size: 15.5px;
+    color: #333;
+    line-height: 1.7;
+  }
+  .detail-omschrijving p { margin-bottom: 16px; }
+  .solliciteer-blok {
+    background: var(--og-grey);
+    border-radius: 10px;
+    padding: 32px;
+    max-width: 560px;
+    margin-top: 40px;
+  }
+  .form-veld { margin-bottom: 18px; }
+  .form-veld label {
+    display: block;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .form-veld input,
+  .form-veld textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .form-veld textarea { min-height: 100px; resize: vertical; }
+  #form-status { margin-top: 14px; font-size: 14px; font-weight: 600; }
+</style>
 </head>
 <body>
 
@@ -19,14 +65,44 @@
   </nav>
 </header>
 
+<img id="header-afbeelding" class="header-afbeelding" src="" alt="" style="display:none;">
+
 <section class="content">
   <div class="section-head">
-    <span class="tag">Openstaande functies</span>
-    <h2>Onze vacatures</h2>
+    <span class="tag" id="vac-afdeling">Vacature</span>
+    <h2 id="vac-titel">Laden...</h2>
   </div>
 
-  <div class="card-grid" id="vacature-lijst">
-    <p id="laad-status">Vacatures laden...</p>
+  <div class="detail-meta" id="vac-meta"></div>
+
+  <div class="detail-omschrijving" id="vac-omschrijving"></div>
+
+  <div class="solliciteer-blok">
+    <h3 style="margin-bottom:20px;">Solliciteer direct</h3>
+    <form id="sollicitatie-form">
+      <div class="form-veld">
+        <label for="naam">Volledige naam</label>
+        <input type="text" id="naam" name="naam" required>
+      </div>
+      <div class="form-veld">
+        <label for="email">E-mailadres</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-veld">
+        <label for="telefoon">Telefoonnummer</label>
+        <input type="tel" id="telefoon" name="telefoon">
+      </div>
+      <div class="form-veld">
+        <label for="motivatie">Motivatie</label>
+        <textarea id="motivatie" name="motivatie"></textarea>
+      </div>
+      <div class="form-veld">
+        <label for="cv">CV (PDF of Word, max 5MB)</label>
+        <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
+      </div>
+      <button type="submit" class="btn" id="submit-btn">Versturen</button>
+      <div id="form-status"></div>
+    </form>
   </div>
 </section>
 
@@ -36,60 +112,111 @@
 </footer>
 
 <script>
-  const VACATURE_BRON = "/api/GetVacatures";
+  // Zet hier de URL van je Power Automate Flow neer zodra die gebouwd is.
+  const SOLLICITATIE_ENDPOINT = "PLAATS_HIER_JE_POWER_AUTOMATE_URL";
 
-  // Haalt platte tekst uit de rich-text omschrijving (die bevat HTML
-  // van SharePoint) en knipt hem af op 100 tekens voor de tegel.
-  function maakSamenvatting(html, lengte = 100) {
-    const tijdelijk = document.createElement("div");
-    tijdelijk.innerHTML = html || "";
-    const platteTekst = tijdelijk.textContent || tijdelijk.innerText || "";
-    const opgeschoond = platteTekst.replace(/\s+/g, " ").trim();
-    return opgeschoond.length > lengte
-      ? opgeschoond.slice(0, lengte).trim() + "..."
-      : opgeschoond;
-  }
+  const params = new URLSearchParams(window.location.search);
+  const vacatureId = params.get("id");
 
-  fetch(VACATURE_BRON)
-    .then(response => {
-      if (!response.ok) throw new Error("Status: " + response.status);
-      return response.json();
-    })
+  fetch("/api/GetVacatures")
+    .then(res => res.json())
     .then(vacatures => {
-      const container = document.getElementById("vacature-lijst");
-      container.innerHTML = "";
+      const vacature = vacatures.find(v => String(v.id) === String(vacatureId));
 
-      const actieveVacatures = vacatures.filter(v => v.actief);
-
-      if (actieveVacatures.length === 0) {
-        container.innerHTML = "<p>Er staan op dit moment geen vacatures open.</p>";
+      if (!vacature) {
+        document.getElementById("vac-titel").textContent = "Vacature niet gevonden";
+        document.querySelector(".solliciteer-blok").style.display = "none";
         return;
       }
 
-      actieveVacatures.forEach(vacature => {
-        const kaart = document.createElement("a");
-        kaart.className = "vacature-card";
-        kaart.href = `vacature-detail.html?id=${encodeURIComponent(vacature.id)}`;
-        kaart.style.textDecoration = "none";
-        kaart.style.color = "inherit";
-        kaart.innerHTML = `
-          <div class="afdeling">${vacature.afdeling || ""}</div>
-          <h3>${vacature.titel || ""}</h3>
-          <div class="meta-row">
-            <span class="meta-pill">${vacature.dienstverband || ""}</span>
-            <span class="meta-pill">${vacature.standplaats || ""}</span>
-          </div>
-          <p class="omschrijving">${maakSamenvatting(vacature.omschrijving, 100)}</p>
-          <span class="btn">Lees meer &amp; solliciteer</span>
-        `;
-        container.appendChild(kaart);
-      });
+      document.title = vacature.titel + " | Werken bij OG Clean Fuels";
+      document.getElementById("vac-titel").textContent = vacature.titel;
+      document.getElementById("vac-afdeling").textContent = vacature.afdeling || "Vacature";
+      document.getElementById("vac-omschrijving").innerHTML = vacature.omschrijving || "";
+
+      document.getElementById("vac-meta").innerHTML = `
+        <span class="meta-pill">${vacature.dienstverband || ""}</span>
+        <span class="meta-pill">${vacature.standplaats || ""}</span>
+        ${vacature.salarisindicatie ? `<span class="meta-pill">${vacature.salarisindicatie}</span>` : ""}
+      `;
+
+      if (vacature.headerafbeelding) {
+        const img = document.getElementById("header-afbeelding");
+        img.src = vacature.headerafbeelding;
+        img.alt = vacature.titel;
+        img.style.display = "block";
+      }
+
+      // Vacaturetitel vast meesturen met het formulier, verborgen veld.
+      const hiddenVeld = document.createElement("input");
+      hiddenVeld.type = "hidden";
+      hiddenVeld.name = "vacature";
+      hiddenVeld.value = vacature.titel;
+      document.getElementById("sollicitatie-form").appendChild(hiddenVeld);
     })
-    .catch(error => {
-      document.getElementById("vacature-lijst").innerHTML =
-        "<p>Er ging iets mis bij het laden van de vacatures. Probeer het later opnieuw.</p>";
-      console.error(error);
+    .catch(() => {
+      document.getElementById("vac-titel").textContent = "Er ging iets mis bij het laden";
     });
+
+  // Bestand omzetten naar base64, zodat het als tekst meegestuurd kan
+  // worden in de JSON die naar Power Automate gaat.
+  function bestandNaarBase64(bestand) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(bestand);
+    });
+  }
+
+  document.getElementById("sollicitatie-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const statusVeld = document.getElementById("form-status");
+    const submitBtn = document.getElementById("submit-btn");
+    const cvBestand = document.getElementById("cv").files[0];
+
+    if (cvBestand && cvBestand.size > 5 * 1024 * 1024) {
+      statusVeld.textContent = "Het CV bestand mag maximaal 5MB zijn.";
+      statusVeld.style.color = "#c0392b";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    statusVeld.textContent = "Versturen...";
+    statusVeld.style.color = "inherit";
+
+    try {
+      const cvBase64 = cvBestand ? await bestandNaarBase64(cvBestand) : null;
+
+      const payload = {
+        naam: document.getElementById("naam").value,
+        email: document.getElementById("email").value,
+        telefoon: document.getElementById("telefoon").value,
+        motivatie: document.getElementById("motivatie").value,
+        vacature: document.querySelector('input[name="vacature"]')?.value || "Onbekend",
+        cv_bestandsnaam: cvBestand ? cvBestand.name : null,
+        cv_inhoud_base64: cvBase64
+      };
+
+      const response = await fetch(SOLLICITATIE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) throw new Error("Versturen mislukt");
+
+      statusVeld.textContent = "Bedankt voor je sollicitatie! We nemen snel contact op.";
+      statusVeld.style.color = "var(--og-green-dark)";
+      document.getElementById("sollicitatie-form").reset();
+    } catch (error) {
+      statusVeld.textContent = "Er ging iets mis bij het versturen. Probeer het later opnieuw.";
+      statusVeld.style.color = "#c0392b";
+      console.error(error);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
 </script>
 
 </body>
