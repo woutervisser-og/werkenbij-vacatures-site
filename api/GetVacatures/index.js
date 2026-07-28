@@ -89,18 +89,20 @@ module.exports = async function (context, req) {
       return;
     }
 
-    // Stap 5: omzetten naar de vaste, schone kolomnamen
+    // Stap 5: omzetten naar de vaste output structuur.
+    // Deze interne namen liggen vast sinds het aanmaken van de kolommen
+    // in SharePoint, en veranderen niet meer door een label-wijziging.
     const vacatures = itemsData.value.map(item => {
       const f = item.fields;
       return {
-        titel: f.vacancy,
-        afdeling: f.department,
-        dienstverband: f.employment,
-        standplaats: getLocationText(f.location),
-        omschrijving: f.description,
-        salarisindicatie: f.salary_indication,
-        sluitingsdatum: f.closing_date,
-        actief: f.active === true || f.active === "Yes" || f.active === 1
+        titel: f.Title,
+        afdeling: f.Department,
+        dienstverband: f.Dienstverband,
+        standplaats: getLocationText(f.Standplaats),
+        omschrijving: f.Functieomschrijving,
+        salarisindicatie: f.Salaryindication,
+        sluitingsdatum: f.Closingdate,
+        actief: f.Active === true || f.Active === "Yes" || f.Active === 1
       };
     });
 
