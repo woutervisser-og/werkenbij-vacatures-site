@@ -39,7 +39,7 @@
   // Dit haalt nu vacatures.json op, dat lokaal bij de site staat.
   // Straks vervang je alleen deze URL door de Azure Function URL,
   // de rest van deze code blijft ongewijzigd.
-  const VACATURE_BRON = "vacatures.json";
+  const VACATURE_BRON = "/api/GetVacatures";
 
   fetch(VACATURE_BRON)
     .then(response => {
