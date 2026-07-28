@@ -26,43 +26,7 @@
   </div>
 
   <div class="card-grid" id="vacature-lijst">
-
-    <div class="vacature-card">
-      <div class="afdeling">Service</div>
-      <h3>Buitendienstmonteur Tankstations</h3>
-      <div class="meta-row">
-        <span class="meta-pill">Vast contract</span>
-        <span class="meta-pill">Landelijk / Reizend</span>
-      </div>
-      <p class="omschrijving">Verantwoordelijk voor onderhoud en storingen aan tankinstallaties door heel Nederland. Technisch inzicht, zelfstandig, rijbewijs B vereist.</p>
-      <p class="salaris">€2.900 – €3.600 per maand</p>
-      <a href="#" class="btn">Lees meer &amp; solliciteer</a>
-    </div>
-
-    <div class="vacature-card">
-      <div class="afdeling">Sales</div>
-      <h3>Sales Manager B2B Clean Fuels</h3>
-      <div class="meta-row">
-        <span class="meta-pill">Fulltime</span>
-        <span class="meta-pill">Hybride</span>
-      </div>
-      <p class="omschrijving">Bouw klantrelaties in transport en logistiek, adviseer over duurzame brandstofoplossingen en zet leads om naar langdurige samenwerkingen.</p>
-      <p class="salaris">€3.800 – €5.000 per maand + bonus</p>
-      <a href="#" class="btn">Lees meer &amp; solliciteer</a>
-    </div>
-
-    <div class="vacature-card">
-      <div class="afdeling">Marketing</div>
-      <h3>Stagiair Marketing &amp; Communicatie</h3>
-      <div class="meta-row">
-        <span class="meta-pill">Stage</span>
-        <span class="meta-pill">Heerenveen</span>
-      </div>
-      <p class="omschrijving">Werk mee aan campagnes, content en data analyse binnen een technisch B2B bedrijf in de energietransitie. Ruimte voor eigen initiatief.</p>
-      <p class="salaris">Stagevergoeding conform CAO</p>
-      <a href="#" class="btn">Lees meer &amp; solliciteer</a>
-    </div>
-
+    <p id="laad-status">Vacatures laden...</p>
   </div>
 </section>
 
@@ -70,6 +34,54 @@
   <span class="logo-footer">OG Clean Fuels</span>
   <p>&copy; 2026 OG Clean Fuels. Alle rechten voorbehouden.</p>
 </footer>
+
+<script>
+  // Dit haalt nu vacatures.json op, dat lokaal bij de site staat.
+  // Straks vervang je alleen deze URL door de Azure Function URL,
+  // de rest van deze code blijft ongewijzigd.
+  const VACATURE_BRON = "vacatures.json";
+
+  fetch(VACATURE_BRON)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Kon vacatures niet ophalen, status: " + response.status);
+      }
+      return response.json();
+    })
+    .then(vacatures => {
+      const container = document.getElementById("vacature-lijst");
+      container.innerHTML = ""; // "Vacatures laden..." tekst weghalen
+
+      const actieveVacatures = vacatures.filter(v => v.actief);
+
+      if (actieveVacatures.length === 0) {
+        container.innerHTML = "<p>Er staan op dit moment geen vacatures open.</p>";
+        return;
+      }
+
+      actieveVacatures.forEach(vacature => {
+        const kaart = document.createElement("div");
+        kaart.className = "vacature-card";
+        kaart.innerHTML = `
+          <div class="afdeling">${vacature.afdeling}</div>
+          <h3>${vacature.titel}</h3>
+          <div class="meta-row">
+            <span class="meta-pill">${vacature.dienstverband}</span>
+            <span class="meta-pill">${vacature.standplaats}</span>
+          </div>
+          <p class="omschrijving">${vacature.omschrijving}</p>
+          <p class="salaris">${vacature.salarisindicatie}</p>
+          <a href="#" class="btn">Lees meer &amp; solliciteer</a>
+        `;
+        container.appendChild(kaart);
+      });
+    })
+    .catch(error => {
+      const container = document.getElementById("vacature-lijst");
+      container.innerHTML = "<p>Er ging iets mis bij het laden van de vacatures. Probeer het later opnieuw.</p>";
+      console.error(error);
+    });
+</script>
 
 </body>
 </html>
