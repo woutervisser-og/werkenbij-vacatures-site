@@ -1,0 +1,274 @@
+:root {
+  --og-green: #13A538;
+  --og-green-dark: #0E7C29;
+  --og-orange: #F18700;
+  --og-dark: #1A1A1A;
+  --og-white: #FFFFFF;
+  --og-grey: #F5F5F3;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: var(--og-dark);
+  background: var(--og-white);
+  line-height: 1.5;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 6%;
+  background: var(--og-white);
+  border-bottom: 1px solid #eee;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--og-green);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+header nav a {
+  color: var(--og-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  margin-left: 32px;
+}
+
+header nav a.active {
+  color: var(--og-green);
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--og-green) 0%, var(--og-green-dark) 100%);
+  color: var(--og-white);
+  padding: 100px 6% 120px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -60px;
+  bottom: -100px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: var(--og-orange);
+  opacity: 0.15;
+}
+
+.hero-content { max-width: 640px; position: relative; z-index: 1; }
+
+.eyebrow {
+  display: inline-block;
+  background: var(--og-orange);
+  color: var(--og-white);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 18px;
+}
+
+.hero p {
+  font-size: 18px;
+  opacity: 0.92;
+  margin-bottom: 32px;
+  max-width: 480px;
+}
+
+.btn {
+  display: inline-block;
+  background: var(--og-orange);
+  color: var(--og-white);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 14px 28px;
+  border-radius: 6px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.btn:hover { background: #d97800; }
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--og-white);
+  color: var(--og-white);
+}
+
+section.content {
+  padding: 80px 6%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-head { margin-bottom: 48px; }
+
+.section-head .tag {
+  color: var(--og-green);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.section-head h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.teaser-card {
+  border: 1px solid #e5e5e2;
+  border-radius: 10px;
+  padding: 28px;
+}
+
+.teaser-card h3 {
+  font-size: 19px;
+  margin-bottom: 10px;
+  color: var(--og-dark);
+}
+
+.teaser-card p {
+  font-size: 14.5px;
+  color: #4a4a4a;
+  margin-bottom: 16px;
+}
+
+.vacature-card {
+  border: 1px solid #e5e5e2;
+  border-radius: 10px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.vacature-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.vacature-card .afdeling {
+  color: var(--og-orange);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.vacature-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--og-dark);
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.meta-pill {
+  background: var(--og-grey);
+  color: var(--og-dark);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+
+.vacature-card .omschrijving {
+  font-size: 14.5px;
+  color: #4a4a4a;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.vacature-card .salaris {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--og-green-dark);
+  margin-bottom: 18px;
+}
+
+.vacature-card .btn {
+  align-self: flex-start;
+  padding: 10px 22px;
+  font-size: 14px;
+}
+
+.value-block {
+  background: var(--og-grey);
+  border-radius: 10px;
+  padding: 28px;
+}
+
+.value-block .icon-label {
+  color: var(--og-green);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.value-block h3 {
+  font-size: 19px;
+  margin-bottom: 10px;
+}
+
+.value-block p {
+  font-size: 14.5px;
+  color: #4a4a4a;
+}
+
+footer {
+  background: var(--og-dark);
+  color: var(--og-white);
+  padding: 40px 6%;
+  text-align: center;
+  font-size: 14px;
+}
+
+footer .logo-footer {
+  color: var(--og-green);
+  font-weight: 800;
+  font-size: 18px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .hero h1 { font-size: 32px; }
+  header nav { display: none; }
+}

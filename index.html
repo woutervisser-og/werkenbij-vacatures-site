@@ -6,239 +6,16 @@
 <title>Werken bij OG Clean Fuels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --og-green: #13A538;
-    --og-green-dark: #0E7C29;
-    --og-orange: #F18700;
-    --og-dark: #1A1A1A;
-    --og-white: #FFFFFF;
-    --og-grey: #F5F5F3;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Open Sans', sans-serif;
-    color: var(--og-dark);
-    background: var(--og-white);
-    line-height: 1.5;
-  }
-
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px 6%;
-    background: var(--og-white);
-    border-bottom: 1px solid #eee;
-  }
-
-  .logo {
-    font-weight: 800;
-    font-size: 20px;
-    color: var(--og-green);
-    letter-spacing: -0.02em;
-  }
-
-  header nav a {
-    color: var(--og-dark);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-    margin-left: 32px;
-  }
-
-  .hero {
-    background: linear-gradient(135deg, var(--og-green) 0%, var(--og-green-dark) 100%);
-    color: var(--og-white);
-    padding: 100px 6% 120px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::after {
-    content: "";
-    position: absolute;
-    right: -60px;
-    bottom: -100px;
-    width: 340px;
-    height: 340px;
-    border-radius: 50%;
-    background: var(--og-orange);
-    opacity: 0.15;
-  }
-
-  .hero-content { max-width: 640px; position: relative; z-index: 1; }
-
-  .eyebrow {
-    display: inline-block;
-    background: var(--og-orange);
-    color: var(--og-white);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-  }
-
-  .hero h1 {
-    font-size: 44px;
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 18px;
-  }
-
-  .hero p {
-    font-size: 18px;
-    opacity: 0.92;
-    margin-bottom: 32px;
-    max-width: 480px;
-  }
-
-  .btn {
-    display: inline-block;
-    background: var(--og-orange);
-    color: var(--og-white);
-    font-weight: 700;
-    font-size: 15px;
-    padding: 14px 28px;
-    border-radius: 6px;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  .btn:hover { background: #d97800; }
-
-  .btn-outline {
-    background: transparent;
-    border: 2px solid var(--og-white);
-    color: var(--og-white);
-  }
-
-  section.vacatures { padding: 80px 6%; max-width: 1100px; margin: 0 auto; }
-
-  .section-head { margin-bottom: 48px; }
-
-  .section-head .tag {
-    color: var(--og-green);
-    font-weight: 700;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .section-head h2 {
-    font-size: 32px;
-    font-weight: 800;
-    margin-top: 8px;
-  }
-
-  .vacature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-  }
-
-  .vacature-card {
-    border: 1px solid #e5e5e2;
-    border-radius: 10px;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
-  }
-
-  .vacature-card:hover {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    transform: translateY(-2px);
-  }
-
-  .vacature-card .afdeling {
-    color: var(--og-orange);
-    font-weight: 700;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 10px;
-  }
-
-  .vacature-card h3 {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 14px;
-    color: var(--og-dark);
-  }
-
-  .meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .meta-pill {
-    background: var(--og-grey);
-    color: var(--og-dark);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 5px 12px;
-    border-radius: 20px;
-  }
-
-  .vacature-card .omschrijving {
-    font-size: 14.5px;
-    color: #4a4a4a;
-    margin-bottom: 20px;
-    flex-grow: 1;
-  }
-
-  .vacature-card .salaris {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--og-green-dark);
-    margin-bottom: 18px;
-  }
-
-  .vacature-card .btn {
-    align-self: flex-start;
-    padding: 10px 22px;
-    font-size: 14px;
-  }
-
-  footer {
-    background: var(--og-dark);
-    color: var(--og-white);
-    padding: 40px 6%;
-    text-align: center;
-    font-size: 14px;
-  }
-
-  footer .logo-footer {
-    color: var(--og-green);
-    font-weight: 800;
-    font-size: 18px;
-    margin-bottom: 8px;
-    display: block;
-  }
-
-  @media (max-width: 640px) {
-    .hero h1 { font-size: 32px; }
-    header nav { display: none; }
-  }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
-  <div class="logo">OG Clean Fuels</div>
+  <a href="index.html" class="logo">OG Clean Fuels</a>
   <nav>
-    <a href="#vacatures">Vacatures</a>
-    <a href="#">Over ons</a>
-    <a href="#">Contact</a>
+    <a href="index.html" class="active">Home</a>
+    <a href="vacatures.html">Vacatures</a>
+    <a href="over-ons.html">Over ons</a>
   </nav>
 </header>
 
@@ -247,54 +24,29 @@
     <span class="eyebrow">Werken bij OG Clean Fuels</span>
     <h1>Bouw mee aan de energietransitie</h1>
     <p>Wij zoeken mensen die net als wij geloven in schone brandstoffen en concrete impact. Bekijk onze openstaande vacatures en ontdek waar jij past.</p>
-    <a href="#vacatures" class="btn">Bekijk vacatures</a>
+    <a href="vacatures.html" class="btn">Bekijk vacatures</a>
+    <a href="over-ons.html" class="btn btn-outline">Over ons</a>
   </div>
 </section>
 
-<section class="vacatures" id="vacatures">
+<section class="content">
   <div class="section-head">
-    <span class="tag">Openstaande functies</span>
-    <h2>Onze vacatures</h2>
+    <span class="tag">Waarom OG Clean Fuels</span>
+    <h2>Werk met directe impact</h2>
   </div>
-
-  <div class="vacature-grid">
-
-    <div class="vacature-card">
-      <div class="afdeling">Service</div>
-      <h3>Buitendienstmonteur Tankstations</h3>
-      <div class="meta-row">
-        <span class="meta-pill">Vast contract</span>
-        <span class="meta-pill">Landelijk / Reizend</span>
-      </div>
-      <p class="omschrijving">Verantwoordelijk voor onderhoud en storingen aan tankinstallaties door heel Nederland. Technisch inzicht, zelfstandig, rijbewijs B vereist.</p>
-      <p class="salaris">€2.900 – €3.600 per maand</p>
-      <a href="#" class="btn">Lees meer &amp; solliciteer</a>
+  <div class="card-grid">
+    <div class="teaser-card">
+      <h3>Duurzame impact</h3>
+      <p>Je werkt dagelijks mee aan schonere brandstoffen voor transport en logistiek, met resultaten die je terugziet in de praktijk.</p>
     </div>
-
-    <div class="vacature-card">
-      <div class="afdeling">Sales</div>
-      <h3>Sales Manager B2B Clean Fuels</h3>
-      <div class="meta-row">
-        <span class="meta-pill">Fulltime</span>
-        <span class="meta-pill">Hybride</span>
-      </div>
-      <p class="omschrijving">Bouw klantrelaties in transport en logistiek, adviseer over duurzame brandstofoplossingen en zet leads om naar langdurige samenwerkingen.</p>
-      <p class="salaris">€3.800 – €5.000 per maand + bonus</p>
-      <a href="#" class="btn">Lees meer &amp; solliciteer</a>
+    <div class="teaser-card">
+      <h3>Ruimte om te groeien</h3>
+      <p>Van buitendienst tot sales tot marketing, we bieden ruimte voor eigen initiatief en persoonlijke ontwikkeling.</p>
     </div>
-
-    <div class="vacature-card">
-      <div class="afdeling">Marketing</div>
-      <h3>Stagiair Marketing &amp; Communicatie</h3>
-      <div class="meta-row">
-        <span class="meta-pill">Stage</span>
-        <span class="meta-pill">Heerenveen</span>
-      </div>
-      <p class="omschrijving">Werk mee aan campagnes, content en data analyse binnen een technisch B2B bedrijf in de energietransitie. Ruimte voor eigen initiatief.</p>
-      <p class="salaris">Stagevergoeding conform CAO</p>
-      <a href="#" class="btn">Lees meer &amp; solliciteer</a>
+    <div class="teaser-card">
+      <h3>Een hecht team</h3>
+      <p>Korte lijnen, directe samenwerking, en collega's die net zo resultaatgericht zijn als jij.</p>
     </div>
-
   </div>
 </section>
 
