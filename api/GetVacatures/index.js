@@ -79,6 +79,16 @@ module.exports = async function (context, req) {
     );
     const itemsData = await itemsResponse.json();
 
+    // Ga naar ?keys=1 om de echte interne kolomnamen te zien.
+    if (req.query.keys) {
+      context.res = {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: itemsData.value[0] ? Object.keys(itemsData.value[0].fields) : []
+      };
+      return;
+    }
+
     // Stap 5: omzetten naar de vaste, schone kolomnamen
     const vacatures = itemsData.value.map(item => {
       const f = item.fields;
