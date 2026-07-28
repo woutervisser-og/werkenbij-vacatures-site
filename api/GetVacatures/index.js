@@ -9,6 +9,15 @@ const SITE_HOSTNAME = process.env.SP_SITE_HOSTNAME;
 const SITE_PATH = process.env.SP_SITE_PATH;
 const LIST_NAME = process.env.SP_LIST_NAME;
 
+// Haalt een bruikbare URL uit een Hyperlink kolom, die kan een object
+// zijn ({ Url, Description }) of gewoon platte tekst.
+function getHyperlinkUrl(value) {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (value.Url) return value.Url;
+  return "";
+}
+
 // Location kan soms een object teruggeven in plaats van platte tekst,
 // dit haalt er altijd leesbare tekst uit, ongeacht het veldtype.
 function getLocationText(value) {
@@ -95,6 +104,7 @@ module.exports = async function (context, req) {
     const vacatures = itemsData.value.map(item => {
       const f = item.fields;
       return {
+        id: item.id,
         titel: f.Title,
         afdeling: f.Department,
         dienstverband: f.Dienstverband,
@@ -102,6 +112,7 @@ module.exports = async function (context, req) {
         omschrijving: f.Functieomschrijving,
         salarisindicatie: f.Salaryindication,
         sluitingsdatum: f.Closingdate,
+        headerafbeelding: getHyperlinkUrl(f.Headerafbeelding),
         actief: f.Active === true || f.Active === "Yes" || f.Active === 1
       };
     });
