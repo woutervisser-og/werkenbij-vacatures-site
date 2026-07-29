@@ -1,3 +1,14 @@
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [ "main" ]
+  schedule:
+    - cron: '0 9 * * *'
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+
 name: Azure Static Web Apps CI/CD
 
 on:
@@ -13,6 +24,18 @@ jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
+    - name: Genereer vacature pagina's
+        run: |
+          cd scripts/generate-vacatures
+          npm install
+          node generate.js
+        env:
+          SP_TENANT_ID: ${{ secrets.SP_TENANT_ID }}
+          SP_CLIENT_ID: ${{ secrets.SP_CLIENT_ID }}
+          SP_CLIENT_SECRET: ${{ secrets.SP_CLIENT_SECRET }}
+          SP_SITE_HOSTNAME: ${{ secrets.SP_SITE_HOSTNAME }}
+          SP_SITE_PATH: ${{ secrets.SP_SITE_PATH }}
+          SP_LIST_NAME: ${{ secrets.SP_LIST_NAME }}
     name: Build and Deploy Job
     steps:
       - uses: actions/checkout@v3

@@ -69,7 +69,7 @@
       actieveVacatures.forEach(vacature => {
         const kaart = document.createElement("a");
         kaart.className = "vacature-card";
-        kaart.href = `vacature-detail.html?id=${encodeURIComponent(vacature.id)}`;
+        kaart.href = `/vacature/${encodeURIComponent(vacature.id)}.html`;
         kaart.style.textDecoration = "none";
         kaart.style.color = "inherit";
         kaart.innerHTML = `
