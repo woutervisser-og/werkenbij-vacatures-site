@@ -202,6 +202,12 @@ async function main() {
   );
   const itemsData = await itemsResponse.json();
 
+  // TIJDELIJK: toont de echte interne kolomnamen in de Actions log,
+  // haal deze regel weer weg zodra de mapping klopt.
+  if (itemsData.value[0]) {
+    console.log("Beschikbare kolomnamen:", Object.keys(itemsData.value[0].fields));
+  }
+
   const vacatures = itemsData.value
     .map(item => {
       const f = item.fields;
