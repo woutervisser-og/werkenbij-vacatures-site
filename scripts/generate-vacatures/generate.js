@@ -12,6 +12,17 @@ const LIST_NAME = process.env.SP_LIST_NAME;
 
 // LET OP: pas deze 2 namen aan zodra je de echte interne kolomnamen
 // hebt gezien in de Actions log ("Beschikbare kolomnamen").
+// Vaste recruiter gegevens, zelfde voor elke vacature. Pas hier aan
+// zodra naam, contactgegevens of foto wijzigen.
+const RECRUITER = {
+  naam: "Iska van der Vlugt",
+  functie: "HR",
+  email: "vandervlugt@ogcleanfuels.com",
+  telefoon: "+31612345678",       // gebruikt voor de "Bellen met" knop (tel: link)
+  telefoonWeergave: "06 12 34 56 78",
+  foto: "/images/iska-van-der-vlugt.webp"
+};
+
 const VELD_LAND = "Country";
 const VELD_ADRES = "Workaddress";
 
@@ -133,6 +144,41 @@ ${bouwJsonLd(vacature)}
   .form-veld input, .form-veld textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; font-size: 14px; }
   .form-veld textarea { min-height: 100px; resize: vertical; }
   #form-status { margin-top: 14px; font-size: 14px; font-weight: 600; }
+
+  .recruiter-blok {
+    background: var(--og-grey);
+    border-radius: 10px;
+    padding: 32px;
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .recruiter-foto-blok { text-align: center; flex-shrink: 0; }
+  .recruiter-foto {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 8px;
+  }
+  .recruiter-naam { font-style: italic; font-size: 14px; }
+  .recruiter-tekst { flex: 1; min-width: 240px; }
+  .recruiter-tekst h3 { color: var(--og-green); font-size: 20px; margin-bottom: 10px; }
+  .recruiter-tekst p { font-size: 14.5px; color: #333; margin-bottom: 6px; }
+  .recruiter-tekst a { color: var(--og-green-dark); font-weight: 600; }
+  .recruiter-bel-btn {
+    background: var(--og-white);
+    color: var(--og-dark);
+    font-weight: 700;
+    padding: 14px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
 </style>
 </head>
 <body>
@@ -161,6 +207,19 @@ ${vacature.headerafbeelding ? `<img class="header-afbeelding" src="${vacature.he
   </div>
 
   <div class="detail-omschrijving">${vacature.omschrijving || ""}</div>
+
+  <div class="recruiter-blok">
+    <div class="recruiter-foto-blok">
+      <img class="recruiter-foto" src="${RECRUITER.foto}" alt="${RECRUITER.naam}">
+      <div class="recruiter-naam">${RECRUITER.naam},<br>${RECRUITER.functie}</div>
+    </div>
+    <div class="recruiter-tekst">
+      <h3>Interesse of vragen over de functie?</h3>
+      <p>Neem contact met ons op! ✉ <a href="mailto:${RECRUITER.email}">${RECRUITER.email}</a></p>
+      <p>Voldoe je niet aan alle functie-eisen, maar spreekt de functie en onze missie je aan? Neem dan ook gerust contact op. We kijken graag verder dan alleen een cv.</p>
+    </div>
+    <a class="recruiter-bel-btn" href="tel:${RECRUITER.telefoon}">Bellen met ${RECRUITER.naam.split(" ")[0]} 📞</a>
+  </div>
 
   <div class="solliciteer-blok">
     <h3 style="margin-bottom:20px;">Solliciteer direct</h3>
