@@ -180,7 +180,8 @@ async function main() {
   const listsData = await listsResponse.json();
   const targetList = listsData.value.find(l => l.displayName === LIST_NAME);
   if (!targetList) {
-    console.error(`Lijst '${LIST_NAME}' niet gevonden`);
+    console.error(`Lijst '${LIST_NAME}' niet gevonden.`);
+    console.error("Beschikbare lijsten op deze site:", listsData.value.map(l => l.displayName));
     process.exit(1);
   }
 
