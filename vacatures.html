@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vacatures | Werken bij OG Clean Fuels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="logo">OG Clean Fuels</a>
+  <a href="index.html" class="logo">o<span>g</span> clean fuels</a>
   <nav>
     <a href="index.html">Home</a>
     <a href="vacatures.html" class="active">Vacatures</a>
@@ -20,12 +20,12 @@
 </header>
 
 <section class="content">
-  <div class="section-head">
+  <div class="section-head reveal">
     <span class="tag">Openstaande functies</span>
     <h2>Onze vacatures</h2>
   </div>
 
-  <div class="card-grid" id="vacature-lijst">
+  <div class="card-grid reveal" id="vacature-lijst">
     <p id="laad-status">Vacatures laden...</p>
   </div>
 </section>
@@ -35,6 +35,7 @@
   <p>&copy; 2026 OG Clean Fuels. Alle rechten voorbehouden.</p>
 </footer>
 
+<script src="animations.js"></script>
 <script>
   const VACATURE_BRON = "/api/GetVacatures";
 
