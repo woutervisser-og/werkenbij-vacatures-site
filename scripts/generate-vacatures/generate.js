@@ -131,23 +131,41 @@ ${bouwJsonLd(vacature)}
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 <style>
-  .header-afbeelding { width: 100%; height: 320px; object-fit: cover; display: block; }
+  .header-afbeelding { width: 100%; height: 340px; object-fit: cover; display: block; }
   .detail-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
   .detail-omschrijving { max-width: 720px; font-size: 15.5px; color: #333; line-height: 1.7; }
   .detail-omschrijving p { margin-bottom: 16px; }
-  .solliciteer-blok { background: var(--og-grey); border-radius: 10px; padding: 32px; max-width: 560px; margin-top: 40px; }
+  .solliciteer-blok { background: var(--og-grey); border-radius: 12px; padding: 32px; max-width: 560px; margin-top: 40px; }
   .form-veld { margin-bottom: 18px; }
   .form-veld label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
-  .form-veld input, .form-veld textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; font-size: 14px; }
+  .form-veld input, .form-veld textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; font-size: 14px; transition: border-color 0.2s ease; }
+  .form-veld input:focus, .form-veld textarea:focus { border-color: var(--og-orange); outline: none; }
   .form-veld textarea { min-height: 100px; resize: vertical; }
   #form-status { margin-top: 14px; font-size: 14px; font-weight: 600; }
 
+  .sfeer-galerij {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin: 40px 0;
+  }
+  .sfeer-foto {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    transition: transform 0.35s ease, filter 0.35s ease;
+    filter: saturate(0.95);
+  }
+  .sfeer-foto:hover { transform: scale(1.04); filter: saturate(1.1); }
+
   .recruiter-blok {
     background: var(--og-grey);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 32px;
     margin-top: 48px;
     display: flex;
@@ -163,12 +181,13 @@ ${bouwJsonLd(vacature)}
     object-fit: cover;
     display: block;
     margin: 0 auto 8px;
+    border: 3px solid var(--og-orange);
   }
   .recruiter-naam { font-style: italic; font-size: 14px; }
   .recruiter-tekst { flex: 1; min-width: 240px; }
-  .recruiter-tekst h3 { color: var(--og-green); font-size: 20px; margin-bottom: 10px; }
+  .recruiter-tekst h3 { color: var(--og-orange-dark); font-size: 20px; margin-bottom: 10px; }
   .recruiter-tekst p { font-size: 14.5px; color: #333; margin-bottom: 6px; }
-  .recruiter-tekst a { color: var(--og-green-dark); font-weight: 600; }
+  .recruiter-tekst a { color: var(--og-orange-dark); font-weight: 600; }
   .recruiter-bel-btn {
     background: var(--og-white);
     color: var(--og-dark);
@@ -178,13 +197,15 @@ ${bouwJsonLd(vacature)}
     text-decoration: none;
     white-space: nowrap;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
   }
+  .recruiter-bel-btn:hover { transform: translateY(-2px); }
 </style>
 </head>
 <body>
 
 <header>
-  <a href="/index.html" class="logo">OG Clean Fuels</a>
+  <a href="/index.html" class="logo">o<span>g</span> clean fuels</a>
   <nav>
     <a href="/index.html">Home</a>
     <a href="/vacatures.html" class="active">Vacatures</a>
@@ -195,20 +216,27 @@ ${bouwJsonLd(vacature)}
 ${vacature.headerafbeelding ? `<img class="header-afbeelding" src="${vacature.headerafbeelding}" alt="${vacature.titel}">` : ""}
 
 <section class="content">
-  <div class="section-head">
+  <div class="section-head reveal">
     <span class="tag">${vacature.afdeling || "Vacature"}</span>
     <h2>${vacature.titel}</h2>
   </div>
 
-  <div class="detail-meta">
+  <div class="detail-meta reveal">
     <span class="meta-pill">${vacature.dienstverband || ""}</span>
     <span class="meta-pill">${vacature.land || ""}</span>
     ${vacature.salarisindicatie ? `<span class="meta-pill">${vacature.salarisindicatie}</span>` : ""}
   </div>
 
-  <div class="detail-omschrijving">${vacature.omschrijving || ""}</div>
+  <div class="detail-omschrijving reveal">${vacature.omschrijving || ""}</div>
 
-  <div class="recruiter-blok">
+  <div class="sfeer-galerij reveal">
+    <img class="sfeer-foto" src="/images/office-sfeer.webp" alt="Sfeerbeeld op kantoor bij OG Clean Fuels">
+    <img class="sfeer-foto" src="/images/Servicemonteur-FR.webp" alt="Servicemonteur aan het werk in Frankrijk">
+    <img class="sfeer-foto" src="/images/Wilco-theoffice.webp" alt="Collega op kantoor bij OG Clean Fuels">
+    <img class="sfeer-foto" src="/images/servicetech-DE-1.webp" alt="Technicus aan het werk in Duitsland">
+  </div>
+
+  <div class="recruiter-blok reveal">
     <div class="recruiter-foto-blok">
       <img class="recruiter-foto" src="${RECRUITER.foto}" alt="${RECRUITER.naam}">
       <div class="recruiter-naam">${RECRUITER.naam},<br>${RECRUITER.functie}</div>
@@ -221,7 +249,7 @@ ${vacature.headerafbeelding ? `<img class="header-afbeelding" src="${vacature.he
     <a class="recruiter-bel-btn" href="tel:${RECRUITER.telefoon}">Bellen met ${RECRUITER.naam.split(" ")[0]} 📞</a>
   </div>
 
-  <div class="solliciteer-blok">
+  <div class="solliciteer-blok reveal">
     <h3 style="margin-bottom:20px;">Solliciteer direct</h3>
     <form id="sollicitatie-form">
       <input type="hidden" name="vacancy" value="${vacature.titel}">
@@ -264,6 +292,7 @@ ${vacature.headerafbeelding ? `<img class="header-afbeelding" src="${vacature.he
   <p>&copy; 2026 OG Clean Fuels. Alle rechten voorbehouden.</p>
 </footer>
 
+<script src="/animations.js"></script>
 <script src="/solliciteer.js"></script>
 </body>
 </html>
