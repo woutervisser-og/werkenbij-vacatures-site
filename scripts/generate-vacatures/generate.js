@@ -29,6 +29,17 @@ function getLocationText(value) {
 }
 
 // Haalt platte tekst uit de rich-text HTML, voor de meta description.
+// Zet een titel om naar een URL-vriendelijke "slug", bijvoorbeeld
+// "Sales Manager B2B Clean Fuels" wordt "sales-manager-b2b-clean-fuels".
+function maakSlug(tekst) {
+  return (tekst || "")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // accenten weghalen
+    .replace(/&/g, " en ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function stripHtml(html, lengte = 160) {
   const platteTekst = (html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   return platteTekst.length > lengte ? platteTekst.slice(0, lengte).trim() + "..." : platteTekst;
@@ -212,10 +223,21 @@ async function main() {
     fs.mkdirSync(OUTPUT_MAP, { recursive: true });
   }
 
+  const gebruikteSlugs = new Set();
+
   vacatures.forEach(vacature => {
-    const bestandspad = path.join(OUTPUT_MAP, `${vacature.id}.html`);
+    let slug = maakSlug(vacature.titel) || String(vacature.id);
+
+    // Bij 2 vacatures met (bijna) dezelfde titel, voorkom dat de 2e
+    // per ongeluk de 1e overschrijft door het ID toe te voegen.
+    if (gebruikteSlugs.has(slug)) {
+      slug = `${slug}-${vacature.id}`;
+    }
+    gebruikteSlugs.add(slug);
+
+    const bestandspad = path.join(OUTPUT_MAP, `${slug}.html`);
     fs.writeFileSync(bestandspad, bouwHtmlPagina(vacature));
-    console.log(`Gegenereerd: vacature/${vacature.id}.html`);
+    console.log(`Gegenereerd: vacature/${slug}.html`);
   });
 
   console.log(`Klaar, ${vacatures.length} vacature pagina's gegenereerd.`);

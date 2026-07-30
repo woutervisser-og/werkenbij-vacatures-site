@@ -38,6 +38,17 @@
 <script>
   const VACATURE_BRON = "/api/GetVacatures";
 
+  // Zelfde slug-logica als in het generatie script, zodat de link hier
+  // exact overeenkomt met de bestandsnaam die gegenereerd is.
+  function maakSlug(tekst) {
+    return (tekst || "")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/&/g, " en ")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
   // Haalt platte tekst uit de rich-text omschrijving (die bevat HTML
   // van SharePoint) en knipt hem af op 100 tekens voor de tegel.
   function maakSamenvatting(html, lengte = 100) {
@@ -69,7 +80,7 @@
       actieveVacatures.forEach(vacature => {
         const kaart = document.createElement("a");
         kaart.className = "vacature-card";
-        kaart.href = `/vacature/${encodeURIComponent(vacature.id)}.html`;
+        kaart.href = `/vacature/${maakSlug(vacature.titel)}.html`;
         kaart.style.textDecoration = "none";
         kaart.style.color = "inherit";
         kaart.innerHTML = `
