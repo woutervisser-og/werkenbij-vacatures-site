@@ -18,15 +18,9 @@ function getHyperlinkUrl(value) {
   return "";
 }
 
-// Location kan soms een object teruggeven in plaats van platte tekst,
-// dit haalt er altijd leesbare tekst uit, ongeacht het veldtype.
-function getLocationText(value) {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  if (value.DisplayName) return value.DisplayName;
-  if (value.Address && value.Address.City) return value.Address.City;
-  return JSON.stringify(value);
-}
+// LET OP: pas deze naam aan zodra je de echte interne kolomnaam
+// hebt gezien via ?keys=1.
+const VELD_LAND = "Country";
 
 module.exports = async function (context, req) {
   try {
@@ -108,7 +102,7 @@ module.exports = async function (context, req) {
         titel: f.Title,
         afdeling: f.Department,
         dienstverband: f.Dienstverband,
-        standplaats: getLocationText(f.Standplaats),
+        land: f[VELD_LAND],
         omschrijving: f.Functieomschrijving,
         salarisindicatie: f.Salaryindication,
         sluitingsdatum: f.Closingdate,

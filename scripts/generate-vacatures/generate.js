@@ -10,6 +10,11 @@ const SITE_HOSTNAME = process.env.SP_SITE_HOSTNAME;
 const SITE_PATH = process.env.SP_SITE_PATH;
 const LIST_NAME = process.env.SP_LIST_NAME;
 
+// LET OP: pas deze 2 namen aan zodra je de echte interne kolomnamen
+// hebt gezien in de Actions log ("Beschikbare kolomnamen").
+const VELD_LAND = "Country";
+const VELD_ADRES = "Workaddress";
+
 // Waar de gegenereerde pagina's terechtkomen, relatief vanaf de repository root.
 const OUTPUT_MAP = path.join(__dirname, "..", "..", "vacature");
 
@@ -20,15 +25,21 @@ function getHyperlinkUrl(value) {
   return "";
 }
 
-function getLocationText(value) {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  if (value.DisplayName) return value.DisplayName;
-  if (value.Address && value.Address.City) return value.Address.City;
-  return "";
+// Vertaalt Dienstverband naar een van Google's vaste, toegestane
+// employmentType waarden. Onbekende waarden vallen terug op "OTHER".
+function naarEmploymentType(dienstverband) {
+  const mapping = {
+    "Fulltime": "FULL_TIME",
+    "Parttime": "PART_TIME",
+    "Vast contract": "FULL_TIME",
+    "Tijdelijk contract": "TEMPORARY",
+    "Stage": "INTERN",
+    "Internship": "INTERN",
+    "Zzp/Freelance": "CONTRACTOR"
+  };
+  return mapping[dienstverband] || "OTHER";
 }
 
-// Haalt platte tekst uit de rich-text HTML, voor de meta description.
 // Zet een titel om naar een URL-vriendelijke "slug", bijvoorbeeld
 // "Sales Manager B2B Clean Fuels" wordt "sales-manager-b2b-clean-fuels".
 function maakSlug(tekst) {
@@ -43,6 +54,49 @@ function maakSlug(tekst) {
 function stripHtml(html, lengte = 160) {
   const platteTekst = (html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   return platteTekst.length > lengte ? platteTekst.slice(0, lengte).trim() + "..." : platteTekst;
+}
+
+function bouwJsonLd(vacature) {
+  const jobPosting = {
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    title: vacature.titel,
+    description: vacature.omschrijving || "",
+    datePosted: vacature.datumGeplaatst || undefined,
+    validThrough: vacature.sluitingsdatum || undefined,
+    employmentType: naarEmploymentType(vacature.dienstverband),
+    hiringOrganization: {
+      "@type": "Organization",
+      name: "OG Clean Fuels",
+      sameAs: "https://www.ogcleanfuels.com"
+    }
+  };
+
+  // Adres alleen meegeven als er daadwerkelijk een adres is ingevuld.
+  // Zonder adres gebruiken we TELECOMMUTE, Google's officiële manier
+  // om aan te geven dat een functie niet aan 1 vaste locatie hangt.
+  if (vacature.adres) {
+    jobPosting.jobLocation = {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: vacature.adres,
+        addressCountry: vacature.land || ""
+      }
+    };
+  } else {
+    jobPosting.jobLocationType = "TELECOMMUTE";
+  }
+
+  if (vacature.salarisindicatie) {
+    jobPosting.baseSalary = {
+      "@type": "MonetaryAmount",
+      currency: "EUR",
+      value: { "@type": "QuantitativeValue", value: vacature.salarisindicatie }
+    };
+  }
+
+  return JSON.stringify(jobPosting, null, 2);
 }
 
 function bouwHtmlPagina(vacature) {
@@ -60,6 +114,10 @@ function bouwHtmlPagina(vacature) {
 <meta property="og:description" content="${metaDescription}">
 <meta property="og:type" content="website">
 ${vacature.headerafbeelding ? `<meta property="og:image" content="${vacature.headerafbeelding}">` : ""}
+
+<script type="application/ld+json">
+${bouwJsonLd(vacature)}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -98,7 +156,7 @@ ${vacature.headerafbeelding ? `<img class="header-afbeelding" src="${vacature.he
 
   <div class="detail-meta">
     <span class="meta-pill">${vacature.dienstverband || ""}</span>
-    <span class="meta-pill">${vacature.standplaats || ""}</span>
+    <span class="meta-pill">${vacature.land || ""}</span>
     ${vacature.salarisindicatie ? `<span class="meta-pill">${vacature.salarisindicatie}</span>` : ""}
   </div>
 
@@ -216,9 +274,12 @@ async function main() {
         titel: f.Title,
         afdeling: f.Department,
         dienstverband: f.Dienstverband,
-        standplaats: getLocationText(f.Standplaats),
+        land: f[VELD_LAND],
+        adres: f[VELD_ADRES],
         omschrijving: f.Functieomschrijving,
         salarisindicatie: f.Salaryindication,
+        datumGeplaatst: f.Datum,
+        sluitingsdatum: f.Closingdate,
         headerafbeelding: getHyperlinkUrl(f.Headerafbeelding),
         actief: f.Active === true || f.Active === "Yes" || f.Active === 1
       };
