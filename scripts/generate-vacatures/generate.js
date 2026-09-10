@@ -7,8 +7,16 @@ const path = require("path");
 // toekomstig custom domain een instelling is, geen code-wijziging). Kan
 // lokaal ook overschreven worden (bijvoorbeeld tijdens testen tegen een
 // lokale server) via de omgevingsvariabele VACATURES_API_URL.
-const VACATURES_API_URL =
-  process.env.VACATURES_API_URL || "https://victorious-sea-0b50b4303.7.azurestaticapps.net/api/GetVacatures";
+//
+// Verdraagt een SITE_URL zonder "https://" ervoor (een licht foutieve
+// waarde in de repository variable is anders lastig te debuggen).
+function metSchema(url) {
+  return /^https?:\/\//.test(url) ? url : `https://${url}`;
+}
+
+const VACATURES_API_URL = metSchema(
+  process.env.VACATURES_API_URL || "victorious-sea-0b50b4303.7.azurestaticapps.net/api/GetVacatures"
+);
 
 // Vaste recruiter gegevens, zelfde voor elke vacature. Pas hier aan
 // zodra naam, contactgegevens of foto wijzigen.
