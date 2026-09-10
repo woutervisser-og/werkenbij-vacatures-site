@@ -2,16 +2,22 @@ const fetch = require("node-fetch");
 const fs = require("fs");
 const path = require("path");
 
-// Deze waarden komen uit GitHub Actions secrets, niet uit de code zelf.
-const TENANT_ID = process.env.SP_TENANT_ID;
-const CLIENT_ID = process.env.SP_CLIENT_ID;
-const CLIENT_SECRET = process.env.SP_CLIENT_SECRET;
-const SITE_HOSTNAME = process.env.SP_SITE_HOSTNAME;
-const SITE_PATH = process.env.SP_SITE_PATH;
-const LIST_NAME = process.env.SP_LIST_NAME;
+// De live site zelf, ipv rechtstreeks SharePoint/Graph API. Wordt in
+// GitHub Actions gezet vanuit de repository variable SITE_URL (zodat een
+// toekomstig custom domain een instelling is, geen code-wijziging). Kan
+// lokaal ook overschreven worden (bijvoorbeeld tijdens testen tegen een
+// lokale server) via de omgevingsvariabele VACATURES_API_URL.
+//
+// Verdraagt een SITE_URL zonder "https://" ervoor (een licht foutieve
+// waarde in de repository variable is anders lastig te debuggen).
+function metSchema(url) {
+  return /^https?:\/\//.test(url) ? url : `https://${url}`;
+}
 
-// LET OP: pas deze 2 namen aan zodra je de echte interne kolomnamen
-// hebt gezien in de Actions log ("Beschikbare kolomnamen").
+const VACATURES_API_URL = metSchema(
+  process.env.VACATURES_API_URL || "victorious-sea-0b50b4303.7.azurestaticapps.net/api/GetVacatures"
+);
+
 // Vaste recruiter gegevens, zelfde voor elke vacature. Pas hier aan
 // zodra naam, contactgegevens of foto wijzigen.
 const RECRUITER = {
@@ -23,33 +29,8 @@ const RECRUITER = {
   foto: "/images/iska-van-der-vlugt.webp"
 };
 
-const VELD_LAND = "Country";
-const VELD_ADRES = "Workaddress";
-
 // Waar de gegenereerde pagina's terechtkomen, relatief vanaf de repository root.
 const OUTPUT_MAP = path.join(__dirname, "..", "..", "vacature");
-
-function getHyperlinkUrl(value) {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  if (value.Url) return value.Url;
-  return "";
-}
-
-// Vertaalt Dienstverband naar een van Google's vaste, toegestane
-// employmentType waarden. Onbekende waarden vallen terug op "OTHER".
-function naarEmploymentType(dienstverband) {
-  const mapping = {
-    "Fulltime": "FULL_TIME",
-    "Parttime": "PART_TIME",
-    "Vast contract": "FULL_TIME",
-    "Tijdelijk contract": "TEMPORARY",
-    "Stage": "INTERN",
-    "Internship": "INTERN",
-    "Zzp/Freelance": "CONTRACTOR"
-  };
-  return mapping[dienstverband] || "OTHER";
-}
 
 // Zet een titel om naar een URL-vriendelijke "slug", bijvoorbeeld
 // "Sales Manager B2B Clean Fuels" wordt "sales-manager-b2b-clean-fuels".
@@ -62,9 +43,47 @@ function maakSlug(tekst) {
     .replace(/^-+|-+$/g, "");
 }
 
-function stripHtml(html, lengte = 160) {
-  const platteTekst = (html || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-  return platteTekst.length > lengte ? platteTekst.slice(0, lengte).trim() + "..." : platteTekst;
+function escapeHtml(tekst) {
+  return String(tekst || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Zet platte tekst (uit een textarea in het beheerportaal) om naar
+// alinea's, met behoud van enters.
+function paragrafen(tekst) {
+  const stukken = escapeHtml(tekst).split(/\n{2,}/).filter(Boolean);
+  return stukken.map(stuk => `<p>${stuk.replace(/\n/g, "<br>")}</p>`).join("");
+}
+
+function inkorten(tekst, lengte = 160) {
+  return tekst.length > lengte ? tekst.slice(0, lengte).trim() + "..." : tekst;
+}
+
+// Voor de meta-description en de JSON-LD "description": platte tekst
+// uit het eerste tekstuele body-blok, geen HTML.
+function vindSamenvatting(bodyBlokken) {
+  const blok = (bodyBlokken || []).find(b => ["intro_gecentreerd", "intro_split", "tekst"].includes(b.type));
+  const ruweTekst = (blok && (blok.tekst || blok.inhoud) || "").replace(/\s+/g, " ").trim();
+  return inkorten(ruweTekst);
+}
+
+function salarisLabel(vacature) {
+  if (vacature.salarisInOverleg) return "Salaris in overleg";
+  if (vacature.salarisMin && vacature.salarisMax) return `€ ${vacature.salarisMin} - € ${vacature.salarisMax}`;
+  if (vacature.salarisMin) return `Vanaf € ${vacature.salarisMin}`;
+  if (vacature.salarisMax) return `Tot € ${vacature.salarisMax}`;
+  return "";
+}
+
+// Vertaalt Dienstverband naar een van Google's vaste, toegestane
+// employmentType waarden. Onbekende waarden vallen terug op "OTHER".
+function naarEmploymentType(dienstverband) {
+  const mapping = { Fulltime: "FULL_TIME", Parttime: "PART_TIME", Stage: "INTERN" };
+  return mapping[dienstverband] || "OTHER";
 }
 
 function bouwJsonLd(vacature) {
@@ -72,8 +91,8 @@ function bouwJsonLd(vacature) {
     "@context": "https://schema.org/",
     "@type": "JobPosting",
     title: vacature.titel,
-    description: vacature.omschrijving || "",
-    datePosted: vacature.datumGeplaatst || undefined,
+    description: vindSamenvatting(vacature.bodyBlokken) || vacature.titel,
+    datePosted: vacature.publicatiedatum || vacature.createdAt || undefined,
     validThrough: vacature.sluitingsdatum || undefined,
     employmentType: naarEmploymentType(vacature.dienstverband),
     hiringOrganization: {
@@ -83,48 +102,179 @@ function bouwJsonLd(vacature) {
     }
   };
 
-  // Adres alleen meegeven als er daadwerkelijk een adres is ingevuld.
-  // Zonder adres gebruiken we TELECOMMUTE, Google's officiële manier
-  // om aan te geven dat een functie niet aan 1 vaste locatie hangt.
-  if (vacature.adres) {
+  // Locatie alleen meegeven als er daadwerkelijk een locatie is
+  // ingevuld. Zonder locatie gebruiken we TELECOMMUTE, Google's
+  // officiële manier om aan te geven dat een functie niet aan 1 vaste
+  // locatie hangt.
+  if (vacature.locatie) {
     jobPosting.jobLocation = {
       "@type": "Place",
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: vacature.adres,
-        addressCountry: vacature.land || ""
-      }
+      address: { "@type": "PostalAddress", addressLocality: vacature.locatie, addressCountry: "NL" }
     };
   } else {
     jobPosting.jobLocationType = "TELECOMMUTE";
   }
 
-  if (vacature.salarisindicatie) {
+  if (!vacature.salarisInOverleg && (vacature.salarisMin || vacature.salarisMax)) {
     jobPosting.baseSalary = {
       "@type": "MonetaryAmount",
       currency: "EUR",
-      value: { "@type": "QuantitativeValue", value: vacature.salarisindicatie }
+      value: {
+        "@type": "QuantitativeValue",
+        ...(vacature.salarisMin ? { minValue: vacature.salarisMin } : {}),
+        ...(vacature.salarisMax ? { maxValue: vacature.salarisMax } : {}),
+        unitText: "MONTH"
+      }
     };
   }
 
   return JSON.stringify(jobPosting, null, 2);
 }
 
+// ===== Body-blokken renderen naar HTML =====
+
+function renderSluitingsdatumBanner(vacature) {
+  if (!vacature.sluitingsdatum) return "";
+  const sluiting = new Date(vacature.sluitingsdatum);
+  if (isNaN(sluiting)) return "";
+  const dagenResterend = Math.ceil((sluiting - new Date()) / (1000 * 60 * 60 * 24));
+  if (dagenResterend < 0) return "";
+  const tekst =
+    dagenResterend === 0 ? "Sluit vandaag" :
+    dagenResterend === 1 ? "Sluit morgen" :
+    `Nog ${dagenResterend} dagen om te solliciteren`;
+  return `<div class="blok blok-sluitingsdatum-banner">${tekst}</div>`;
+}
+
+function renderBlok(blok, vacature) {
+  switch (blok.type) {
+    case "intro_gecentreerd":
+      return `<div class="blok blok-intro-gecentreerd">
+        ${blok.eyebrow ? `<span class="eyebrow">${escapeHtml(blok.eyebrow)}</span>` : ""}
+        ${blok.kop ? `<h3>${escapeHtml(blok.kop)}</h3>` : ""}
+        <div class="blok-tekstinhoud">${paragrafen(blok.tekst)}</div>
+      </div>`;
+
+    case "intro_split":
+      return `<div class="blok blok-intro-split">
+        <div class="blok-tekstinhoud">${paragrafen(blok.tekst)}</div>
+        ${blok.uitgelicht ? `<div class="blok-uitgelicht">${escapeHtml(blok.uitgelicht)}</div>` : ""}
+      </div>`;
+
+    case "tekst":
+      return `<div class="blok blok-tekst">${paragrafen(blok.inhoud)}</div>`;
+
+    case "tekst_kolommen":
+      return `<div class="blok blok-tekst-kolommen">
+        <div>${paragrafen(blok.kolom1)}</div>
+        <div>${paragrafen(blok.kolom2)}</div>
+      </div>`;
+
+    case "uitgelichte_quote":
+      return `<blockquote class="blok blok-quote">${escapeHtml(blok.quote)}</blockquote>`;
+
+    case "afbeelding_tekst":
+      return `<div class="blok blok-afbeelding-tekst blok-richting-${blok.richting === "rechts" ? "rechts" : "links"}">
+        ${blok.afbeelding ? `<img src="${escapeHtml(blok.afbeelding)}" alt="">` : ""}
+        <div class="blok-tekstinhoud">${paragrafen(blok.tekst)}</div>
+      </div>`;
+
+    case "bullet_lijst":
+      return `<div class="blok blok-bullets">
+        ${blok.titel ? `<h4>${escapeHtml(blok.titel)}</h4>` : ""}
+        <ul>
+          ${(blok.punten || []).map(punt =>
+            `<li>${punt.icoon ? `<span class="blok-icoon">${escapeHtml(punt.icoon)}</span>` : ""}${escapeHtml(punt.tekst)}</li>`
+          ).join("")}
+        </ul>
+      </div>`;
+
+    case "arbeidsvoorwaarden_grid":
+      return `<div class="blok blok-arbeidsvoorwaarden">
+        ${(blok.items || []).map(item => `<div class="blok-arbeidsvoorwaarde">
+          ${item.icoon ? `<span class="blok-icoon">${escapeHtml(item.icoon)}</span>` : ""}
+          <span>${escapeHtml(item.tekst)}</span>
+        </div>`).join("")}
+      </div>`;
+
+    case "collega_quote":
+      return `<div class="blok blok-collega-quote">
+        ${blok.foto ? `<img src="${escapeHtml(blok.foto)}" alt="${escapeHtml(blok.naam)}">` : ""}
+        <div>
+          <blockquote>${escapeHtml(blok.quote)}</blockquote>
+          <div class="blok-collega-naam">${escapeHtml(blok.naam)}${blok.functie ? `, ${escapeHtml(blok.functie)}` : ""}</div>
+        </div>
+      </div>`;
+
+    case "video_embed":
+      return blok.url ? `<div class="blok blok-video">
+        <iframe src="${escapeHtml(blok.url)}" allowfullscreen loading="lazy"></iframe>
+      </div>` : "";
+
+    case "team_voorstelling":
+      return `<div class="blok blok-team">
+        ${(blok.leden || []).map(lid => `<div class="blok-team-lid">
+          ${lid.foto ? `<img src="${escapeHtml(lid.foto)}" alt="${escapeHtml(lid.voornaam)}">` : ""}
+          <span>${escapeHtml(lid.voornaam)}</span>
+        </div>`).join("")}
+      </div>`;
+
+    case "sollicitatieproces":
+      return `<div class="blok blok-sollicitatieproces">
+        ${(blok.stappen || []).map((stap, index) => `<div class="blok-stap">
+          <span class="blok-stap-nummer">${index + 1}</span>
+          <div>
+            <h4>${escapeHtml(stap.titel)}</h4>
+            <div>${paragrafen(stap.omschrijving)}</div>
+          </div>
+        </div>`).join("")}
+      </div>`;
+
+    case "veelgestelde_vragen":
+      return `<div class="blok blok-faq">
+        ${(blok.vragen || []).map(item => `<details>
+          <summary>${escapeHtml(item.vraag)}</summary>
+          <div>${paragrafen(item.antwoord)}</div>
+        </details>`).join("")}
+      </div>`;
+
+    case "sluitingsdatum_banner":
+      return renderSluitingsdatumBanner(vacature);
+
+    default:
+      return "";
+  }
+}
+
+function renderBlokken(vacature) {
+  return (vacature.bodyBlokken || []).map(blok => renderBlok(blok, vacature)).join("\n");
+}
+
+function renderHeader(vacature) {
+  if (!vacature.header || !vacature.header.bron) return "";
+  if (vacature.header.type === "video") {
+    return `<div class="header-video"><iframe src="${escapeHtml(vacature.header.bron)}" allowfullscreen loading="lazy"></iframe></div>`;
+  }
+  return `<img class="header-afbeelding" src="${escapeHtml(vacature.header.bron)}" alt="${escapeHtml(vacature.titel)}">`;
+}
+
 function bouwHtmlPagina(vacature) {
-  const metaDescription = stripHtml(vacature.omschrijving);
+  const metaDescription = vindSamenvatting(vacature.bodyBlokken) || vacature.titel;
+  const isFotoHeader = vacature.header && vacature.header.type !== "video" && vacature.header.bron;
+  const salaris = salarisLabel(vacature);
 
   return `<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${vacature.titel} | Werken bij OG Clean Fuels</title>
-<meta name="description" content="${metaDescription}">
+<title>${escapeHtml(vacature.titel)} | Werken bij OG Clean Fuels</title>
+<meta name="description" content="${escapeHtml(metaDescription)}">
 
-<meta property="og:title" content="${vacature.titel} | Werken bij OG Clean Fuels">
-<meta property="og:description" content="${metaDescription}">
+<meta property="og:title" content="${escapeHtml(vacature.titel)} | Werken bij OG Clean Fuels">
+<meta property="og:description" content="${escapeHtml(metaDescription)}">
 <meta property="og:type" content="website">
-${vacature.headerafbeelding ? `<meta property="og:image" content="${vacature.headerafbeelding}">` : ""}
+${isFotoHeader ? `<meta property="og:image" content="${escapeHtml(vacature.header.bron)}">` : ""}
 
 <script type="application/ld+json">
 ${bouwJsonLd(vacature)}
@@ -135,6 +285,8 @@ ${bouwJsonLd(vacature)}
 <link rel="stylesheet" href="/styles.css">
 <style>
   .header-afbeelding { width: 100%; height: 340px; object-fit: cover; display: block; }
+  .header-video { position: relative; width: 100%; padding-top: 42%; }
+  .header-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .detail-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
   .detail-omschrijving { max-width: 720px; font-size: 15.5px; color: #333; line-height: 1.7; }
   .detail-omschrijving p { margin-bottom: 16px; }
@@ -213,21 +365,21 @@ ${bouwJsonLd(vacature)}
   </nav>
 </header>
 
-${vacature.headerafbeelding ? `<img class="header-afbeelding" src="${vacature.headerafbeelding}" alt="${vacature.titel}">` : ""}
+${renderHeader(vacature)}
 
 <section class="content">
   <div class="section-head reveal">
-    <span class="tag">${vacature.afdeling || "Vacature"}</span>
-    <h2>${vacature.titel}</h2>
+    <span class="tag">${escapeHtml(vacature.afdeling || "Vacature")}</span>
+    <h2>${escapeHtml(vacature.titel)}</h2>
   </div>
 
   <div class="detail-meta reveal">
-    <span class="meta-pill">${vacature.dienstverband || ""}</span>
-    <span class="meta-pill">${vacature.land || ""}</span>
-    ${vacature.salarisindicatie ? `<span class="meta-pill">${vacature.salarisindicatie}</span>` : ""}
+    <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
+    <span class="meta-pill">${escapeHtml(vacature.locatie || "")}</span>
+    ${salaris ? `<span class="meta-pill">${escapeHtml(salaris)}</span>` : ""}
   </div>
 
-  <div class="detail-omschrijving reveal">${vacature.omschrijving || ""}</div>
+  <div class="detail-omschrijving reveal">${renderBlokken(vacature)}</div>
 
   <div class="sfeer-galerij reveal">
     <img class="sfeer-foto" src="/images/office-sfeer.webp" alt="Sfeerbeeld op kantoor bij OG Clean Fuels">
@@ -252,7 +404,7 @@ ${vacature.headerafbeelding ? `<img class="header-afbeelding" src="${vacature.he
   <div class="solliciteer-blok reveal">
     <h3 style="margin-bottom:20px;">Solliciteer direct</h3>
     <form id="sollicitatie-form">
-      <input type="hidden" name="vacancy" value="${vacature.titel}">
+      <input type="hidden" name="vacancy" value="${escapeHtml(vacature.titel)}">
       <div class="form-veld">
         <label for="first_name">Voornaam</label>
         <input type="text" id="first_name" name="first_name" required>
@@ -300,79 +452,12 @@ ${vacature.headerafbeelding ? `<img class="header-afbeelding" src="${vacature.he
 }
 
 async function main() {
-  const tokenResponse = await fetch(
-    `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        scope: "https://graph.microsoft.com/.default",
-        grant_type: "client_credentials"
-      })
-    }
-  );
-  const tokenData = await tokenResponse.json();
-  if (!tokenData.access_token) {
-    console.error("Kon niet authenticeren:", tokenData);
+  const response = await fetch(VACATURES_API_URL);
+  if (!response.ok) {
+    console.error("Kon vacatures niet ophalen:", response.status);
     process.exit(1);
   }
-  const headers = { Authorization: `Bearer ${tokenData.access_token}` };
-
-  const siteResponse = await fetch(
-    `https://graph.microsoft.com/v1.0/sites/${SITE_HOSTNAME}:${SITE_PATH}`,
-    { headers }
-  );
-  const siteData = await siteResponse.json();
-  if (!siteData.id) {
-    console.error("Site niet gevonden:", siteData);
-    process.exit(1);
-  }
-
-  const listsResponse = await fetch(
-    `https://graph.microsoft.com/v1.0/sites/${siteData.id}/lists`,
-    { headers }
-  );
-  const listsData = await listsResponse.json();
-  const targetList = listsData.value.find(l => l.displayName === LIST_NAME);
-  if (!targetList) {
-    console.error(`Lijst '${LIST_NAME}' niet gevonden.`);
-    console.error("Beschikbare lijsten op deze site:", listsData.value.map(l => l.displayName));
-    process.exit(1);
-  }
-
-  const itemsResponse = await fetch(
-    `https://graph.microsoft.com/v1.0/sites/${siteData.id}/lists/${targetList.id}/items?expand=fields`,
-    { headers }
-  );
-  const itemsData = await itemsResponse.json();
-
-  // TIJDELIJK: toont de echte interne kolomnamen in de Actions log,
-  // haal deze regel weer weg zodra de mapping klopt.
-  if (itemsData.value[0]) {
-    console.log("Beschikbare kolomnamen:", Object.keys(itemsData.value[0].fields));
-  }
-
-  const vacatures = itemsData.value
-    .map(item => {
-      const f = item.fields;
-      return {
-        id: item.id,
-        titel: f.Title,
-        afdeling: f.Department,
-        dienstverband: f.Dienstverband,
-        land: f[VELD_LAND],
-        adres: f[VELD_ADRES],
-        omschrijving: f.Functieomschrijving,
-        salarisindicatie: f.Salaryindication,
-        datumGeplaatst: f.Datum,
-        sluitingsdatum: f.Closingdate,
-        headerafbeelding: getHyperlinkUrl(f.Headerafbeelding),
-        actief: f.Active === true || f.Active === "Yes" || f.Active === 1
-      };
-    })
-    .filter(v => v.actief);
+  const vacatures = await response.json();
 
   if (!fs.existsSync(OUTPUT_MAP)) {
     fs.mkdirSync(OUTPUT_MAP, { recursive: true });

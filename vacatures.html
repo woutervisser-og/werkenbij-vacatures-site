@@ -50,16 +50,13 @@
       .replace(/^-+|-+$/g, "");
   }
 
-  // Haalt platte tekst uit de rich-text omschrijving (die bevat HTML
-  // van SharePoint) en knipt hem af op 100 tekens voor de tegel.
-  function maakSamenvatting(html, lengte = 100) {
-    const tijdelijk = document.createElement("div");
-    tijdelijk.innerHTML = html || "";
-    const platteTekst = tijdelijk.textContent || tijdelijk.innerText || "";
-    const opgeschoond = platteTekst.replace(/\s+/g, " ").trim();
-    return opgeschoond.length > lengte
-      ? opgeschoond.slice(0, lengte).trim() + "..."
-      : opgeschoond;
+  // Zoekt het eerste tekstuele body-blok op (intro of gewone tekst) en
+  // knipt dat af op 100 tekens voor de tegel. Body-blokken bevatten
+  // platte tekst (geen HTML), dus geen strip-stap meer nodig.
+  function maakSamenvatting(bodyBlokken, lengte = 100) {
+    const blok = (bodyBlokken || []).find(b => ["intro_gecentreerd", "intro_split", "tekst"].includes(b.type));
+    const ruweTekst = (blok && (blok.tekst || blok.inhoud) || "").replace(/\s+/g, " ").trim();
+    return ruweTekst.length > lengte ? ruweTekst.slice(0, lengte).trim() + "..." : ruweTekst;
   }
 
   fetch(VACATURE_BRON)
@@ -71,14 +68,12 @@
       const container = document.getElementById("vacature-lijst");
       container.innerHTML = "";
 
-      const actieveVacatures = vacatures.filter(v => v.actief);
-
-      if (actieveVacatures.length === 0) {
+      if (vacatures.length === 0) {
         container.innerHTML = "<p>Er staan op dit moment geen vacatures open.</p>";
         return;
       }
 
-      actieveVacatures.forEach(vacature => {
+      vacatures.forEach(vacature => {
         const kaart = document.createElement("a");
         kaart.className = "vacature-card";
         kaart.href = `/vacature/${maakSlug(vacature.titel)}.html`;
@@ -89,9 +84,9 @@
           <h3>${vacature.titel || ""}</h3>
           <div class="meta-row">
             <span class="meta-pill">${vacature.dienstverband || ""}</span>
-            <span class="meta-pill">${vacature.land || ""}</span>
+            <span class="meta-pill">${vacature.locatie || ""}</span>
           </div>
-          <p class="omschrijving">${maakSamenvatting(vacature.omschrijving, 100)}</p>
+          <p class="omschrijving">${maakSamenvatting(vacature.bodyBlokken, 100)}</p>
           <span class="btn">Lees meer &amp; solliciteer</span>
         `;
         container.appendChild(kaart);

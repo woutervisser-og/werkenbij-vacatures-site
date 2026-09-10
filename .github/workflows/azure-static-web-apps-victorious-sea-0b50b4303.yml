@@ -29,12 +29,7 @@ jobs:
           npm install
           node generate.js
         env:
-          SP_TENANT_ID: ${{ secrets.SP_TENANT_ID }}
-          SP_CLIENT_ID: ${{ secrets.SP_CLIENT_ID }}
-          SP_CLIENT_SECRET: ${{ secrets.SP_CLIENT_SECRET }}
-          SP_SITE_HOSTNAME: ${{ secrets.SP_SITE_HOSTNAME }}
-          SP_SITE_PATH: ${{ secrets.SP_SITE_PATH }}
-          SP_LIST_NAME: ${{ secrets.SP_LIST_NAME }}
+          VACATURES_API_URL: ${{ vars.SITE_URL }}/api/GetVacatures
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
