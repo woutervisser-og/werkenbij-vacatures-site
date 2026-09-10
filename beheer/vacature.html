@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vacature bewerken | OG Clean Fuels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="beheer.css">
+</head>
+<body>
+
+<div class="beheer-topbar">
+  <span class="logo">o<span>g</span> clean fuels — beheer</span>
+  <span class="beheer-gebruiker" id="gebruiker-info"></span>
+</div>
+
+<main class="beheer-main">
+  <div class="beheer-header-rij">
+    <h1 id="pagina-titel">Nieuwe vacature</h1>
+    <a href="index.html" class="btn btn-klein btn-secundair">&larr; Terug naar overzicht</a>
+  </div>
+
+  <div id="melding"></div>
+
+  <form class="beheer-form" id="vacature-form">
+    <div class="form-rij">
+      <div class="form-veld volle-breedte">
+        <label for="veld-titel">Titel *</label>
+        <input type="text" id="veld-titel" required>
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <div class="form-veld">
+        <label for="veld-afdeling">Afdeling</label>
+        <input type="text" id="veld-afdeling">
+      </div>
+      <div class="form-veld">
+        <label for="veld-locatie">Locatie</label>
+        <input type="text" id="veld-locatie">
+      </div>
+      <div class="form-veld">
+        <label for="veld-dienstverband">Uren/dienstverband</label>
+        <select id="veld-dienstverband">
+          <option value="">Kies...</option>
+          <option value="Fulltime">Fulltime</option>
+          <option value="Parttime">Parttime</option>
+          <option value="Stage">Stage</option>
+          <option value="Overig">Overig</option>
+        </select>
+      </div>
+      <div class="form-veld">
+        <label for="veld-opleidingsniveau">Opleidingsniveau</label>
+        <select id="veld-opleidingsniveau">
+          <option value="">Kies...</option>
+          <option value="MBO">MBO</option>
+          <option value="HBO">HBO</option>
+          <option value="WO">WO</option>
+          <option value="Geen vereiste">Geen vereiste</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <div class="form-veld form-veld-checkbox volle-breedte">
+        <input type="checkbox" id="veld-salaris-overleg">
+        <label for="veld-salaris-overleg" style="font-weight: 600;">Salaris in overleg</label>
+      </div>
+      <div class="form-veld">
+        <label for="veld-salaris-min">Salaris (min, per maand)</label>
+        <input type="number" id="veld-salaris-min" min="0">
+      </div>
+      <div class="form-veld">
+        <label for="veld-salaris-max">Salaris (max, per maand)</label>
+        <input type="number" id="veld-salaris-max" min="0">
+      </div>
+      <div class="form-veld">
+        <label for="veld-publicatiedatum">Publicatiedatum</label>
+        <input type="date" id="veld-publicatiedatum">
+      </div>
+      <div class="form-veld">
+        <label for="veld-sluitingsdatum">Sluitingsdatum</label>
+        <input type="date" id="veld-sluitingsdatum">
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <div class="form-veld">
+        <label for="veld-status">Status</label>
+        <select id="veld-status">
+          <option value="concept">Concept</option>
+          <option value="ingepland">Ingepland</option>
+          <option value="gepubliceerd">Gepubliceerd</option>
+          <option value="gesloten">Gesloten</option>
+          <option value="gearchiveerd">Gearchiveerd</option>
+        </select>
+      </div>
+    </div>
+
+    <fieldset class="header-keuze">
+      <legend>Header</legend>
+      <div class="header-type-opties">
+        <label><input type="radio" name="header-type" value="foto" id="header-type-foto" checked> Foto</label>
+        <label><input type="radio" name="header-type" value="video" id="header-type-video"> Video</label>
+      </div>
+
+      <div id="header-foto-opties">
+        <img id="header-preview" class="header-preview" hidden>
+        <div class="form-rij" style="margin-bottom: 10px;">
+          <div class="form-veld">
+            <label for="veld-foto-upload">Nieuwe foto uploaden</label>
+            <input type="file" id="veld-foto-upload" accept=".jpg,.jpeg,.png,.webp,.gif">
+          </div>
+          <div class="form-veld">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn-klein btn-secundair" id="toon-mediabibliotheek">Bestaande foto kiezen</button>
+          </div>
+        </div>
+        <div class="media-grid" id="media-grid" hidden></div>
+      </div>
+
+      <div id="header-video-opties" hidden>
+        <div class="form-veld volle-breedte">
+          <label for="veld-video-url">Video-URL (bv. YouTube embed-link)</label>
+          <input type="url" id="veld-video-url" placeholder="https://youtube.com/embed/...">
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="form-acties">
+      <button type="submit" class="btn btn-klein" id="opslaan-knop">Opslaan</button>
+      <button type="button" class="btn btn-klein btn-gevaar" id="verwijder-knop" hidden>Verwijderen</button>
+    </div>
+  </form>
+</main>
+
+<script>
+  const zoekParams = new URLSearchParams(location.search);
+  const vacatureId = zoekParams.get("id");
+  let headerBron = "";
+
+  fetch("/.auth/me")
+    .then(r => r.json())
+    .then(data => {
+      const principal = data.clientPrincipal;
+      if (principal) {
+        document.getElementById("gebruiker-info").innerHTML =
+          `Ingelogd als ${principal.userDetails} <a href="/.auth/logout?post_logout_redirect_uri=/">Uitloggen</a>`;
+      }
+    })
+    .catch(() => {});
+
+  function toonMelding(tekst, type) {
+    const meldingEl = document.getElementById("melding");
+    meldingEl.innerHTML = "";
+    if (!tekst) return;
+    const el = document.createElement("div");
+    el.className = "melding melding-" + type;
+    el.textContent = tekst;
+    meldingEl.appendChild(el);
+  }
+
+  function toonHeaderPreview(url) {
+    const preview = document.getElementById("header-preview");
+    if (url) {
+      preview.src = url;
+      preview.hidden = false;
+    } else {
+      preview.hidden = true;
+    }
+  }
+
+  function stelHeaderTypeIn(type) {
+    document.getElementById("header-type-foto").checked = type !== "video";
+    document.getElementById("header-type-video").checked = type === "video";
+    document.getElementById("header-foto-opties").hidden = type === "video";
+    document.getElementById("header-video-opties").hidden = type !== "video";
+  }
+
+  document.getElementById("header-type-foto").addEventListener("change", () => stelHeaderTypeIn("foto"));
+  document.getElementById("header-type-video").addEventListener("change", () => stelHeaderTypeIn("video"));
+
+  document.getElementById("veld-salaris-overleg").addEventListener("change", event => {
+    const uitgeschakeld = event.target.checked;
+    document.getElementById("veld-salaris-min").disabled = uitgeschakeld;
+    document.getElementById("veld-salaris-max").disabled = uitgeschakeld;
+  });
+
+  // ===== Mediabibliotheek: bestaande foto kiezen =====
+  document.getElementById("toon-mediabibliotheek").addEventListener("click", () => {
+    const grid = document.getElementById("media-grid");
+    if (!grid.hidden) {
+      grid.hidden = true;
+      return;
+    }
+    grid.hidden = false;
+    grid.innerHTML = "<p>Bibliotheek laden...</p>";
+
+    fetch("/api/media")
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(bestanden => {
+        grid.innerHTML = "";
+        if (bestanden.length === 0) {
+          grid.innerHTML = "<p>Nog geen foto's geüpload.</p>";
+          return;
+        }
+        bestanden.forEach(bestand => {
+          const knop = document.createElement("button");
+          knop.type = "button";
+          knop.title = bestand.naam;
+          const img = document.createElement("img");
+          img.src = bestand.url;
+          img.alt = bestand.naam;
+          knop.appendChild(img);
+          knop.addEventListener("click", () => {
+            headerBron = bestand.url;
+            toonHeaderPreview(bestand.url);
+            grid.hidden = true;
+          });
+          grid.appendChild(knop);
+        });
+      })
+      .catch(error => {
+        grid.innerHTML = "<p>Kon de mediabibliotheek niet laden.</p>";
+        console.error(error);
+      });
+  });
+
+  // ===== Nieuwe foto uploaden =====
+  document.getElementById("veld-foto-upload").addEventListener("change", event => {
+    const bestand = event.target.files[0];
+    if (!bestand) return;
+
+    toonMelding("Foto wordt geüpload...", "ok");
+    fetch("/api/media?bestandsnaam=" + encodeURIComponent(bestand.name), {
+      method: "POST",
+      headers: { "Content-Type": bestand.type },
+      body: bestand
+    })
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(resultaat => {
+        headerBron = resultaat.url;
+        toonHeaderPreview(resultaat.url);
+        toonMelding("Foto geüpload.", "ok");
+      })
+      .catch(error => {
+        toonMelding("Uploaden is mislukt.", "fout");
+        console.error(error);
+      });
+  });
+
+  // ===== Bestaande vacature laden (bewerken) =====
+  if (vacatureId) {
+    document.getElementById("pagina-titel").textContent = "Vacature bewerken";
+    document.getElementById("verwijder-knop").hidden = false;
+
+    fetch("/api/vacatures/" + encodeURIComponent(vacatureId))
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(vacature => {
+        document.getElementById("veld-titel").value = vacature.titel || "";
+        document.getElementById("veld-afdeling").value = vacature.afdeling || "";
+        document.getElementById("veld-locatie").value = vacature.locatie || "";
+        document.getElementById("veld-dienstverband").value = vacature.dienstverband || "";
+        document.getElementById("veld-opleidingsniveau").value = vacature.opleidingsniveau || "";
+        document.getElementById("veld-salaris-overleg").checked = Boolean(vacature.salarisInOverleg);
+        document.getElementById("veld-salaris-min").value = vacature.salarisMin ?? "";
+        document.getElementById("veld-salaris-max").value = vacature.salarisMax ?? "";
+        document.getElementById("veld-salaris-min").disabled = Boolean(vacature.salarisInOverleg);
+        document.getElementById("veld-salaris-max").disabled = Boolean(vacature.salarisInOverleg);
+        document.getElementById("veld-publicatiedatum").value = (vacature.publicatiedatum || "").slice(0, 10);
+        document.getElementById("veld-sluitingsdatum").value = (vacature.sluitingsdatum || "").slice(0, 10);
+        document.getElementById("veld-status").value = vacature.status || "concept";
+
+        if (vacature.header && vacature.header.type === "video") {
+          stelHeaderTypeIn("video");
+          document.getElementById("veld-video-url").value = vacature.header.bron || "";
+        } else if (vacature.header) {
+          stelHeaderTypeIn("foto");
+          headerBron = vacature.header.bron || "";
+          toonHeaderPreview(headerBron);
+        }
+      })
+      .catch(error => {
+        toonMelding("Kon de vacature niet laden.", "fout");
+        console.error(error);
+      });
+  }
+
+  document.getElementById("verwijder-knop").addEventListener("click", () => {
+    if (!confirm("Deze vacature definitief verwijderen?")) return;
+    fetch("/api/vacatures/" + encodeURIComponent(vacatureId), { method: "DELETE" })
+      .then(response => {
+        if (!response.ok && response.status !== 204) throw new Error("Status: " + response.status);
+        location.href = "index.html";
+      })
+      .catch(error => {
+        toonMelding("Verwijderen is mislukt.", "fout");
+        console.error(error);
+      });
+  });
+
+  function parseOptioneelGetal(waarde) {
+    return waarde === "" ? null : Number(waarde);
+  }
+
+  // ===== Opslaan =====
+  document.getElementById("vacature-form").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const isVideo = document.getElementById("header-type-video").checked;
+    const header = isVideo
+      ? { type: "video", bron: document.getElementById("veld-video-url").value }
+      : { type: "foto", bron: headerBron };
+
+    const salarisInOverleg = document.getElementById("veld-salaris-overleg").checked;
+
+    const vacature = {
+      titel: document.getElementById("veld-titel").value,
+      afdeling: document.getElementById("veld-afdeling").value,
+      locatie: document.getElementById("veld-locatie").value,
+      dienstverband: document.getElementById("veld-dienstverband").value,
+      opleidingsniveau: document.getElementById("veld-opleidingsniveau").value,
+      salarisInOverleg,
+      salarisMin: salarisInOverleg ? null : parseOptioneelGetal(document.getElementById("veld-salaris-min").value),
+      salarisMax: salarisInOverleg ? null : parseOptioneelGetal(document.getElementById("veld-salaris-max").value),
+      publicatiedatum: document.getElementById("veld-publicatiedatum").value || null,
+      sluitingsdatum: document.getElementById("veld-sluitingsdatum").value || null,
+      status: document.getElementById("veld-status").value,
+      header
+    };
+
+    const opslaanKnop = document.getElementById("opslaan-knop");
+    opslaanKnop.disabled = true;
+    toonMelding("", "ok");
+
+    const request = vacatureId
+      ? fetch("/api/vacatures/" + encodeURIComponent(vacatureId), {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(vacature)
+        })
+      : fetch("/api/vacatures", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(vacature)
+        });
+
+    request
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(() => {
+        location.href = "index.html";
+      })
+      .catch(error => {
+        toonMelding("Opslaan is mislukt.", "fout");
+        opslaanKnop.disabled = false;
+        console.error(error);
+      });
+  });
+</script>
+
+</body>
+</html>
