@@ -27,6 +27,14 @@ de chat gedeeld op het moment dat ze nodig zijn.
   is net als `/beheer/*` beperkt tot "authenticated". Lokaal end-to-end
   getest tegen de Azurite-emulator (create/list/get/update/delete +
   validatie van titel, status en niet-bestaande id's).
+- Automatisch publiceren/sluiten gebouwd als `api/VacaturesTick`: een
+  HTTP-Function (geen Azure Timer-trigger, want Static Web Apps' managed
+  Functions ondersteunen die niet), beveiligd met een gedeelde secret
+  (`VACATURES_TICK_SECRET`), elk uur aangeroepen door de nieuwe workflow
+  `.github/workflows/vacatures-tick.yml`. Zet "ingepland" om naar
+  "gepubliceerd" zodra de publicatiedatum is bereikt, en "gepubliceerd"
+  naar "gesloten" zodra de sluitingsdatum is verstreken. Lokaal
+  end-to-end getest tegen Azurite (secret-check + statusovergangen).
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -61,6 +69,13 @@ verbindingsstring als Application Setting `AZURE_STORAGE_CONNECTION_STRING`
 instellen op de Static Web App, anders kunnen de CRUD-Functions niets
 opslaan of ophalen (de code staat al klaar op main).
 
+## Volgende stap (VacaturesTick secret)
+
+- Een geheime waarde bedenken voor `VACATURES_TICK_SECRET` en op 2 plekken
+  hetzelfde instellen: als Application Setting op de Static Web App, én
+  als GitHub Actions repository secret (Settings → Secrets and variables
+  → Actions). Zonder deze secret geeft `VacaturesTick` altijd 401 terug.
+
 ## Nog open
 
 - `GetVacatures` (publieke site, gebruikt door `scripts/generate-vacatures`)
@@ -68,5 +83,7 @@ opslaan of ophalen (de code staat al klaar op main).
   een latere, aparte stap, pas zodra vacatures ook echt via de nieuwe CRUD
   in Table Storage staan.
 - Azure Blob Storage (foto's, video-links, CV's) nog te bouwen.
-- Timer-Function voor automatisch publiceren/sluiten nog te bouwen.
+- Statuswijzigingen triggeren nog geen nieuwe site-build via GitHub
+  Actions; dat heeft pas zin zodra `GetVacatures` van Table Storage
+  leest (zie punt hierboven), bewust nog niet gebouwd.
 - Een daadwerkelijke `/beheer`-pagina/interface bestaat nog niet.
