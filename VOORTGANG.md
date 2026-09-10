@@ -149,6 +149,17 @@ SharePoint stonden opnieuw aanmaken in `/beheer` en op status
 "gepubliceerd" zetten, dan verschijnen ze bij de eerstvolgende build weer
 op de site.
 
+## Geblokkeerd: admin consent bij inloggen op /beheer
+
+Wouter komt er niet in: Entra ID vraagt een goedkeuring ("approval
+required") bij het inloggen op de App Registration `Werkenbij-HR-Portaal`.
+Dit is typisch een tenant-instelling die user consent voor nieuwe
+apps blokkeert, een tenant-beheerder moet eenmalig admin consent geven
+voor deze App Registration (Entra admin center → App registrations →
+Werkenbij-HR-Portaal → API permissions → "Grant admin consent for
+[tenant]"). Moet opgelost worden voordat de vacatures opnieuw
+aangemaakt kunnen worden in `/beheer`.
+
 ## Nog open
 
 - CV-uploads (documenten, niet openbaar) nog te bouwen, samen met de
