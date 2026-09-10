@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vacatures beheren | OG Clean Fuels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="beheer.css">
+</head>
+<body>
+
+<div class="beheer-topbar">
+  <span class="logo">o<span>g</span> clean fuels — beheer</span>
+  <span class="beheer-gebruiker" id="gebruiker-info"></span>
+</div>
+
+<main class="beheer-main">
+  <div class="beheer-header-rij">
+    <h1>Vacatures</h1>
+    <a href="vacature.html" class="btn btn-klein">+ Nieuwe vacature</a>
+  </div>
+
+  <div id="melding"></div>
+
+  <div class="beheer-tabel-wrap">
+    <table class="beheer-tabel" id="vacature-tabel" hidden>
+      <thead>
+        <tr>
+          <th>Titel</th>
+          <th>Afdeling</th>
+          <th>Status</th>
+          <th>Sluitingsdatum</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="vacature-tabel-body"></tbody>
+    </table>
+    <div class="beheer-leeg" id="leeg-status">Vacatures laden...</div>
+  </div>
+</main>
+
+<script>
+  fetch("/.auth/me")
+    .then(r => r.json())
+    .then(data => {
+      const principal = data.clientPrincipal;
+      if (principal) {
+        document.getElementById("gebruiker-info").innerHTML =
+          `Ingelogd als ${principal.userDetails} <a href="/.auth/logout?post_logout_redirect_uri=/">Uitloggen</a>`;
+      }
+    })
+    .catch(() => {});
+
+  function formatteerDatum(isoDatum) {
+    if (!isoDatum) return "—";
+    const datum = new Date(isoDatum);
+    if (isNaN(datum)) return "—";
+    return datum.toLocaleDateString("nl-NL");
+  }
+
+  function laadVacatures() {
+    fetch("/api/vacatures")
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(vacatures => {
+        const tabel = document.getElementById("vacature-tabel");
+        const tabelBody = document.getElementById("vacature-tabel-body");
+        const leegStatus = document.getElementById("leeg-status");
+        tabelBody.innerHTML = "";
+
+        if (vacatures.length === 0) {
+          leegStatus.textContent = "Nog geen vacatures. Klik op '+ Nieuwe vacature' om te beginnen.";
+          leegStatus.hidden = false;
+          tabel.hidden = true;
+          return;
+        }
+
+        vacatures
+          .sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""))
+          .forEach(vacature => tabelBody.appendChild(maakVacatureRij(vacature)));
+
+        tabel.hidden = false;
+        leegStatus.hidden = true;
+      })
+      .catch(error => {
+        document.getElementById("leeg-status").textContent =
+          "Er ging iets mis bij het laden van de vacatures.";
+        console.error(error);
+      });
+  }
+
+  function maakVacatureRij(vacature) {
+    const rij = document.createElement("tr");
+
+    const titelCel = document.createElement("td");
+    titelCel.textContent = vacature.titel || "(zonder titel)";
+    rij.appendChild(titelCel);
+
+    const afdelingCel = document.createElement("td");
+    afdelingCel.textContent = vacature.afdeling || "—";
+    rij.appendChild(afdelingCel);
+
+    const statusCel = document.createElement("td");
+    const badge = document.createElement("span");
+    badge.className = "status-badge status-" + (vacature.status || "concept");
+    badge.textContent = vacature.status || "concept";
+    statusCel.appendChild(badge);
+    rij.appendChild(statusCel);
+
+    const sluitingCel = document.createElement("td");
+    sluitingCel.textContent = formatteerDatum(vacature.sluitingsdatum);
+    rij.appendChild(sluitingCel);
+
+    const actiesCel = document.createElement("td");
+    actiesCel.className = "acties";
+
+    const bewerkLink = document.createElement("a");
+    bewerkLink.className = "btn btn-klein btn-secundair";
+    bewerkLink.href = "vacature.html?id=" + encodeURIComponent(vacature.id);
+    bewerkLink.textContent = "Bewerken";
+    actiesCel.appendChild(bewerkLink);
+
+    const verwijderKnop = document.createElement("button");
+    verwijderKnop.className = "btn btn-klein btn-gevaar";
+    verwijderKnop.textContent = "Verwijderen";
+    verwijderKnop.addEventListener("click", () => verwijderVacature(vacature.id, vacature.titel));
+    actiesCel.appendChild(verwijderKnop);
+
+    rij.appendChild(actiesCel);
+    return rij;
+  }
+
+  function toonMelding(tekst, type) {
+    const meldingEl = document.getElementById("melding");
+    meldingEl.innerHTML = "";
+    if (!tekst) return;
+    const el = document.createElement("div");
+    el.className = "melding melding-" + type;
+    el.textContent = tekst;
+    meldingEl.appendChild(el);
+  }
+
+  function verwijderVacature(id, titel) {
+    if (!confirm(`Vacature "${titel || "(zonder titel)"}" definitief verwijderen?`)) return;
+
+    fetch("/api/vacatures/" + encodeURIComponent(id), { method: "DELETE" })
+      .then(response => {
+        if (!response.ok && response.status !== 204) throw new Error("Status: " + response.status);
+        toonMelding("Vacature verwijderd.", "ok");
+        laadVacatures();
+      })
+      .catch(error => {
+        toonMelding("Verwijderen is mislukt.", "fout");
+        console.error(error);
+      });
+  }
+
+  laadVacatures();
+</script>
+
+</body>
+</html>

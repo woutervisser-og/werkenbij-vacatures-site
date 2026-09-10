@@ -45,6 +45,18 @@ de chat gedeeld op het moment dat ze nodig zijn.
   `/api/vacatures*` beperkt tot "authenticated". Lokaal end-to-end getest
   tegen Azurite (upload/list/delete, bestandstype-validatie, en dat de
   geüploade inhoud publiek en ongewijzigd terug op te halen is).
+- Eerste `/beheer`-interface gebouwd: `beheer/index.html` (overzicht met
+  status, bewerken/verwijderen) en `beheer/vacature.html` (aanmaken/
+  bewerken van de vaste velden: titel, afdeling, locatie, dienstverband,
+  opleidingsniveau, salaris (of "in overleg"), publicatie-/sluitingsdatum,
+  status, en de header: foto (uploaden of hergebruiken uit de
+  mediabibliotheek) of video-URL). Bewust nog **zonder** de body-blokken-
+  editor (14 bloktypes); dat is een aparte, latere stap. Echt getest in
+  een browser (Playwright) tegen een lokale server die de Functions
+  rechtstreeks aanroept op Azurite: aanmaken, bewerken, statuswijziging,
+  mediabibliotheek hergebruiken, verwijderen. Daarbij een echte bug
+  gevonden en gefixt: de "geen vacatures"-melding bleef verborgen na het
+  verwijderen van de laatste vacature.
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -98,4 +110,9 @@ opslaan of ophalen (de code staat al klaar op main).
 - Statuswijzigingen triggeren nog geen nieuwe site-build via GitHub
   Actions; dat heeft pas zin zodra `GetVacatures` van Table Storage
   leest (zie punt hierboven), bewust nog niet gebouwd.
-- Een daadwerkelijke `/beheer`-pagina/interface bestaat nog niet.
+- Body-blokken-editor (14 bloktypes, incl. volgorde) nog te bouwen in de
+  `/beheer`-interface.
+- Afdeling en locatie zijn nu vrije tekstvelden (geen vaste keuzelijst,
+  zoals het architectuurdocument suggereert), omdat er nog geen
+  goedgekeurde lijst met waarden is. Later eventueel om te zetten naar
+  een select-veld.
