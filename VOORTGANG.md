@@ -35,6 +35,16 @@ de chat gedeeld op het moment dat ze nodig zijn.
   "gepubliceerd" zodra de publicatiedatum is bereikt, en "gepubliceerd"
   naar "gesloten" zodra de sluitingsdatum is verstreken. Lokaal
   end-to-end getest tegen Azurite (secret-check + statusovergangen).
+- Mediabibliotheek gebouwd op Azure Blob Storage (`@azure/storage-blob`):
+  `api/MediaUpload` (foto uploaden, alleen jpg/jpeg/png/webp/gif),
+  `api/MediaList` (bestaande foto's tonen om te hergebruiken) en
+  `api/MediaDelete`. Container `media` heeft publieke leestoegang op
+  blob-niveau (nodig zodat headerafbeeldingen rechtstreeks op de site
+  laden), maar de container-inhoud is niet op te sommen zonder de
+  (beveiligde) `MediaList`-Function. Route `/api/media*` is net als
+  `/api/vacatures*` beperkt tot "authenticated". Lokaal end-to-end getest
+  tegen Azurite (upload/list/delete, bestandstype-validatie, en dat de
+  geüploade inhoud publiek en ongewijzigd terug op te halen is).
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -82,7 +92,9 @@ opslaan of ophalen (de code staat al klaar op main).
   gebruikt nog SharePoint, niet de nieuwe Table Storage. Omzetten is bewust
   een latere, aparte stap, pas zodra vacatures ook echt via de nieuwe CRUD
   in Table Storage staan.
-- Azure Blob Storage (foto's, video-links, CV's) nog te bouwen.
+- CV-uploads (documenten, niet openbaar) nog te bouwen, samen met de
+  sollicitatie-Functions; bewust niet meegenomen in de mediabibliotheek
+  omdat die publiek leesbaar is en CV's dat niet mogen zijn.
 - Statuswijzigingen triggeren nog geen nieuwe site-build via GitHub
   Actions; dat heeft pas zin zodra `GetVacatures` van Table Storage
   leest (zie punt hierboven), bewust nog niet gebouwd.
