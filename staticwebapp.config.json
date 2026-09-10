@@ -3,6 +3,10 @@
     {
       "route": "/beheer/*",
       "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/vacatures*",
+      "allowedRoles": ["authenticated"]
     }
   ],
   "responseOverrides": {

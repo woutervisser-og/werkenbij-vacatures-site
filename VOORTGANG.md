@@ -21,6 +21,12 @@ de chat gedeeld op het moment dat ze nodig zijn.
 - Route-restrictie `/beheer/*` ingesteld in `staticwebapp.config.json`, op
   dit moment op basis van "authenticated" (ingelogd met een account binnen
   de tenant), niet op de rol `hrbeheer`.
+- Azure Functions CRUD voor vacatures gebouwd (`api/VacaturesList`,
+  `VacatureGet`, `VacatureCreate`, `VacatureUpdate`, `VacatureDelete`),
+  bovenop Azure Table Storage (`@azure/data-tables`). Route `/api/vacatures*`
+  is net als `/beheer/*` beperkt tot "authenticated". Lokaal end-to-end
+  getest tegen de Azurite-emulator (create/list/get/update/delete +
+  validatie van titel, status en niet-bestaande id's).
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -45,8 +51,19 @@ tot ingelogde gebruikers binnen de tenant (laag 1+2 uit
   `GroupMember.Read.All` toevoegen en admin consent geven, anders kan de
   rollen-Function geen groepslidmaatschap opvragen.
 
+## Volgende stap (Azure Storage Account)
+
+- Storage Account aanmaken in Azure (of hergebruiken als er al één is voor
+  dit doel) en de Table Storage-verbindingsstring als Application Setting
+  `AZURE_STORAGE_CONNECTION_STRING` instellen op de Static Web App, anders
+  kunnen de CRUD-Functions niets opslaan of ophalen.
+
 ## Nog open
 
-- Overige bouwstenen (Azure Functions CRUD, Table Storage, Blob Storage)
-  nog te bouwen.
+- `GetVacatures` (publieke site, gebruikt door `scripts/generate-vacatures`)
+  gebruikt nog SharePoint, niet de nieuwe Table Storage. Omzetten is bewust
+  een latere, aparte stap, pas zodra vacatures ook echt via de nieuwe CRUD
+  in Table Storage staan.
+- Azure Blob Storage (foto's, video-links, CV's) nog te bouwen.
+- Timer-Function voor automatisch publiceren/sluiten nog te bouwen.
 - Een daadwerkelijke `/beheer`-pagina/interface bestaat nog niet.
