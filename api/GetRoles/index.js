@@ -12,6 +12,11 @@ const HR_ROLE = "hrbeheer";
 // Static Web Apps roept deze Function aan na elke login, met de
 // geverifieerde claims van de gebruiker. Wat hier wordt teruggegeven
 // bepaalt de rollen van die gebruiker voor de rest van de sessie.
+//
+// Nog niet gekoppeld: rolesSource ("auth" config in staticwebapp.config.json)
+// vereist de Standard SKU van Azure Static Web Apps, die nu (bewust, om
+// kosten) nog niet actief is. Zodra die upgrade er is, hier "rolesSource":
+// "/api/GetRoles" weer toevoegen aan staticwebapp.config.json.
 module.exports = async function (context, req) {
   const { identityProvider, userId } = req.body || {};
 

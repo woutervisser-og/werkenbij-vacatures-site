@@ -1,11 +1,8 @@
 {
-  "auth": {
-    "rolesSource": "/api/GetRoles"
-  },
   "routes": [
     {
       "route": "/beheer/*",
-      "allowedRoles": ["hrbeheer"]
+      "allowedRoles": ["authenticated"]
     }
   ],
   "responseOverrides": {
