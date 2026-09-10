@@ -91,6 +91,22 @@ de chat gedeeld op het moment dat ze nodig zijn.
   `generate.js` en `vacatures-tick.yml` gebruiken nu allebei 1 centrale
   GitHub Actions repository variable `SITE_URL` (zie hieronder), in
   plaats van het adres los in 2 bestanden hard te coderen.
+- Rebuild-trigger gebouwd: `api/shared/rebuildTrigger.js` roept GitHub's
+  `workflow_dispatch` API aan om een nieuwe site-build te starten, zodra
+  een statuswijziging de publieke zichtbaarheid raakt (een vacature wordt
+  "gepubliceerd", of verlaat die status). Gekoppeld aan `VacatureCreate`
+  (direct op "gepubliceerd" gezet), `VacatureUpdate` (elke wijziging waar
+  "gepubliceerd" bij betrokken is, ook een content-wijziging aan een
+  reeds live vacature), `VacatureDelete` (een live vacature verwijderen)
+  en `VacaturesTick` (1 rebuild per hele tick-run, niet per gewijzigde
+  vacature). Best-effort: een falende trigger blokkeert de CRUD-actie
+  zelf niet, alleen loggen. Vereist een nieuwe Application Setting
+  `GITHUB_REBUILD_TOKEN` (zie hieronder).
+  Echt getest tegen Azurite (node-fetch gemockt om de echte GitHub API
+  niet te raken): 9 scenario's, o.a. direct publiceren, content-wijziging
+  aan een live vacature, sluiten, verwijderen van een live vs. een
+  niet-live vacature, en dat een tick-run met meerdere statuswijzigingen
+  precies 1 keer triggert, niet per vacature.
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -157,14 +173,22 @@ Werkenbij-HR-Portaal → API permissions → "Grant admin consent for
 [tenant]"). Moet opgelost worden voordat de vacatures opnieuw
 aangemaakt kunnen worden in `/beheer`. **Ligt nu bij de IT-afdeling.**
 
+## Volgende stap (GITHUB_REBUILD_TOKEN)
+
+- Een GitHub **fine-grained personal access token** aanmaken, alleen
+  scoped tot deze repository, met permission "Actions: Read and write"
+  (GitHub → instellingen van je account → Developer settings → Personal
+  access tokens → Fine-grained tokens → Generate new token).
+- Deze token als Application Setting instellen op de Static Web App:
+  naam `GITHUB_REBUILD_TOKEN`, waarde het gegenereerde token. Zonder deze
+  instelling wordt er nog geen rebuild getriggerd bij een
+  statuswijziging (valt dan terug op de vaste 9:00/14:00-build).
+
 ## Nog open
 
 - CV-uploads (documenten, niet openbaar) nog te bouwen, samen met de
   sollicitatie-Functions; bewust niet meegenomen in de mediabibliotheek
   omdat die publiek leesbaar is en CV's dat niet mogen zijn.
-- Statuswijzigingen triggeren nog geen nieuwe site-build via GitHub
-  Actions (nu wél zinvol, `GetVacatures` leest inmiddels van Table
-  Storage); nog niet gebouwd.
 - Afdeling en locatie zijn nu vrije tekstvelden (geen vaste keuzelijst,
   zoals het architectuurdocument suggereert), omdat er nog geen
   goedgekeurde lijst met waarden is. Later eventueel om te zetten naar

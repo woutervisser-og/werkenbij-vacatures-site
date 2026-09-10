@@ -1,5 +1,6 @@
 const { randomUUID } = require("crypto");
 const { getVacaturesTableClient, toEntity, toVacatureDto, ALLOWED_STATUSSEN } = require("../shared/vacaturesTable");
+const { triggerRebuild, raaktPubliekeSite } = require("../shared/rebuildTrigger");
 
 module.exports = async function (context, req) {
   const input = req.body || {};
@@ -23,6 +24,10 @@ module.exports = async function (context, req) {
   try {
     const tableClient = await getVacaturesTableClient();
     await tableClient.createEntity(entity);
+
+    if (raaktPubliekeSite(null, entity.status)) {
+      await triggerRebuild(context);
+    }
 
     context.res = {
       status: 201,
