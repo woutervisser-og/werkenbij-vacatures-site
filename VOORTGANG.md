@@ -84,6 +84,13 @@ de chat gedeeld op het moment dat ze nodig zijn.
   en de gegenereerde pagina + `vacatures.html` in een browser bekeken:
   alle blokken renderen, FAQ klapt uit, sluitingsdatum-banner telt goed,
   meta-description en geldige JSON-LD aanwezig.
+- CI faalde eerst met een 404: het live-URL van de Static Web App was een
+  aanname (`victorious-sea-0b50b4303.azurestaticapps.net`), het echte
+  adres bevat een extra label (`victorious-sea-0b50b4303.7.azurestaticapps.net`).
+  Hersteld, en om herhaling te voorkomen bij het latere custom domain:
+  `generate.js` en `vacatures-tick.yml` gebruiken nu allebei 1 centrale
+  GitHub Actions repository variable `SITE_URL` (zie hieronder), in
+  plaats van het adres los in 2 bestanden hard te coderen.
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -116,6 +123,17 @@ Nog te controleren/instellen: of `AZURE_STORAGE_CONNECTION_STRING` al als
 Application Setting op de Static Web App staat, anders kunnen de
 CRUD-Functions, `VacaturesTick`, de mediabibliotheek én de nu omgezette
 `GetVacatures` niets opslaan of ophalen.
+
+## Volgende stap (SITE_URL repository variable)
+
+- Een GitHub Actions repository **variable** (geen secret, dit is geen
+  gevoelige waarde) aanmaken: Settings → Secrets and variables → Actions
+  → tab **Variables** → New repository variable → naam `SITE_URL`,
+  waarde `https://victorious-sea-0b50b4303.7.azurestaticapps.net` (geen
+  trailing slash). Zonder deze variable kunnen `generate.js` (via de
+  build-workflow) en `vacatures-tick.yml` de live site niet bereiken.
+  Zodra het custom domain live gaat: alleen deze ene variable aanpassen,
+  geen code- of workflow-wijziging nodig.
 
 ## Volgende stap (VacaturesTick secret)
 

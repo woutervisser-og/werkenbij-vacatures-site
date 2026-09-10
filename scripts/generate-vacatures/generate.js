@@ -2,11 +2,13 @@ const fetch = require("node-fetch");
 const fs = require("fs");
 const path = require("path");
 
-// De live site zelf, ipv rechtstreeks SharePoint/Graph API. Kan lokaal
-// overschreven worden (bijvoorbeeld tijdens testen tegen een lokale
-// server) via de omgevingsvariabele VACATURES_API_URL.
+// De live site zelf, ipv rechtstreeks SharePoint/Graph API. Wordt in
+// GitHub Actions gezet vanuit de repository variable SITE_URL (zodat een
+// toekomstig custom domain een instelling is, geen code-wijziging). Kan
+// lokaal ook overschreven worden (bijvoorbeeld tijdens testen tegen een
+// lokale server) via de omgevingsvariabele VACATURES_API_URL.
 const VACATURES_API_URL =
-  process.env.VACATURES_API_URL || "https://victorious-sea-0b50b4303.azurestaticapps.net/api/GetVacatures";
+  process.env.VACATURES_API_URL || "https://victorious-sea-0b50b4303.7.azurestaticapps.net/api/GetVacatures";
 
 // Vaste recruiter gegevens, zelfde voor elke vacature. Pas hier aan
 // zodra naam, contactgegevens of foto wijzigen.
