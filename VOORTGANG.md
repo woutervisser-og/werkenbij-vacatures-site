@@ -27,6 +27,11 @@ de chat gedeeld op het moment dat ze nodig zijn.
   is net als `/beheer/*` beperkt tot "authenticated". Lokaal end-to-end
   getest tegen de Azurite-emulator (create/list/get/update/delete +
   validatie van titel, status en niet-bestaande id's).
+- Timer-Function (`api/VacaturesTimer`) gebouwd: draait elk uur, zet
+  "ingepland" automatisch om naar "gepubliceerd" zodra de publicatiedatum
+  is bereikt, en "gepubliceerd" naar "gesloten" zodra de sluitingsdatum is
+  verstreken. Lokaal end-to-end getest tegen Azurite (verleden/toekomst
+  datums per status, en dat concept-vacatures ongemoeid blijven).
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -68,5 +73,7 @@ opslaan of ophalen (de code staat al klaar op main).
   een latere, aparte stap, pas zodra vacatures ook echt via de nieuwe CRUD
   in Table Storage staan.
 - Azure Blob Storage (foto's, video-links, CV's) nog te bouwen.
-- Timer-Function voor automatisch publiceren/sluiten nog te bouwen.
+- Statuswijzigingen triggeren nog geen nieuwe site-build via GitHub
+  Actions; dat heeft pas zin zodra `GetVacatures` van Table Storage
+  leest (zie punt hierboven), bewust nog niet gebouwd.
 - Een daadwerkelijke `/beheer`-pagina/interface bestaat nog niet.
