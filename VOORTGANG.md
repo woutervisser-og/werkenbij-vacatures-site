@@ -51,12 +51,15 @@ tot ingelogde gebruikers binnen de tenant (laag 1+2 uit
   `GroupMember.Read.All` toevoegen en admin consent geven, anders kan de
   rollen-Function geen groepslidmaatschap opvragen.
 
-## Volgende stap (Azure Storage Account)
+## Geblokkeerd: Azure Storage Account
 
-- Storage Account aanmaken in Azure (of hergebruiken als er al één is voor
-  dit doel) en de Table Storage-verbindingsstring als Application Setting
-  `AZURE_STORAGE_CONNECTION_STRING` instellen op de Static Web App, anders
-  kunnen de CRUD-Functions niets opslaan of ophalen.
+Storage Account aanmaken kan nog niet: de resource provider
+`Microsoft.Storage` is niet geregistreerd voor het Azure-abonnement, en
+Wouter heeft geen rechten om die zelf te registreren. Moet via IT geregeld
+worden. Zodra dat kan: Storage Account aanmaken en de
+verbindingsstring als Application Setting `AZURE_STORAGE_CONNECTION_STRING`
+instellen op de Static Web App, anders kunnen de CRUD-Functions niets
+opslaan of ophalen (de code staat al klaar op main).
 
 ## Nog open
 
