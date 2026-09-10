@@ -67,6 +67,23 @@ de chat gedeeld op het moment dat ze nodig zijn.
   (tekst, een lijst-type met items toevoegen/verwijderen, een
   afbeelding-type met echte foto-upload), herordenen, opslaan, en
   daarna opnieuw openen om te bevestigen dat alles correct terugkomt.
+- `GetVacatures` omgezet van SharePoint naar Table Storage: toont alleen
+  vacatures met status "gepubliceerd". `scripts/generate-vacatures/generate.js`
+  haalt nu op bij deze Function (de live site) in plaats van rechtstreeks
+  bij SharePoint/Graph, en rendert de body-blokken naar HTML voor de
+  gegenereerde detailpagina's (alle 14 types). `vacatures.html` gebruikt
+  de nieuwe velden (`locatie` i.p.v. `land`, samenvatting uit het eerste
+  tekstuele body-blok i.p.v. de oude platte `omschrijving`). JSON-LD/SEO-
+  opzet qua structuur ongewijzigd, alleen de brondata en de
+  locatie-/salarisvelden aangepast aan het nieuwe schema. De SharePoint-
+  secrets (`SP_*`) zijn uit de build-stap van de GitHub Actions workflow
+  gehaald, worden niet meer gebruikt.
+  Echt getest: een testvacature met alle 14 bloktypes aangemaakt via de
+  CRUD-API, `generate.js` er lokaal op losgelaten (tegen een lokale
+  server i.p.v. de live site, via de nieuwe env var `VACATURES_API_URL`),
+  en de gegenereerde pagina + `vacatures.html` in een browser bekeken:
+  alle blokken renderen, FAQ klapt uit, sluitingsdatum-banner telt goed,
+  meta-description en geldige JSON-LD aanwezig.
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -91,15 +108,14 @@ tot ingelogde gebruikers binnen de tenant (laag 1+2 uit
   `GroupMember.Read.All` toevoegen en admin consent geven, anders kan de
   rollen-Function geen groepslidmaatschap opvragen.
 
-## Geblokkeerd: Azure Storage Account
+## Afgerond: Azure Storage Account
 
-Storage Account aanmaken kan nog niet: de resource provider
-`Microsoft.Storage` is niet geregistreerd voor het Azure-abonnement, en
-Wouter heeft geen rechten om die zelf te registreren. Moet via IT geregeld
-worden. Zodra dat kan: Storage Account aanmaken en de
-verbindingsstring als Application Setting `AZURE_STORAGE_CONNECTION_STRING`
-instellen op de Static Web App, anders kunnen de CRUD-Functions niets
-opslaan of ophalen (de code staat al klaar op main).
+De blocker bij IT (resource provider `Microsoft.Storage` niet
+geregistreerd) is opgelost, Wouter heeft de Storage Account aangemaakt.
+Nog te controleren/instellen: of `AZURE_STORAGE_CONNECTION_STRING` al als
+Application Setting op de Static Web App staat, anders kunnen de
+CRUD-Functions, `VacaturesTick`, de mediabibliotheek én de nu omgezette
+`GetVacatures` niets opslaan of ophalen.
 
 ## Volgende stap (VacaturesTick secret)
 
@@ -110,20 +126,22 @@ opslaan of ophalen (de code staat al klaar op main).
 
 ## Nog open
 
-- `GetVacatures` (publieke site, gebruikt door `scripts/generate-vacatures`)
-  gebruikt nog SharePoint, niet de nieuwe Table Storage. Omzetten is bewust
-  een latere, aparte stap, pas zodra vacatures ook echt via de nieuwe CRUD
-  in Table Storage staan.
 - CV-uploads (documenten, niet openbaar) nog te bouwen, samen met de
   sollicitatie-Functions; bewust niet meegenomen in de mediabibliotheek
   omdat die publiek leesbaar is en CV's dat niet mogen zijn.
 - Statuswijzigingen triggeren nog geen nieuwe site-build via GitHub
-  Actions; dat heeft pas zin zodra `GetVacatures` van Table Storage
-  leest (zie punt hierboven), bewust nog niet gebouwd.
-- De publieke vacaturepagina (`vacature-detail.html` / generate-vacatures)
-  rendert de body-blokken nog niet; dat gebeurt pas bij de omzetting naar
-  Table Storage (zie punt hierboven over `GetVacatures`).
+  Actions (nu wél zinvol, `GetVacatures` leest inmiddels van Table
+  Storage); nog niet gebouwd.
 - Afdeling en locatie zijn nu vrije tekstvelden (geen vaste keuzelijst,
   zoals het architectuurdocument suggereert), omdat er nog geen
   goedgekeurde lijst met waarden is. Later eventueel om te zetten naar
   een select-veld.
+- `vacature-detail.html` is een ongebruikt/verweesd bestand (niets linkt
+  ernaar, `generate.js` genereert losse statische pagina's per vacature
+  onder `/vacature/`). Gebruikt nog de oude veldnamen; niet aangepast in
+  deze omzetting omdat het toch nergens aan hangt. Kandidaat om later op
+  te ruimen.
+- De `SP_*` GitHub Actions secrets (SharePoint) worden niet meer gebruikt
+  door de workflow en kunnen op termijn verwijderd worden (Settings →
+  Secrets and variables → Actions), zodra bevestigd is dat er verder
+  nergens meer naar verwezen wordt.
