@@ -1,9 +1,22 @@
 const { getVacaturesTableClient, toEntity, toVacatureDto } = require("../shared/vacaturesTable");
 
-// Draait elk uur (zie function.json). Zet vacatures automatisch van
-// "ingepland" naar "gepubliceerd" zodra de publicatiedatum is bereikt, en
-// van "gepubliceerd" naar "gesloten" zodra de sluitingsdatum is verstreken.
-module.exports = async function (context) {
+const TICK_SECRET = process.env.VACATURES_TICK_SECRET;
+
+// Static Web Apps' managed Functions ondersteunen geen timer-triggers,
+// dus dit is een gewone HTTP-Function die periodiek wordt aangeroepen
+// door de GitHub Actions workflow (.github/workflows/vacatures-tick.yml),
+// beveiligd met een gedeelde secret in plaats van een AAD-login.
+//
+// Zet "ingepland" om naar "gepubliceerd" zodra de publicatiedatum is
+// bereikt, en "gepubliceerd" naar "gesloten" zodra de sluitingsdatum is
+// verstreken.
+module.exports = async function (context, req) {
+  const meegestuurdeSecret = req.headers["x-tick-secret"];
+  if (!TICK_SECRET || meegestuurdeSecret !== TICK_SECRET) {
+    context.res = { status: 401, body: { error: "Ongeldige of ontbrekende secret" } };
+    return;
+  }
+
   const nu = new Date();
   const tableClient = await getVacaturesTableClient();
 
@@ -20,9 +33,11 @@ module.exports = async function (context) {
     vacature => vacature.sluitingsdatum && new Date(vacature.sluitingsdatum) <= nu
   );
 
-  context.log(
-    `VacaturesTimer: ${aantalGepubliceerd} vacature(s) gepubliceerd, ${aantalGesloten} vacature(s) gesloten.`
-  );
+  context.res = {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+    body: { gepubliceerd: aantalGepubliceerd, gesloten: aantalGesloten }
+  };
 };
 
 async function zetStatusOm(tableClient, vanStatus, naarStatus, voorwaarde) {

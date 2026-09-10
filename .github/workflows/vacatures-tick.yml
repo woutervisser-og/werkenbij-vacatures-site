@@ -1,0 +1,16 @@
+name: Vacatures automatisch publiceren/sluiten
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Roep vacatures-tick endpoint aan
+        run: |
+          curl -sS -X POST "https://victorious-sea-0b50b4303.azurestaticapps.net/api/onderhoud/vacaturesTick" \
+            -H "x-tick-secret: ${{ secrets.VACATURES_TICK_SECRET }}" \
+            --fail
