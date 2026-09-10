@@ -57,6 +57,16 @@ de chat gedeeld op het moment dat ze nodig zijn.
   mediabibliotheek hergebruiken, verwijderen. Daarbij een echte bug
   gevonden en gefixt: de "geen vacatures"-melding bleef verborgen na het
   verwijderen van de laatste vacature.
+- Body-blokken-editor toegevoegd aan `beheer/vacature.html`: alle 14
+  bloktypes uit `ARCHITECTUUR-HR-PORTAAL.md` (intro's, tekst(kolommen),
+  quotes, afbeelding+tekst, bullet-lijst, arbeidsvoorwaarden-grid,
+  video, team-voorstelling, sollicitatieproces, FAQ,
+  sluitingsdatum-banner), met toevoegen/verwijderen/herordenen, en
+  hergebruik van de mediabibliotheek voor de afbeelding-velden binnen
+  blokken. Echt getest in een browser (Playwright): blokken toevoegen
+  (tekst, een lijst-type met items toevoegen/verwijderen, een
+  afbeelding-type met echte foto-upload), herordenen, opslaan, en
+  daarna opnieuw openen om te bevestigen dat alles correct terugkomt.
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -110,8 +120,9 @@ opslaan of ophalen (de code staat al klaar op main).
 - Statuswijzigingen triggeren nog geen nieuwe site-build via GitHub
   Actions; dat heeft pas zin zodra `GetVacatures` van Table Storage
   leest (zie punt hierboven), bewust nog niet gebouwd.
-- Body-blokken-editor (14 bloktypes, incl. volgorde) nog te bouwen in de
-  `/beheer`-interface.
+- De publieke vacaturepagina (`vacature-detail.html` / generate-vacatures)
+  rendert de body-blokken nog niet; dat gebeurt pas bij de omzetting naar
+  Table Storage (zie punt hierboven over `GetVacatures`).
 - Afdeling en locatie zijn nu vrije tekstvelden (geen vaste keuzelijst,
   zoals het architectuurdocument suggereert), omdat er nog geen
   goedgekeurde lijst met waarden is. Later eventueel om te zetten naar

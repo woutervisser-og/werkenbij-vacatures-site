@@ -129,6 +129,15 @@
       </div>
     </fieldset>
 
+    <fieldset class="header-keuze">
+      <legend>Inhoud (body-blokken)</legend>
+      <div class="blok-toevoegen-rij">
+        <select id="nieuw-blok-type"></select>
+        <button type="button" class="btn btn-klein btn-secundair" id="blok-toevoegen-knop">+ Blok toevoegen</button>
+      </div>
+      <div id="blokken-container"></div>
+    </fieldset>
+
     <div class="form-acties">
       <button type="submit" class="btn btn-klein" id="opslaan-knop">Opslaan</button>
       <button type="button" class="btn btn-klein btn-gevaar" id="verwijder-knop" hidden>Verwijderen</button>
@@ -257,6 +266,416 @@
       });
   });
 
+  // ===== Body-blokken =====
+  // Elk bloktype beschrijft zijn eigen velden. "lijst" velden zijn
+  // herhaalbare rijen (bv. losse FAQ-vragen), "afbeelding" velden gebruiken
+  // dezelfde mediabibliotheek als de header hierboven.
+  const BLOK_TYPES = {
+    intro_gecentreerd: {
+      label: "Intro (gecentreerd)",
+      velden: [
+        { naam: "eyebrow", label: "Eyebrow", type: "tekst" },
+        { naam: "kop", label: "Kop", type: "tekst" },
+        { naam: "tekst", label: "Tekst", type: "tekstblok" }
+      ]
+    },
+    intro_split: {
+      label: "Intro (split)",
+      velden: [
+        { naam: "tekst", label: "Tekst", type: "tekstblok" },
+        { naam: "uitgelicht", label: "Uitgelichte quote/stat", type: "tekst" }
+      ]
+    },
+    tekst: {
+      label: "Tekst",
+      velden: [{ naam: "inhoud", label: "Inhoud", type: "tekstblok" }]
+    },
+    tekst_kolommen: {
+      label: "Tekst in kolommen",
+      velden: [
+        { naam: "kolom1", label: "Kolom 1", type: "tekstblok" },
+        { naam: "kolom2", label: "Kolom 2", type: "tekstblok" }
+      ]
+    },
+    uitgelichte_quote: {
+      label: "Uitgelichte quote",
+      velden: [{ naam: "quote", label: "Quote", type: "tekstblok" }]
+    },
+    afbeelding_tekst: {
+      label: "Afbeelding + tekst",
+      velden: [
+        { naam: "afbeelding", label: "Afbeelding", type: "afbeelding" },
+        { naam: "tekst", label: "Tekst", type: "tekstblok" },
+        { naam: "richting", label: "Richting", type: "keuze", opties: ["links", "rechts"] }
+      ]
+    },
+    bullet_lijst: {
+      label: "Bullet-lijst",
+      velden: [
+        { naam: "titel", label: "Titel (optioneel)", type: "tekst" },
+        {
+          naam: "punten", label: "Punten", type: "lijst",
+          subvelden: [
+            { naam: "icoon", label: "Icoon (emoji)", type: "tekst" },
+            { naam: "tekst", label: "Tekst", type: "tekst" }
+          ]
+        }
+      ]
+    },
+    arbeidsvoorwaarden_grid: {
+      label: "Arbeidsvoorwaarden-grid",
+      velden: [
+        {
+          naam: "items", label: "Items", type: "lijst",
+          subvelden: [
+            { naam: "icoon", label: "Icoon (emoji)", type: "tekst" },
+            { naam: "tekst", label: "Tekst", type: "tekst" }
+          ]
+        }
+      ]
+    },
+    collega_quote: {
+      label: "Collega-quote",
+      velden: [
+        { naam: "quote", label: "Quote", type: "tekstblok" },
+        { naam: "naam", label: "Naam", type: "tekst" },
+        { naam: "functie", label: "Functie (optioneel)", type: "tekst" },
+        { naam: "foto", label: "Foto", type: "afbeelding" }
+      ]
+    },
+    video_embed: {
+      label: "Video",
+      velden: [{ naam: "url", label: "Video-URL", type: "tekst" }]
+    },
+    team_voorstelling: {
+      label: "Team-voorstelling",
+      velden: [
+        {
+          naam: "leden", label: "Teamleden", type: "lijst",
+          subvelden: [
+            { naam: "voornaam", label: "Voornaam", type: "tekst" },
+            { naam: "foto", label: "Foto", type: "afbeelding" }
+          ]
+        }
+      ]
+    },
+    sollicitatieproces: {
+      label: "Sollicitatieproces",
+      velden: [
+        {
+          naam: "stappen", label: "Stappen", type: "lijst",
+          subvelden: [
+            { naam: "titel", label: "Titel", type: "tekst" },
+            { naam: "omschrijving", label: "Omschrijving", type: "tekstblok" }
+          ]
+        }
+      ]
+    },
+    veelgestelde_vragen: {
+      label: "Veelgestelde vragen",
+      velden: [
+        {
+          naam: "vragen", label: "Vragen", type: "lijst",
+          subvelden: [
+            { naam: "vraag", label: "Vraag", type: "tekst" },
+            { naam: "antwoord", label: "Antwoord", type: "tekstblok" }
+          ]
+        }
+      ]
+    },
+    sluitingsdatum_banner: {
+      label: "Sluitingsdatum-banner",
+      velden: []
+    }
+  };
+
+  let bodyBlokken = [];
+
+  const blokTypeSelect = document.getElementById("nieuw-blok-type");
+  Object.entries(BLOK_TYPES).forEach(([type, definitie]) => {
+    const optie = document.createElement("option");
+    optie.value = type;
+    optie.textContent = definitie.label;
+    blokTypeSelect.appendChild(optie);
+  });
+
+  function nieuweBlokData(type) {
+    const definitie = BLOK_TYPES[type];
+    const data = { type };
+    definitie.velden.forEach(veldDef => {
+      data[veldDef.naam] = veldDef.type === "lijst" ? [] : "";
+    });
+    return data;
+  }
+
+  document.getElementById("blok-toevoegen-knop").addEventListener("click", () => {
+    bodyBlokken.push(nieuweBlokData(blokTypeSelect.value));
+    renderBlokken();
+  });
+
+  // Herbruikbare foto-kiezer: eigen upload + "bestaande kiezen" per
+  // instantie, zodat meerdere afbeelding-velden (ook binnen lijst-items)
+  // onafhankelijk van elkaar werken.
+  function maakAfbeeldingKiezer(doel, veldNaam) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "afbeelding-kiezer";
+
+    const preview = document.createElement("img");
+    preview.className = "afbeelding-kiezer-preview";
+    if (doel[veldNaam]) {
+      preview.src = doel[veldNaam];
+    } else {
+      preview.hidden = true;
+    }
+    wrapper.appendChild(preview);
+
+    const rij = document.createElement("div");
+    rij.className = "afbeelding-kiezer-rij";
+
+    const uploadInput = document.createElement("input");
+    uploadInput.type = "file";
+    uploadInput.accept = ".jpg,.jpeg,.png,.webp,.gif";
+    uploadInput.addEventListener("change", () => {
+      const bestand = uploadInput.files[0];
+      if (!bestand) return;
+      fetch("/api/media?bestandsnaam=" + encodeURIComponent(bestand.name), {
+        method: "POST",
+        headers: { "Content-Type": bestand.type },
+        body: bestand
+      })
+        .then(response => {
+          if (!response.ok) throw new Error("Status: " + response.status);
+          return response.json();
+        })
+        .then(resultaat => {
+          doel[veldNaam] = resultaat.url;
+          preview.src = resultaat.url;
+          preview.hidden = false;
+        })
+        .catch(error => console.error(error));
+    });
+    rij.appendChild(uploadInput);
+
+    const grid = document.createElement("div");
+    grid.className = "media-grid";
+    grid.hidden = true;
+
+    const kiesKnop = document.createElement("button");
+    kiesKnop.type = "button";
+    kiesKnop.className = "btn btn-klein btn-secundair";
+    kiesKnop.textContent = "Bestaande kiezen";
+    kiesKnop.addEventListener("click", () => {
+      if (!grid.hidden) {
+        grid.hidden = true;
+        return;
+      }
+      grid.hidden = false;
+      grid.innerHTML = "<p>Bibliotheek laden...</p>";
+      fetch("/api/media")
+        .then(response => {
+          if (!response.ok) throw new Error("Status: " + response.status);
+          return response.json();
+        })
+        .then(bestanden => {
+          grid.innerHTML = "";
+          if (bestanden.length === 0) {
+            grid.innerHTML = "<p>Nog geen foto's geüpload.</p>";
+            return;
+          }
+          bestanden.forEach(bestand => {
+            const knop = document.createElement("button");
+            knop.type = "button";
+            knop.title = bestand.naam;
+            const img = document.createElement("img");
+            img.src = bestand.url;
+            img.alt = bestand.naam;
+            knop.appendChild(img);
+            knop.addEventListener("click", () => {
+              doel[veldNaam] = bestand.url;
+              preview.src = bestand.url;
+              preview.hidden = false;
+              grid.hidden = true;
+            });
+            grid.appendChild(knop);
+          });
+        })
+        .catch(error => {
+          grid.innerHTML = "<p>Kon de mediabibliotheek niet laden.</p>";
+          console.error(error);
+        });
+    });
+    rij.appendChild(kiesKnop);
+
+    wrapper.appendChild(rij);
+    wrapper.appendChild(grid);
+    return wrapper;
+  }
+
+  function maakVeldRij(veldDef, doel) {
+    const rij = document.createElement("div");
+    rij.className = "veld-rij";
+
+    const label = document.createElement("label");
+    label.textContent = veldDef.label;
+    rij.appendChild(label);
+
+    if (veldDef.type === "lijst") {
+      rij.appendChild(maakLijstVeld(veldDef, doel));
+      return rij;
+    }
+
+    if (veldDef.type === "afbeelding") {
+      rij.appendChild(maakAfbeeldingKiezer(doel, veldDef.naam));
+      return rij;
+    }
+
+    let input;
+    if (veldDef.type === "tekstblok") {
+      input = document.createElement("textarea");
+    } else if (veldDef.type === "keuze") {
+      input = document.createElement("select");
+      veldDef.opties.forEach(optie => {
+        const optionEl = document.createElement("option");
+        optionEl.value = optie;
+        optionEl.textContent = optie;
+        input.appendChild(optionEl);
+      });
+    } else {
+      input = document.createElement("input");
+      input.type = "text";
+    }
+    input.value = doel[veldDef.naam] || "";
+    input.addEventListener("input", () => { doel[veldDef.naam] = input.value; });
+    rij.appendChild(input);
+    return rij;
+  }
+
+  function maakLijstVeld(veldDef, blok) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "lijst-veld";
+
+    const itemsContainer = document.createElement("div");
+    itemsContainer.className = "lijst-items";
+
+    function renderItems() {
+      itemsContainer.innerHTML = "";
+      blok[veldDef.naam].forEach((item, itemIndex) => {
+        const itemEl = document.createElement("div");
+        itemEl.className = "lijst-item";
+
+        veldDef.subvelden.forEach(sub => {
+          itemEl.appendChild(maakVeldRij(sub, item));
+        });
+
+        const verwijderKnop = document.createElement("button");
+        verwijderKnop.type = "button";
+        verwijderKnop.className = "btn btn-klein btn-gevaar";
+        verwijderKnop.textContent = "Verwijderen";
+        verwijderKnop.addEventListener("click", () => {
+          blok[veldDef.naam].splice(itemIndex, 1);
+          renderItems();
+        });
+        itemEl.appendChild(verwijderKnop);
+
+        itemsContainer.appendChild(itemEl);
+      });
+    }
+    renderItems();
+    wrapper.appendChild(itemsContainer);
+
+    const toevoegenKnop = document.createElement("button");
+    toevoegenKnop.type = "button";
+    toevoegenKnop.className = "btn btn-klein btn-secundair";
+    toevoegenKnop.textContent = "+ Toevoegen";
+    toevoegenKnop.addEventListener("click", () => {
+      const nieuwItem = {};
+      veldDef.subvelden.forEach(sub => { nieuwItem[sub.naam] = ""; });
+      blok[veldDef.naam].push(nieuwItem);
+      renderItems();
+    });
+    wrapper.appendChild(toevoegenKnop);
+
+    return wrapper;
+  }
+
+  function maakBlokKaart(blok, index) {
+    const definitie = BLOK_TYPES[blok.type];
+    const kaart = document.createElement("div");
+    kaart.className = "blok-kaart";
+
+    const header = document.createElement("div");
+    header.className = "blok-kaart-header";
+
+    const label = document.createElement("span");
+    label.className = "blok-label";
+    label.textContent = `${index + 1}. ${definitie.label}`;
+    header.appendChild(label);
+
+    const acties = document.createElement("div");
+    acties.className = "blok-acties";
+
+    const omhoogKnop = document.createElement("button");
+    omhoogKnop.type = "button";
+    omhoogKnop.textContent = "↑";
+    omhoogKnop.disabled = index === 0;
+    omhoogKnop.addEventListener("click", () => {
+      [bodyBlokken[index - 1], bodyBlokken[index]] = [bodyBlokken[index], bodyBlokken[index - 1]];
+      renderBlokken();
+    });
+    acties.appendChild(omhoogKnop);
+
+    const omlaagKnop = document.createElement("button");
+    omlaagKnop.type = "button";
+    omlaagKnop.textContent = "↓";
+    omlaagKnop.disabled = index === bodyBlokken.length - 1;
+    omlaagKnop.addEventListener("click", () => {
+      [bodyBlokken[index + 1], bodyBlokken[index]] = [bodyBlokken[index], bodyBlokken[index + 1]];
+      renderBlokken();
+    });
+    acties.appendChild(omlaagKnop);
+
+    const verwijderKnop = document.createElement("button");
+    verwijderKnop.type = "button";
+    verwijderKnop.className = "btn-verwijder-blok";
+    verwijderKnop.textContent = "Verwijderen";
+    verwijderKnop.addEventListener("click", () => {
+      bodyBlokken.splice(index, 1);
+      renderBlokken();
+    });
+    acties.appendChild(verwijderKnop);
+
+    header.appendChild(acties);
+    kaart.appendChild(header);
+
+    if (definitie.velden.length === 0) {
+      const leeg = document.createElement("p");
+      leeg.className = "blok-geen-velden";
+      leeg.textContent = "Geen instellingen nodig, toont automatisch de resterende tijd tot de sluitingsdatum.";
+      kaart.appendChild(leeg);
+    } else {
+      const velden = document.createElement("div");
+      velden.className = "blok-velden";
+      definitie.velden.forEach(veldDef => {
+        velden.appendChild(maakVeldRij(veldDef, blok));
+      });
+      kaart.appendChild(velden);
+    }
+
+    return kaart;
+  }
+
+  function renderBlokken() {
+    const container = document.getElementById("blokken-container");
+    container.innerHTML = "";
+    if (bodyBlokken.length === 0) {
+      container.innerHTML = "<p class=\"blokken-leeg\">Nog geen blokken toegevoegd.</p>";
+      return;
+    }
+    bodyBlokken.forEach((blok, index) => container.appendChild(maakBlokKaart(blok, index)));
+  }
+
+  renderBlokken();
+
   // ===== Bestaande vacature laden (bewerken) =====
   if (vacatureId) {
     document.getElementById("pagina-titel").textContent = "Vacature bewerken";
@@ -290,6 +709,9 @@
           headerBron = vacature.header.bron || "";
           toonHeaderPreview(headerBron);
         }
+
+        bodyBlokken = Array.isArray(vacature.bodyBlokken) ? vacature.bodyBlokken : [];
+        renderBlokken();
       })
       .catch(error => {
         toonMelding("Kon de vacature niet laden.", "fout");
@@ -337,7 +759,8 @@
       publicatiedatum: document.getElementById("veld-publicatiedatum").value || null,
       sluitingsdatum: document.getElementById("veld-sluitingsdatum").value || null,
       status: document.getElementById("veld-status").value,
-      header
+      header,
+      bodyBlokken
     };
 
     const opslaanKnop = document.getElementById("opslaan-knop");
