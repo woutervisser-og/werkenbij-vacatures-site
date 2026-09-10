@@ -124,16 +124,13 @@ Application Setting op de Static Web App staat, anders kunnen de
 CRUD-Functions, `VacaturesTick`, de mediabibliotheek én de nu omgezette
 `GetVacatures` niets opslaan of ophalen.
 
-## Volgende stap (SITE_URL repository variable)
+## Afgerond: SITE_URL repository variable
 
-- Een GitHub Actions repository **variable** (geen secret, dit is geen
-  gevoelige waarde) aanmaken: Settings → Secrets and variables → Actions
-  → tab **Variables** → New repository variable → naam `SITE_URL`,
-  waarde `https://victorious-sea-0b50b4303.7.azurestaticapps.net` (geen
-  trailing slash). Zonder deze variable kunnen `generate.js` (via de
-  build-workflow) en `vacatures-tick.yml` de live site niet bereiken.
-  Zodra het custom domain live gaat: alleen deze ene variable aanpassen,
-  geen code- of workflow-wijziging nodig.
+GitHub Actions repository variable `SITE_URL` staat
+(`https://victorious-sea-0b50b4303.7.azurestaticapps.net`). `generate.js`
+en `vacatures-tick.yml` bereiken de live site nu correct. Zodra het custom
+domain live gaat: alleen deze ene variable aanpassen, geen code- of
+workflow-wijziging nodig.
 
 ## Volgende stap (VacaturesTick secret)
 
@@ -141,6 +138,16 @@ CRUD-Functions, `VacaturesTick`, de mediabibliotheek én de nu omgezette
   hetzelfde instellen: als Application Setting op de Static Web App, én
   als GitHub Actions repository secret (Settings → Secrets and variables
   → Actions). Zonder deze secret geeft `VacaturesTick` altijd 401 terug.
+
+## Actie nodig: site staat nu leeg
+
+Sinds de omzetting van `GetVacatures` naar Table Storage (en de merge
+daarvan) toont de site **geen vacatures meer**: de oude SharePoint-
+vacatures vervallen, en er staat nog niets als "gepubliceerd" in Table
+Storage. Bevestigd door Wouter. Actie: de vacatures die eerder in
+SharePoint stonden opnieuw aanmaken in `/beheer` en op status
+"gepubliceerd" zetten, dan verschijnen ze bij de eerstvolgende build weer
+op de site.
 
 ## Nog open
 
