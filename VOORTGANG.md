@@ -119,10 +119,8 @@ tot ingelogde gebruikers binnen de tenant (laag 1+2 uit
 
 De blocker bij IT (resource provider `Microsoft.Storage` niet
 geregistreerd) is opgelost, Wouter heeft de Storage Account aangemaakt.
-Nog te controleren/instellen: of `AZURE_STORAGE_CONNECTION_STRING` al als
-Application Setting op de Static Web App staat, anders kunnen de
-CRUD-Functions, `VacaturesTick`, de mediabibliotheek én de nu omgezette
-`GetVacatures` niets opslaan of ophalen.
+`AZURE_STORAGE_CONNECTION_STRING` staat als Application Setting op de
+Static Web App.
 
 ## Afgerond: SITE_URL repository variable
 
@@ -132,12 +130,11 @@ en `vacatures-tick.yml` bereiken de live site nu correct. Zodra het custom
 domain live gaat: alleen deze ene variable aanpassen, geen code- of
 workflow-wijziging nodig.
 
-## Volgende stap (VacaturesTick secret)
+## Afgerond: VacaturesTick secret
 
-- Een geheime waarde bedenken voor `VACATURES_TICK_SECRET` en op 2 plekken
-  hetzelfde instellen: als Application Setting op de Static Web App, én
-  als GitHub Actions repository secret (Settings → Secrets and variables
-  → Actions). Zonder deze secret geeft `VacaturesTick` altijd 401 terug.
+`VACATURES_TICK_SECRET` staat op beide plekken (Application Setting op de
+Static Web App, en als GitHub Actions repository secret), met dezelfde
+waarde. `VacaturesTick` en de cron-workflow werken nu.
 
 ## Actie nodig: site staat nu leeg
 
@@ -158,7 +155,7 @@ apps blokkeert, een tenant-beheerder moet eenmalig admin consent geven
 voor deze App Registration (Entra admin center → App registrations →
 Werkenbij-HR-Portaal → API permissions → "Grant admin consent for
 [tenant]"). Moet opgelost worden voordat de vacatures opnieuw
-aangemaakt kunnen worden in `/beheer`.
+aangemaakt kunnen worden in `/beheer`. **Ligt nu bij de IT-afdeling.**
 
 ## Nog open
 
