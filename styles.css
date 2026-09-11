@@ -214,7 +214,7 @@ section.content {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-.section-head h2 { font-size: 34px; margin-top: 10px; }
+.section-head h2 { font-size: 34px; margin-top: 10px; color: var(--og-orange-dark); }
 
 .card-grid {
   display: grid;
