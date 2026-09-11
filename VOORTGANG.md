@@ -354,6 +354,25 @@ crops zijn verwijderd; de header gebruikt nu rechtstreeks
 `images/logo/og-logo-wit.png` en `og-logo-kleur.png`, geschaald op
 hoogte. Wit/kleur-wissel bij het scrollen ongewijzigd.
 
+## Afgerond: eigen huisstijl-lettertypes zelf gehost i.p.v. Anton/Google Fonts
+
+Wouter merkte terecht op dat het lettertype niet overeenkwam met wat OG
+normaal gebruikt. Root cause: het brandbook was destijds als screenshots
+aangeleverd (kleuren/lay-out zichtbaar, geen los fontbestand of
+merknaam), dus is toen 'Anton' (Google Fonts) gekozen als stijl-
+benadering — niet het echte merklettertype. Wouter heeft nu de
+daadwerkelijke fontbestanden aangeleverd.
+
+- Koppen/knoppen/labels: 'Anton' → **'Komu'** (het echte merklettertype).
+- Bodytekst: 'Open Sans' bleek al de juiste familie, nu zelf gehost
+  i.p.v. via de Google Fonts CDN (geen externe afhankelijkheid meer).
+- Aangeleverde .otf/.ttf-bestanden geconverteerd naar .woff2 (kleiner,
+  bv. de Open Sans variable font van ~530KB naar ~280KB), opgeslagen
+  onder `fonts/`. De losse statische Open Sans-gewichten die ook waren
+  aangeleverd (Bold/ExtraBold/Medium/SemiBold) zijn niet apart
+  meegenomen: de aangeleverde variabele font dekt dat hele
+  gewicht-bereik al in 1 bestand.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
