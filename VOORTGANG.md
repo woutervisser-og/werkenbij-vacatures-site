@@ -190,11 +190,38 @@ Claude levert de content aan om te kopiëren/plakken (netwerktoegang tot
 de live site ontbreekt vanuit de sandbox, dus zelf de API aanroepen kan
 niet).
 
+## Afgerond: sollicitatieproces
+
+Kandidaten kunnen nu daadwerkelijk solliciteren op een vacature (het
+sollicitatieformulier op elke vacature-detailpagina stond er al, maar
+deed nog niets — `solliciteer.js` was een lege placeholder).
+
+- Nieuwe Table Storage-tabel `Sollicitaties`, met de statussen uit
+  `ARCHITECTUUR-HR-PORTAAL.md` (nieuw, in_behandeling, afgewezen,
+  aangenomen, bewaard, gearchiveerd).
+- Nieuwe private Blob-container `sollicitatie-bijlagen` voor CV's en
+  motivatiebrieven (in tegenstelling tot de mediabibliotheek niet publiek
+  leesbaar).
+- `CvUpload` (POST `/api/cv`) en `SollicitatieCreate`
+  (POST `/api/sollicitaties`), beide publiek/anoniem toegankelijk: een
+  kandidaat is niet ingelogd. Valideert bestandstype (pdf/doc/docx, max
+  5MB), verplichte velden, een geldig e-mailadres en dat de vacatureId
+  bestaat.
+- `SollicitatiesList`/`Update`/`Delete`/`Bijlage` onder
+  `/api/sollicitatiebeheer/*` (beperkt tot "authenticated"): nieuwe
+  beheerpagina `beheer/sollicitaties.html` toont alle sollicitaties,
+  met statuswijziging, CV/motivatiebrief-download en verwijderen.
+- Bewust **geen** automatische e-mailnotificatie bij een nieuwe
+  sollicitatie (kan later toegevoegd worden).
+  Echt getest tegen Azurite (volledige backend-flow + alle
+  validatiefouten) en in een browser met Playwright (het publieke
+  formulier, inclusief een clientside geweigerd bestandstype, en het
+  beheeroverzicht).
+
 ## Nog open
 
-- CV-uploads (documenten, niet openbaar) nog te bouwen, samen met de
-  sollicitatie-Functions; bewust niet meegenomen in de mediabibliotheek
-  omdat die publiek leesbaar is en CV's dat niet mogen zijn.
+- Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
+  uitgesteld, zie hierboven).
 - Afdeling en locatie zijn nu vrije tekstvelden (geen vaste keuzelijst,
   zoals het architectuurdocument suggereert), omdat er nog geen
   goedgekeurde lijst met waarden is. Later eventueel om te zetten naar
