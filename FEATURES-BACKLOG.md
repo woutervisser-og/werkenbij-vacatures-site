@@ -29,7 +29,7 @@ te lezen zonder los in de data te duiken.
 
 | Feature | Wat ontbreekt nu | Prioriteit | Inschatting |
 |---|---|---|---|
-| Doorklikken vanuit vacature naar bijbehorende sollicitaties | Vacature-overzicht toont geen aantal sollicitaties en linkt niet gefilterd door; je moet nu handmatig op naam zoeken in de losse, ongefilterde sollicitatietabel | Must | S |
+| ~~Doorklikken vanuit vacature naar bijbehorende sollicitaties~~ ✅ | Afgerond: aantal sollicitaties als link, filtert door naar `/beheer/sollicitaties.html?vacatureId=...` | Must | S |
 | Filteren/zoeken in sollicitatie-overzicht (op vacature, status, naam, periode) | Geen enkel filter of zoekveld aanwezig, alles staat in 1 lange tabel | Must | S |
 | Bulk-export van sollicitaties (CSV/Excel) | Geen exportfunctie; data is alleen rij-voor-rij in de UI te bekijken | Must | S |
 | Sollicitatie-detailweergave (motivatietekst, CV-voorbeeld, contactgegevens in 1 overzicht) | De motivatietekst wordt nergens getoond in de UI, alleen opgeslagen; CV/motivatiebrief zijn alleen als download-link te openen | Must | M |

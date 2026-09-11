@@ -389,6 +389,22 @@ Open puntje: mogelijk past de corporate site nog een `transform` of
 volledig zichtbaar was in de aangeleverde devtools-screenshot. Nog te
 bevestigen door Wouter.
 
+## Afgerond: vacature-overzicht gegroepeerd per status, sorteerbaar, doorklik naar sollicitaties
+
+Eerste feature uit `FEATURES-BACKLOG.md` gebouwd, plus 2 extra wensen
+van Wouter over de tabel-indeling:
+
+- Doorklikken vanuit een vacature naar de bijbehorende sollicitaties:
+  elke rij toont het aantal sollicitaties als link naar
+  `/beheer/sollicitaties.html?vacatureId=...`, die pagina filtert dan
+  automatisch en toont de vacaturenaam in een contextregel.
+- Het overzicht toont niet langer 1 platte tabel met een status-kolom,
+  maar 1 sectie (met eigen tabel) per status, in vaste volgorde
+  (gepubliceerd, ingepland, concept, gesloten, gearchiveerd).
+  Gearchiveerde vacatures staan zo niet meer tussen de actieve door.
+- Kolomkoppen (Titel/Afdeling/Sluitingsdatum/Sollicitaties) zijn
+  klikbaar en sorteren de hele lijst; standaard alfabetisch op titel.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
