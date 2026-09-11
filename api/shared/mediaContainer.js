@@ -26,7 +26,14 @@ function getMediaContainerClient() {
       const containerClient = serviceClient.getContainerClient(CONTAINER_NAME);
       await containerClient.createIfNotExists({ access: "blob" });
       return containerClient;
-    })();
+    })().catch(error => {
+      // Een mislukte poging niet permanent laten "vastzitten": zonder dit
+      // blijft een Function-instance die eenmaal een fout tegenkwam (bv.
+      // een storage-instelling die nog niet klopte) die fout tot in
+      // lengte van dagen herhalen, ook nadat de oorzaak is opgelost.
+      containerClientPromise = null;
+      throw error;
+    });
   }
   return containerClientPromise;
 }
