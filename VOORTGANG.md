@@ -344,6 +344,16 @@ De sluitingsdatum-banner ("Nog X dagen om te solliciteren") zag er al
 uit als een knop, maar deed niets bij een klik. Is nu een link die naar
 het sollicitatieformulier verderop op de pagina scrollt.
 
+## Afgerond: header toont volledige logo-afbeelding
+
+Correctie op de sticky header hierboven: Wouter gaf terecht aan dat de
+header niet alleen het uitgesneden beeldmerkje moest tonen, maar de
+volledige aangeleverde logo-afbeelding (beeldmerk + "og" + "clean
+fuels"), net als op de corporate website. De uitgesneden icoon-only
+crops zijn verwijderd; de header gebruikt nu rechtstreeks
+`images/logo/og-logo-wit.png` en `og-logo-kleur.png`, geschaald op
+hoogte. Wit/kleur-wissel bij het scrollen ongewijzigd.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
