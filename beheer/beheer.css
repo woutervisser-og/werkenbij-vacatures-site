@@ -92,6 +92,18 @@ table.beheer-tabel td.acties { display: flex; gap: 8px; justify-content: flex-en
 .status-gesloten { background: #e6e6e6; color: #3a3a3a; }
 .status-gearchiveerd { background: #f0f0ee; color: #99998f; }
 
+/* Sollicitatie-statussen (los van de vacature-statussen hierboven, maar
+   dezelfde palet-aanpak) */
+.beheer-tabel select {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13.5px;
+  padding: 6px 10px;
+  border: 1px solid #d8d8d4;
+  border-radius: 20px;
+  background: var(--og-grey);
+  text-transform: capitalize;
+}
+
 .beheer-leeg { padding: 60px 20px; text-align: center; color: #767672; }
 
 /* ===== Formulier ===== */
