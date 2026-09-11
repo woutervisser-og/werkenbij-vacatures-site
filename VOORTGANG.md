@@ -306,6 +306,27 @@ Daarnaast het vacature-overzicht in `/beheer` verbreed en de kolommen
 opnieuw verdeeld (titelkolom breder, actieknoppen lopen niet meer vast)
 op verzoek van Wouter.
 
+## Afgerond: sticky header met logo-wissel + vacature-hero overlay
+
+Wouter heeft de echte OG Clean Fuels-logobestanden aangeleverd (kleur en
+wit, staand). Daarmee de header op index.html, over-ons.html en
+vacature-detailpagina's (met headerfoto) omgebouwd naar hetzelfde gedrag
+als de corporate website: transparant met wit logo bovenaan de hero,
+wordt effen wit met het gekleurde logo zodra je voorbij de hero scrolt.
+Huisstijl-oranje gebruikt in plaats van het groen uit het aangeleverde
+logo. `vacatures.html` heeft geen hero en blijft daarom altijd gewoon
+effen wit, geen wijziging daar.
+
+Vacature-detailpagina's met een headerfoto/video tonen de titel,
+meta-info en een "Solliciteer direct!"-knop nu rechtstreeks overlayd op
+de headerafbeelding zelf (met een donkere schaduw-gradient voor
+leesbaarheid), met een broodkruimelpad eronder. Vacatures zonder
+headerfoto vallen terug op de oude platte titel-sectie.
+
+De aangeleverde logo-bestanden staan onder `images/logo/`; daaruit ook
+een icoon-only crop gesneden (kleur en wit) specifiek voor gebruik in de
+compacte header, naast de originele staande lockup-bestanden.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
