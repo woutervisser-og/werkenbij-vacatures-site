@@ -33,7 +33,12 @@ function getVacaturesTableClient() {
       );
       await client.createTable();
       return client;
-    })();
+    })().catch(error => {
+      // Niet een mislukte poging permanent laten "vastzitten" voor de
+      // levensduur van deze Function-instance, zie mediaContainer.js.
+      tableClientPromise = null;
+      throw error;
+    });
   }
   return tableClientPromise;
 }

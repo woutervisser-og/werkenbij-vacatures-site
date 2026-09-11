@@ -23,7 +23,12 @@ function getCvBijlagenContainerClient() {
       const containerClient = serviceClient.getContainerClient(CONTAINER_NAME);
       await containerClient.createIfNotExists(); // geen "access"-optie: private
       return containerClient;
-    })();
+    })().catch(error => {
+      // Niet een mislukte poging permanent laten "vastzitten" voor de
+      // levensduur van deze Function-instance, zie mediaContainer.js.
+      containerClientPromise = null;
+      throw error;
+    });
   }
   return containerClientPromise;
 }
