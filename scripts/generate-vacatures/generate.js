@@ -333,8 +333,6 @@ ${isFotoHeader ? `<meta property="og:image" content="${escapeHtml(vacature.heade
 ${bouwJsonLd(vacature)}
 </script>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 <style>
   .detail-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
