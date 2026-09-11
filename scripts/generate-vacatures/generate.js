@@ -290,7 +290,7 @@ ${bouwJsonLd(vacature)}
   .detail-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
   .detail-omschrijving { max-width: 720px; font-size: 15.5px; color: #333; line-height: 1.7; }
   .detail-omschrijving p { margin-bottom: 16px; }
-  .solliciteer-blok { background: var(--og-grey); border-radius: 12px; padding: 32px; max-width: 560px; margin-top: 40px; }
+  .solliciteer-blok { background: var(--og-cream); border-radius: 12px; padding: 32px; max-width: 560px; margin-top: 40px; }
   .form-veld { margin-bottom: 18px; }
   .form-veld label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
   .form-veld input, .form-veld textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; font-size: 14px; transition: border-color 0.2s ease; }
@@ -320,7 +320,7 @@ ${bouwJsonLd(vacature)}
   .sfeer-foto:hover { transform: scale(1.04); filter: saturate(1.1); }
 
   .recruiter-blok {
-    background: var(--og-grey);
+    background: var(--og-cream);
     border-radius: 12px;
     padding: 32px;
     margin-top: 48px;
@@ -406,7 +406,7 @@ ${renderHeader(vacature)}
   </div>
 
   <div class="solliciteer-blok reveal">
-    <h3 style="margin-bottom:20px;">Solliciteer direct</h3>
+    <h3 style="margin-bottom:20px;">Solliciteer <span class="titel-highlight">direct</span></h3>
     <form id="sollicitatie-form">
       <input type="hidden" name="vacatureId" value="${escapeHtml(vacature.id)}">
       <fieldset id="sollicitatie-velden" style="border:0;padding:0;margin:0;">
