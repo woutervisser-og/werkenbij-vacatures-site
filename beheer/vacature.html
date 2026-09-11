@@ -6,8 +6,8 @@
 <title>Vacature bewerken | OG Clean Fuels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css">
-<link rel="stylesheet" href="beheer.css">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/beheer/beheer.css">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
 <main class="beheer-main">
   <div class="beheer-header-rij">
     <h1 id="pagina-titel">Nieuwe vacature</h1>
-    <a href="index.html" class="btn btn-klein btn-secundair">&larr; Terug naar overzicht</a>
+    <a href="/beheer/index.html" class="btn btn-klein btn-secundair">&larr; Terug naar overzicht</a>
   </div>
 
   <div id="melding"></div>
@@ -724,7 +724,7 @@
     fetch("/api/vacatures/" + encodeURIComponent(vacatureId), { method: "DELETE" })
       .then(response => {
         if (!response.ok && response.status !== 204) throw new Error("Status: " + response.status);
-        location.href = "index.html";
+        location.href = "/beheer/index.html";
       })
       .catch(error => {
         toonMelding("Verwijderen is mislukt.", "fout");
@@ -785,7 +785,7 @@
         return response.json();
       })
       .then(() => {
-        location.href = "index.html";
+        location.href = "/beheer/index.html";
       })
       .catch(error => {
         toonMelding("Opslaan is mislukt.", "fout");

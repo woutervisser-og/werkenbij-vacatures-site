@@ -6,8 +6,8 @@
 <title>Vacatures beheren | OG Clean Fuels</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../styles.css">
-<link rel="stylesheet" href="beheer.css">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/beheer/beheer.css">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
 <main class="beheer-main">
   <div class="beheer-header-rij">
     <h1>Vacatures</h1>
-    <a href="vacature.html" class="btn btn-klein">+ Nieuwe vacature</a>
+    <a href="/beheer/vacature.html" class="btn btn-klein">+ Nieuwe vacature</a>
   </div>
 
   <div id="melding"></div>
@@ -120,7 +120,7 @@
 
     const bewerkLink = document.createElement("a");
     bewerkLink.className = "btn btn-klein btn-secundair";
-    bewerkLink.href = "vacature.html?id=" + encodeURIComponent(vacature.id);
+    bewerkLink.href = "/beheer/vacature.html?id=" + encodeURIComponent(vacature.id);
     bewerkLink.textContent = "Bewerken";
     actiesCel.appendChild(bewerkLink);
 
