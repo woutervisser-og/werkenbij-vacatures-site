@@ -327,6 +327,23 @@ De aangeleverde logo-bestanden staan onder `images/logo/`; daaruit ook
 een icoon-only crop gesneden (kleur en wit) specifiek voor gebruik in de
 compacte header, naast de originele staande lockup-bestanden.
 
+## Afgerond: kop bij meer blokken, opsommingstekens i.p.v. iconen
+
+De blokken "Tekst", "Tekst in kolommen", "Afbeelding + tekst" en
+"Veelgestelde vragen" hebben nu net als de andere blokken een optioneel
+kop-veld.
+
+"Bullet-lijst" en "Arbeidsvoorwaarden-grid" gebruikten per punt een vrij
+in te vullen emoji als icoon; dat is verwijderd (uit zowel de
+beheer-editor als de weergave op de site). In plaats daarvan een vast
+opsommingsteken uit de huisstijl (een klein oranje blokje) voor ieder
+punt. Een eigen iconenset kan later eventueel alsnog toegevoegd worden,
+maar dat is bewust nog niet gedaan.
+
+De sluitingsdatum-banner ("Nog X dagen om te solliciteren") zag er al
+uit als een knop, maar deed niets bij een klik. Is nu een link die naar
+het sollicitatieformulier verderop op de pagina scrollt.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
