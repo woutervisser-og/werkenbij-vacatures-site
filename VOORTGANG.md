@@ -288,6 +288,24 @@ fout voor altijd herhalen zonder ooit opnieuw te proberen. Gefixt: een
 mislukte poging wordt niet meer gecached, de volgende aanroep probeert
 het gewoon opnieuw.
 
+## Afgerond: headerfoto sloeg op maar toonde niet, en beheer-overzicht opgeruimd
+
+Derde en laatste laag van hetzelfde headerfoto-probleem: de upload lukte
+nu wel, maar de afbeelding bleef onzichtbaar op de vacature-detailpagina.
+Oorzaak: `createIfNotExists({ access: "blob" })` past de publieke
+toegang alleen toe op het moment dat de container daadwerkelijk wordt
+aangemaakt. De "media"-container bestond echter al (aangemaakt tijdens
+de periode dat publieke blobtoegang nog uitstond), dus die optie had
+geen effect meer en de container bleef feitelijk privé. Gefixt door na
+`createIfNotExists` altijd expliciet `containerClient.setAccessPolicy
+("blob")` aan te roepen, ongeacht of de container al bestond. Lokaal
+end-to-end geverifieerd: upload → publieke GET zonder inlog → afbeelding
+laadt echt op de gegenereerde pagina.
+
+Daarnaast het vacature-overzicht in `/beheer` verbreed en de kolommen
+opnieuw verdeeld (titelkolom breder, actieknoppen lopen niet meer vast)
+op verzoek van Wouter.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
