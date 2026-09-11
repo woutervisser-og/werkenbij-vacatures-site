@@ -276,7 +276,17 @@ voor nieuw aangemaakte accounts). Onze mediabibliotheek heeft dit wél
 nodig, headerafbeeldingen moeten rechtstreeks door bezoekers geladen
 kunnen worden zonder in te loggen. Wouter heeft dit aangezet in Azure
 Portal → Storage Account → Configuratie → "Anonieme blobtoegang
-toestaan" → Ingeschakeld. Geen code- of deploy-wijziging nodig.
+toestaan" → Ingeschakeld.
+
+Dit loste het echter niet meteen op: de 500 bleef terugkomen met exact
+dezelfde RequestId en timestamp als vóór de instelling was aangepast.
+Oorzaak: `mediaContainer.js` (en dezelfde patroon in
+`cvBijlagenContainer.js`, `vacaturesTable.js`, `sollicitatiesTable.js`)
+cachte de container-/tabel-client als een lazy-promise, inclusief een
+FALENDE poging — eenmaal gefaald, bleef de Function-instance die oude
+fout voor altijd herhalen zonder ooit opnieuw te proberen. Gefixt: een
+mislukte poging wordt niet meer gecached, de volgende aanroep probeert
+het gewoon opnieuw.
 
 ## Nog open
 
