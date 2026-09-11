@@ -16,7 +16,10 @@
 
 <main class="beheer-main">
   <div class="beheer-header-rij">
-    <h1>Sollicitaties</h1>
+    <div>
+      <h1>Sollicitaties</h1>
+      <p class="beheer-subtitel" id="filter-context" hidden></p>
+    </div>
     <a href="/beheer/index.html" class="btn btn-klein btn-secundair">&larr; Terug naar vacatures</a>
   </div>
 
@@ -43,6 +46,30 @@
 
 <script>
   const STATUSSEN = ["nieuw", "in_behandeling", "afgewezen", "aangenomen", "bewaard", "gearchiveerd"];
+
+  // Vanuit het vacature-overzicht kan hierheen doorgeklikt worden met
+  // ?vacatureId=..., zodat alleen de sollicitaties voor die ene vacature
+  // getoond worden i.p.v. de volledige, ongefilterde lijst.
+  const zoekParams = new URLSearchParams(location.search);
+  const vacatureIdFilter = zoekParams.get("vacatureId");
+
+  function toonFilterContext(titel) {
+    const el = document.getElementById("filter-context");
+    if (!vacatureIdFilter) {
+      el.hidden = true;
+      return;
+    }
+    el.innerHTML = `Gefilterd op vacature: <strong>${titel || "(onbekende vacature)"}</strong> &middot; ` +
+      `<a href="/beheer/sollicitaties.html">alle sollicitaties tonen</a>`;
+    el.hidden = false;
+  }
+
+  if (vacatureIdFilter) {
+    fetch("/api/vacatures/" + encodeURIComponent(vacatureIdFilter))
+      .then(response => response.ok ? response.json() : null)
+      .then(vacature => toonFilterContext(vacature && vacature.titel))
+      .catch(() => toonFilterContext(null));
+  }
 
   fetch("/.auth/me")
     .then(r => r.json())
@@ -84,14 +111,20 @@
         const leegStatus = document.getElementById("leeg-status");
         tabelBody.innerHTML = "";
 
-        if (sollicitaties.length === 0) {
-          leegStatus.textContent = "Nog geen sollicitaties binnengekomen.";
+        const gefilterd = vacatureIdFilter
+          ? sollicitaties.filter(sollicitatie => sollicitatie.vacatureId === vacatureIdFilter)
+          : sollicitaties;
+
+        if (gefilterd.length === 0) {
+          leegStatus.textContent = vacatureIdFilter
+            ? "Nog geen sollicitaties voor deze vacature."
+            : "Nog geen sollicitaties binnengekomen.";
           leegStatus.hidden = false;
           tabel.hidden = true;
           return;
         }
 
-        sollicitaties
+        gefilterd
           .sort((a, b) => (b.ingediendOp || "").localeCompare(a.ingediendOp || ""))
           .forEach(sollicitatie => tabelBody.appendChild(maakSollicitatieRij(sollicitatie)));
 
