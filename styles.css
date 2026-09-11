@@ -392,15 +392,46 @@ footer .logo-footer {
   gap: 28px;
 }
 
+/* Volle-breedte uitgelichte quote: breekt bewust uit de vaste
+   contentbreedte, met een grote decoratieve aanhalingsteken erachter,
+   i.p.v. een generiek gekleurd tekstvakje. */
 .blok-quote {
-  background: var(--og-cream);
-  border-radius: 12px;
-  padding: 30px 34px;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  background: var(--og-orange-dark);
+  color: var(--og-white);
+  overflow: hidden;
+  position: relative;
+}
+.blok-quote-inner {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 6% 56px;
+}
+.blok-quote-mark {
+  position: absolute;
+  top: -6px;
+  left: 6%;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 150px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+}
+.blok-quote p {
+  position: relative;
   font-family: 'Anton', sans-serif;
-  font-size: 22px;
+  font-size: 28px;
   line-height: 1.3;
   text-transform: none;
-  color: var(--og-orange-dark);
+  max-width: 780px;
+  padding-top: 46px;
+}
+@media (max-width: 640px) {
+  .blok-quote p { font-size: 22px; }
+  .blok-quote-mark { font-size: 110px; }
 }
 
 .blok-afbeelding-tekst { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
@@ -437,7 +468,16 @@ footer .logo-footer {
 .blok-collega-quote blockquote { font-size: 16px; margin-bottom: 8px; }
 .blok-collega-naam { font-weight: 700; font-size: 14px; color: var(--og-orange-dark); }
 
-.blok-video { position: relative; padding-top: 56.25%; border-radius: 12px; overflow: hidden; }
+/* Ook volle breedte, voor een bioscoopachtig effect i.p.v. een video die
+   binnen de smalle contentkolom gepropt zit. */
+.blok-video {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-top: 42%;
+  overflow: hidden;
+}
 .blok-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 .blok-team { display: flex; flex-wrap: wrap; gap: 20px; }
