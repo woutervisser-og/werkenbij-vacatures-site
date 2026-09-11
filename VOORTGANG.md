@@ -252,6 +252,26 @@ Tot stand gekomen in een paar iteraties op basis van screenshot-feedback
 van Wouter (kaarten op over-ons.html moesten gelijk aan index.html,
 titels waren nog zwart, eyebrow/tag misten de kleurblok-achtergrond).
 
+## Afgerond: vacature-detailpagina opgeschoond
+
+- `uitgelichte_quote`-blok herontworpen: volle-breedte donker-oranje
+  band met een grote decoratieve aanhalingsteken, i.p.v. een generiek
+  gekleurd tekstvakje.
+- `video_embed`-blok breekt nu ook uit naar volle schermbreedte.
+- Foto-upload (headerfoto en afbeeldingen binnen body-blokken) stuurde
+  het Content-Type van de browser mee i.p.v. `application/octet-stream`,
+  inconsistent met hoe het sollicitatieformulier dat al deed. Gefixt —
+  waarschijnlijke oorzaak van de headerfoto-upload die in productie niet
+  aankwam. Kon dit niet 1-op-1 reproduceren op de lokale
+  Azurite-emulator (minder streng dan de echte Azure Functions-runtime
+  bij binaire uploads), dus **check na de eerstvolgende build of dit
+  daadwerkelijk oploste.**
+- De 4 vaste stockfoto's onder de omschrijving (office-sfeer.webp e.a.)
+  verwijderd: een leftover uit de oorspronkelijke SharePoint-build.
+- De gemelde "omschrijving bij sollicitatieproces niet zichtbaar" bleek
+  bij grondig testen (API, editor-rondgang, gegenereerde pagina) overal
+  correct te werken; geen bug gevonden.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
