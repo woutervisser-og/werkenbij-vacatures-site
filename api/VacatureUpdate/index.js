@@ -5,6 +5,7 @@ const {
   PARTITION_KEY,
   ALLOWED_STATUSSEN
 } = require("../shared/vacaturesTable");
+const { triggerRebuild, raaktPubliekeSite } = require("../shared/rebuildTrigger");
 
 module.exports = async function (context, req) {
   const id = context.bindingData.id;
@@ -31,6 +32,10 @@ module.exports = async function (context, req) {
     );
 
     await tableClient.updateEntity(bijgewerkt, "Replace");
+
+    if (raaktPubliekeSite(bestaandeVacature.status, bijgewerkt.status)) {
+      await triggerRebuild(context);
+    }
 
     context.res = {
       status: 200,

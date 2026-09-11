@@ -1,4 +1,5 @@
 const { getVacaturesTableClient, toEntity, toVacatureDto } = require("../shared/vacaturesTable");
+const { triggerRebuild } = require("../shared/rebuildTrigger");
 
 const TICK_SECRET = process.env.VACATURES_TICK_SECRET;
 
@@ -32,6 +33,12 @@ module.exports = async function (context, req) {
     "gesloten",
     vacature => vacature.sluitingsdatum && new Date(vacature.sluitingsdatum) <= nu
   );
+
+  // Elke overgang hier raakt de grens met "gepubliceerd" (erin of eruit),
+  // dus 1 rebuild is genoeg voor de hele run.
+  if (aantalGepubliceerd + aantalGesloten > 0) {
+    await triggerRebuild(context);
+  }
 
   context.res = {
     status: 200,

@@ -1,4 +1,5 @@
 const { getVacaturesTableClient, PARTITION_KEY } = require("../shared/vacaturesTable");
+const { triggerRebuild, raaktPubliekeSite } = require("../shared/rebuildTrigger");
 
 // Voor een bewust ingetrokken vacature is meestal de status "gearchiveerd"
 // (via VacatureUpdate) het juiste middel, dit is echte, onomkeerbare
@@ -8,7 +9,12 @@ module.exports = async function (context, req) {
 
   try {
     const tableClient = await getVacaturesTableClient();
+    const bestaand = await tableClient.getEntity(PARTITION_KEY, id);
     await tableClient.deleteEntity(PARTITION_KEY, id);
+
+    if (raaktPubliekeSite(bestaand.status, null)) {
+      await triggerRebuild(context);
+    }
 
     context.res = { status: 204 };
   } catch (error) {
