@@ -4,8 +4,8 @@
    en "Open Sans" (nu zelf gehost i.p.v. via de Google Fonts CDN). */
 @font-face {
   font-family: 'Komu';
-  src: url('fonts/Komu-Regular.woff2') format('woff2');
-  font-weight: 400;
+  src: url('fonts/Komu-Bold.woff2') format('woff2');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
