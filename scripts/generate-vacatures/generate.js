@@ -171,7 +171,12 @@ function renderBlok(blok, vacature) {
       </div>`;
 
     case "uitgelichte_quote":
-      return `<blockquote class="blok blok-quote">${escapeHtml(blok.quote)}</blockquote>`;
+      return `<blockquote class="blok blok-quote">
+        <div class="blok-quote-inner">
+          <span class="blok-quote-mark" aria-hidden="true">&ldquo;</span>
+          <p>${escapeHtml(blok.quote)}</p>
+        </div>
+      </blockquote>`;
 
     case "afbeelding_tekst":
       return `<div class="blok blok-afbeelding-tekst blok-richting-${blok.richting === "rechts" ? "rechts" : "links"}">
@@ -302,23 +307,6 @@ ${bouwJsonLd(vacature)}
   .form-veld-fout { color: #b3261e; font-size: 13px; margin-top: 4px; }
   #sollicitatie-form fieldset[disabled] { opacity: 0.6; }
 
-  .sfeer-galerij {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 14px;
-    margin: 40px 0;
-  }
-  .sfeer-foto {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 10px;
-    display: block;
-    transition: transform 0.35s ease, filter 0.35s ease;
-    filter: saturate(0.95);
-  }
-  .sfeer-foto:hover { transform: scale(1.04); filter: saturate(1.1); }
-
   .recruiter-blok {
     background: var(--og-cream);
     border-radius: 12px;
@@ -384,13 +372,6 @@ ${renderHeader(vacature)}
   </div>
 
   <div class="detail-omschrijving reveal">${renderBlokken(vacature)}</div>
-
-  <div class="sfeer-galerij reveal">
-    <img class="sfeer-foto" src="/images/office-sfeer.webp" alt="Sfeerbeeld op kantoor bij OG Clean Fuels">
-    <img class="sfeer-foto" src="/images/Servicemonteur-FR.webp" alt="Servicemonteur aan het werk in Frankrijk">
-    <img class="sfeer-foto" src="/images/Wilco-theoffice.webp" alt="Collega op kantoor bij OG Clean Fuels">
-    <img class="sfeer-foto" src="/images/servicetech-DE-1.webp" alt="Technicus aan het werk in Duitsland">
-  </div>
 
   <div class="recruiter-blok reveal">
     <div class="recruiter-foto-blok">

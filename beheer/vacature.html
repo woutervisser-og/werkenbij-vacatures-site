@@ -248,7 +248,7 @@
     toonMelding("Foto wordt geüpload...", "ok");
     fetch("/api/media?bestandsnaam=" + encodeURIComponent(bestand.name), {
       method: "POST",
-      headers: { "Content-Type": bestand.type },
+      headers: { "Content-Type": "application/octet-stream" },
       body: bestand
     })
       .then(response => {
@@ -440,7 +440,7 @@
       if (!bestand) return;
       fetch("/api/media?bestandsnaam=" + encodeURIComponent(bestand.name), {
         method: "POST",
-        headers: { "Content-Type": bestand.type },
+        headers: { "Content-Type": "application/octet-stream" },
         body: bestand
       })
         .then(response => {
