@@ -17,7 +17,7 @@ body { background: var(--og-grey); }
 .beheer-gebruiker a { color: var(--og-orange-dark); text-decoration: none; font-weight: 600; margin-left: 14px; }
 
 .beheer-main {
-  max-width: 1000px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 48px 6% 90px;
 }
@@ -75,8 +75,16 @@ table.beheer-tabel th {
   color: #767672;
   background: var(--og-grey);
 }
+
+/* Meer ruimte voor de titelkolom, zodat die niet onnodig over 3 regels
+   uitvalt in een brede tabel; de actiekolom (Bewerken/Verwijderen) mag
+   nooit krimpen. */
+#vacature-tabel th:nth-child(1) { width: 32%; }
+#vacature-tabel th:nth-child(2) { width: 16%; }
+#vacature-tabel th:nth-child(3) { width: 14%; }
+#vacature-tabel th:nth-child(4) { width: 16%; }
 table.beheer-tabel tr:last-child td { border-bottom: none; }
-table.beheer-tabel td.acties { display: flex; gap: 8px; justify-content: flex-end; }
+table.beheer-tabel td.acties { display: flex; gap: 8px; justify-content: flex-end; white-space: nowrap; }
 
 .status-badge {
   display: inline-block;

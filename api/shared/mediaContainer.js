@@ -25,6 +25,14 @@ function getMediaContainerClient() {
       const serviceClient = BlobServiceClient.fromConnectionString(CONNECTION_STRING);
       const containerClient = serviceClient.getContainerClient(CONTAINER_NAME);
       await containerClient.createIfNotExists({ access: "blob" });
+      // De "access"-optie hierboven werkt alleen bij het daadwerkelijk
+      // aanmaken van de container. Als de container al bestond (bv. een
+      // eerdere poging die de container wél aanmaakte maar niet publiek
+      // kon zetten, toen "Anonieme blobtoegang toestaan" op het
+      // storage-account nog uitstond), verandert createIfNotExists niets
+      // aan een bestaande container. Daarom hier expliciet en altijd
+      // opnieuw de toegang instellen, ongeacht of de container al bestond.
+      await containerClient.setAccessPolicy("blob");
       return containerClient;
     })().catch(error => {
       // Een mislukte poging niet permanent laten "vastzitten": zonder dit
