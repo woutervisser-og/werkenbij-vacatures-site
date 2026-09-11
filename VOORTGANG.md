@@ -260,17 +260,23 @@ titels waren nog zwart, eyebrow/tag misten de kleurblok-achtergrond).
 - `video_embed`-blok breekt nu ook uit naar volle schermbreedte.
 - Foto-upload (headerfoto en afbeeldingen binnen body-blokken) stuurde
   het Content-Type van de browser mee i.p.v. `application/octet-stream`,
-  inconsistent met hoe het sollicitatieformulier dat al deed. Gefixt —
-  waarschijnlijke oorzaak van de headerfoto-upload die in productie niet
-  aankwam. Kon dit niet 1-op-1 reproduceren op de lokale
-  Azurite-emulator (minder streng dan de echte Azure Functions-runtime
-  bij binaire uploads), dus **check na de eerstvolgende build of dit
-  daadwerkelijk oploste.**
+  inconsistent met hoe het sollicitatieformulier dat al deed. Gefixt,
+  maar bleek niet de (enige) oorzaak van de falende headerfoto-upload.
 - De 4 vaste stockfoto's onder de omschrijving (office-sfeer.webp e.a.)
   verwijderd: een leftover uit de oorspronkelijke SharePoint-build.
 - De gemelde "omschrijving bij sollicitatieproces niet zichtbaar" bleek
   bij grondig testen (API, editor-rondgang, gegenereerde pagina) overal
   correct te werken; geen bug gevonden.
+
+## Afgerond: headerfoto-upload gaf 500 ("Public access is not permitted")
+
+Echte oorzaak van de falende headerfoto-upload: de Storage Account had
+"Anonieme blobtoegang toestaan" uitgeschakeld (de huidige Azure-default
+voor nieuw aangemaakte accounts). Onze mediabibliotheek heeft dit wél
+nodig, headerafbeeldingen moeten rechtstreeks door bezoekers geladen
+kunnen worden zonder in te loggen. Wouter heeft dit aangezet in Azure
+Portal → Storage Account → Configuratie → "Anonieme blobtoegang
+toestaan" → Ingeschakeld. Geen code- of deploy-wijziging nodig.
 
 ## Nog open
 
