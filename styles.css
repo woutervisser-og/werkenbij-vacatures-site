@@ -63,23 +63,68 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 6%;
+  padding: 20px 6%;
   background: var(--og-white);
   border-bottom: 1px solid #eee;
   position: sticky;
   top: 0;
   z-index: 50;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Op pagina's met een hero (zie ".pagina-met-hero" op <body>) overlapt de
+   header de hero: transparant met een wit logo bovenaan, en zodra je
+   voorbij de hero scrolt (".header-solide", door animations.js
+   toegevoegd) wordt hij weer een gewone effen witte balk. Andere
+   pagina's (bv. vacatures.html, zonder hero) behouden gewoon de effen
+   witte header van hierboven. */
+body.pagina-met-hero header {
+  position: fixed;
+  left: 0;
+  width: 100%;
+}
+body.pagina-met-hero header:not(.header-solide) {
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+body.pagina-met-hero header.header-solide {
+  box-shadow: 0 2px 14px rgba(0,0,0,0.06);
 }
 
 .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo-icoon-wrap {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+.logo-icoon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s ease;
+}
+.logo-icoon-kleur { opacity: 1; }
+.logo-icoon-wit { opacity: 0; }
+.logo-tekst {
   font-family: 'Anton', sans-serif;
-  font-size: 22px;
+  font-size: 20px;
   color: var(--og-dark);
   letter-spacing: -0.01em;
-  text-decoration: none;
   text-transform: uppercase;
+  transition: color 0.3s ease;
 }
-.logo span { color: var(--og-orange); }
+
+body.pagina-met-hero header:not(.header-solide) .logo-icoon-kleur { opacity: 0; }
+body.pagina-met-hero header:not(.header-solide) .logo-icoon-wit { opacity: 1; }
+body.pagina-met-hero header:not(.header-solide) .logo-tekst { color: var(--og-white); }
 
 header nav a {
   position: relative;
@@ -89,6 +134,7 @@ header nav a {
   font-size: 15px;
   margin-left: 32px;
   padding-bottom: 4px;
+  transition: color 0.3s ease;
 }
 header nav a::after {
   content: "";
@@ -102,6 +148,11 @@ header nav a::after {
 header nav a:hover::after,
 header nav a.active::after { width: 100%; }
 header nav a.active { color: var(--og-orange-dark); }
+
+body.pagina-met-hero header:not(.header-solide) nav a,
+body.pagina-met-hero header:not(.header-solide) nav a.active {
+  color: var(--og-white);
+}
 
 /* ===== Label tag, zoals "COLOR PALETTE" in het brandbook ===== */
 .label-tag {
@@ -216,6 +267,70 @@ header nav a.active { color: var(--og-orange-dark); }
   color: var(--og-white);
 }
 .btn-outline:hover { background: rgba(255,255,255,0.15); }
+
+/* ===== Vacature-hero (headerfoto/video van een vacature) =====
+   Titel, meta-info en CTA overlayen rechtstreeks op de headerafbeelding,
+   met een donkere schaduw-gradient voor leesbaarheid. Werkt samen met de
+   transparante header hierboven ("pagina-met-hero" op <body>): de header
+   overlapt deze hero net als op de andere pagina's. */
+.vacature-hero {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--og-dark);
+}
+.vacature-hero-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vacature-hero-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.vacature-hero-schaduw {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.8) 100%);
+}
+.vacature-hero-content {
+  position: relative;
+  z-index: 1;
+  color: var(--og-white);
+  padding: 150px 6% 56px;
+  max-width: 780px;
+}
+.vacature-hero-content h1 {
+  font-size: 44px;
+  margin: 16px 0 20px;
+  color: var(--og-white);
+}
+.vacature-hero-content .detail-meta { margin-bottom: 28px; }
+.vacature-hero-content .meta-pill { background: rgba(255,255,255,0.18); color: var(--og-white); }
+.vacature-hero-content .btn { margin-right: 0; }
+
+.broodkruimel {
+  padding: 16px 6%;
+  font-size: 13.5px;
+  color: #767672;
+}
+.broodkruimel a { color: #767672; text-decoration: none; }
+.broodkruimel a:hover { color: var(--og-orange-dark); text-decoration: underline; }
+.broodkruimel .scheiding { margin: 0 6px; }
+
+@media (max-width: 640px) {
+  .vacature-hero { min-height: 420px; }
+  .vacature-hero-content { padding: 120px 6% 40px; }
+  .vacature-hero-content h1 { font-size: 30px; }
+}
 
 /* ===== Content sections ===== */
 section.content {
