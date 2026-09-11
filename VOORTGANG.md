@@ -373,6 +373,22 @@ daadwerkelijke fontbestanden aangeleverd.
   meegenomen: de aangeleverde variabele font dekt dat hele
   gewicht-bereik al in 1 bestand.
 
+## Afgerond: het juiste Komu-lettertype-bestand gevonden
+
+Vervolg op de eigen-lettertypes-migratie hierboven: de eerder aangeleverde
+bestanden ("KOMU B (2).otf" en een herupload via fonnts.com) bleken
+byte-voor-byte identiek en een andere, lichtere snit ("Komu Book") dan wat
+ogcleanfuels.com daadwerkelijk gebruikt — bevestigd via devtools
+(font-family/font-weight klopten wel, de snit niet) en een glyph-
+vergelijking. Wouter heeft het echte bestand rechtstreeks uit de
+Network-tab van de live site gehaald: `Komu-Bold.woff2`. Dat is nu
+verwerkt in `fonts/`, de foute bestanden zijn verwijderd.
+
+Open puntje: mogelijk past de corporate site nog een `transform` of
+`letter-spacing` toe op de grote hero-titel (768px+ media query) die niet
+volledig zichtbaar was in de aangeleverde devtools-screenshot. Nog te
+bevestigen door Wouter.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
