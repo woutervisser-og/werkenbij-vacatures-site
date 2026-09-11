@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sollicitaties beheren | OG Clean Fuels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/beheer/beheer.css">
+</head>
+<body>
+
+<div class="beheer-topbar">
+  <span class="logo">o<span>g</span> clean fuels — beheer</span>
+  <span class="beheer-gebruiker" id="gebruiker-info"></span>
+</div>
+
+<main class="beheer-main">
+  <div class="beheer-header-rij">
+    <h1>Sollicitaties</h1>
+    <a href="/beheer/index.html" class="btn btn-klein btn-secundair">&larr; Terug naar vacatures</a>
+  </div>
+
+  <div id="melding"></div>
+
+  <div class="beheer-tabel-wrap">
+    <table class="beheer-tabel" id="sollicitatie-tabel" hidden>
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th>Vacature</th>
+          <th>Contact</th>
+          <th>Ingediend</th>
+          <th>Status</th>
+          <th>Bijlagen</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="sollicitatie-tabel-body"></tbody>
+    </table>
+    <div class="beheer-leeg" id="leeg-status">Sollicitaties laden...</div>
+  </div>
+</main>
+
+<script>
+  const STATUSSEN = ["nieuw", "in_behandeling", "afgewezen", "aangenomen", "bewaard", "gearchiveerd"];
+
+  fetch("/.auth/me")
+    .then(r => r.json())
+    .then(data => {
+      const principal = data.clientPrincipal;
+      if (principal) {
+        document.getElementById("gebruiker-info").innerHTML =
+          `Ingelogd als ${principal.userDetails} <a href="/.auth/logout?post_logout_redirect_uri=/">Uitloggen</a>`;
+      }
+    })
+    .catch(() => {});
+
+  function formatteerDatum(isoDatum) {
+    if (!isoDatum) return "—";
+    const datum = new Date(isoDatum);
+    if (isNaN(datum)) return "—";
+    return datum.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  }
+
+  function toonMelding(tekst, type) {
+    const meldingEl = document.getElementById("melding");
+    meldingEl.innerHTML = "";
+    if (!tekst) return;
+    const el = document.createElement("div");
+    el.className = "melding melding-" + type;
+    el.textContent = tekst;
+    meldingEl.appendChild(el);
+  }
+
+  function laadSollicitaties() {
+    fetch("/api/sollicitatiebeheer")
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(sollicitaties => {
+        const tabel = document.getElementById("sollicitatie-tabel");
+        const tabelBody = document.getElementById("sollicitatie-tabel-body");
+        const leegStatus = document.getElementById("leeg-status");
+        tabelBody.innerHTML = "";
+
+        if (sollicitaties.length === 0) {
+          leegStatus.textContent = "Nog geen sollicitaties binnengekomen.";
+          leegStatus.hidden = false;
+          tabel.hidden = true;
+          return;
+        }
+
+        sollicitaties
+          .sort((a, b) => (b.ingediendOp || "").localeCompare(a.ingediendOp || ""))
+          .forEach(sollicitatie => tabelBody.appendChild(maakSollicitatieRij(sollicitatie)));
+
+        tabel.hidden = false;
+        leegStatus.hidden = true;
+      })
+      .catch(error => {
+        document.getElementById("leeg-status").textContent =
+          "Er ging iets mis bij het laden van de sollicitaties.";
+        console.error(error);
+      });
+  }
+
+  function maakSollicitatieRij(sollicitatie) {
+    const rij = document.createElement("tr");
+
+    const naamCel = document.createElement("td");
+    naamCel.textContent = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
+    rij.appendChild(naamCel);
+
+    const vacatureCel = document.createElement("td");
+    vacatureCel.textContent = sollicitatie.vacatureTitel || "—";
+    rij.appendChild(vacatureCel);
+
+    const contactCel = document.createElement("td");
+    contactCel.innerHTML = `<a href="mailto:${encodeURIComponent(sollicitatie.email || "")}">${sollicitatie.email || "—"}</a>` +
+      (sollicitatie.telefoon ? `<br>${sollicitatie.telefoon}` : "");
+    rij.appendChild(contactCel);
+
+    const datumCel = document.createElement("td");
+    datumCel.textContent = formatteerDatum(sollicitatie.ingediendOp);
+    rij.appendChild(datumCel);
+
+    const statusCel = document.createElement("td");
+    const statusSelect = document.createElement("select");
+    STATUSSEN.forEach(status => {
+      const optie = document.createElement("option");
+      optie.value = status;
+      optie.textContent = status.replace("_", " ");
+      if (status === sollicitatie.status) optie.selected = true;
+      statusSelect.appendChild(optie);
+    });
+    statusSelect.addEventListener("change", () => wijzigStatus(sollicitatie.id, statusSelect.value));
+    statusCel.appendChild(statusSelect);
+    rij.appendChild(statusCel);
+
+    const bijlagenCel = document.createElement("td");
+    const cvLink = document.createElement("a");
+    cvLink.href = "/api/sollicitatiebeheer/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=cv";
+    cvLink.textContent = "CV";
+    cvLink.className = "btn btn-klein btn-secundair";
+    bijlagenCel.appendChild(cvLink);
+    if (sollicitatie.motivatiebriefNaam) {
+      const briefLink = document.createElement("a");
+      briefLink.href = "/api/sollicitatiebeheer/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=motivatiebrief";
+      briefLink.textContent = "Motivatiebrief";
+      briefLink.className = "btn btn-klein btn-secundair";
+      briefLink.style.marginLeft = "6px";
+      bijlagenCel.appendChild(briefLink);
+    }
+    rij.appendChild(bijlagenCel);
+
+    const actiesCel = document.createElement("td");
+    actiesCel.className = "acties";
+    const verwijderKnop = document.createElement("button");
+    verwijderKnop.className = "btn btn-klein btn-gevaar";
+    verwijderKnop.textContent = "Verwijderen";
+    verwijderKnop.addEventListener("click", () => verwijderSollicitatie(sollicitatie.id, naamCel.textContent));
+    actiesCel.appendChild(verwijderKnop);
+    rij.appendChild(actiesCel);
+
+    return rij;
+  }
+
+  function wijzigStatus(id, status) {
+    fetch("/api/sollicitatiebeheer/" + encodeURIComponent(id), {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status })
+    })
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        toonMelding("Status bijgewerkt.", "ok");
+      })
+      .catch(error => {
+        toonMelding("Status bijwerken is mislukt.", "fout");
+        console.error(error);
+      });
+  }
+
+  function verwijderSollicitatie(id, naam) {
+    if (!confirm(`Sollicitatie van "${naam}" definitief verwijderen?`)) return;
+
+    fetch("/api/sollicitatiebeheer/" + encodeURIComponent(id), { method: "DELETE" })
+      .then(response => {
+        if (!response.ok && response.status !== 204) throw new Error("Status: " + response.status);
+        toonMelding("Sollicitatie verwijderd.", "ok");
+        laadSollicitaties();
+      })
+      .catch(error => {
+        toonMelding("Verwijderen is mislukt.", "fout");
+        console.error(error);
+      });
+  }
+
+  laadSollicitaties();
+</script>
+
+</body>
+</html>

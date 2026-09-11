@@ -297,6 +297,10 @@ ${bouwJsonLd(vacature)}
   .form-veld input:focus, .form-veld textarea:focus { border-color: var(--og-orange); outline: none; }
   .form-veld textarea { min-height: 100px; resize: vertical; }
   #form-status { margin-top: 14px; font-size: 14px; font-weight: 600; }
+  #form-status.form-status-ok { color: var(--og-green-dark); }
+  #form-status.form-status-fout { color: #b3261e; }
+  .form-veld-fout { color: #b3261e; font-size: 13px; margin-top: 4px; }
+  #sollicitatie-form fieldset[disabled] { opacity: 0.6; }
 
   .sfeer-galerij {
     display: grid;
@@ -404,7 +408,8 @@ ${renderHeader(vacature)}
   <div class="solliciteer-blok reveal">
     <h3 style="margin-bottom:20px;">Solliciteer direct</h3>
     <form id="sollicitatie-form">
-      <input type="hidden" name="vacancy" value="${escapeHtml(vacature.titel)}">
+      <input type="hidden" name="vacatureId" value="${escapeHtml(vacature.id)}">
+      <fieldset id="sollicitatie-velden" style="border:0;padding:0;margin:0;">
       <div class="form-veld">
         <label for="first_name">Voornaam</label>
         <input type="text" id="first_name" name="first_name" required>
@@ -434,7 +439,8 @@ ${renderHeader(vacature)}
         <input type="file" id="motivation_letter" name="motivation_letter" accept=".pdf,.doc,.docx">
       </div>
       <button type="submit" class="btn" id="submit-btn">Versturen</button>
-      <div id="form-status"></div>
+      </fieldset>
+      <div id="form-status" role="status" aria-live="polite"></div>
     </form>
   </div>
 </section>

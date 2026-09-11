@@ -11,6 +11,10 @@
     {
       "route": "/api/media*",
       "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/sollicitatiebeheer/*",
+      "allowedRoles": ["authenticated"]
     }
   ],
   "responseOverrides": {
