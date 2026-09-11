@@ -107,6 +107,14 @@ de chat gedeeld op het moment dat ze nodig zijn.
   aan een live vacature, sluiten, verwijderen van een live vs. een
   niet-live vacature, en dat een tick-run met meerdere statuswijzigingen
   precies 1 keer triggert, niet per vacature.
+- Bug gevonden en gefixt: "+ Nieuwe vacature" in `/beheer` gaf een 404.
+  Oorzaak: Azure Static Web Apps serveert `/beheer` (zonder trailing
+  slash) server-side als `beheer/index.html`, zonder de URL-balk aan te
+  passen naar `/beheer/`. De relatieve links in `beheer/index.html` en
+  `beheer/vacature.html` (`vacature.html`, `index.html`, `../styles.css`)
+  resolveerden daardoor tegen het verkeerde basispad. Opgelost door alle
+  links en stylesheets in `beheer/` absoluut te maken. Lokaal getest met
+  een Playwright-scenario dat dit exacte gedrag nabootst.
 
 ## Beslissing: SKU-upgrade uitgesteld
 
@@ -152,37 +160,35 @@ workflow-wijziging nodig.
 Static Web App, en als GitHub Actions repository secret), met dezelfde
 waarde. `VacaturesTick` en de cron-workflow werken nu.
 
-## Actie nodig: site staat nu leeg
+## Afgerond: admin consent voor Werkenbij-HR-Portaal
 
-Sinds de omzetting van `GetVacatures` naar Table Storage (en de merge
-daarvan) toont de site **geen vacatures meer**: de oude SharePoint-
-vacatures vervallen, en er staat nog niets als "gepubliceerd" in Table
-Storage. Bevestigd door Wouter. Actie: de vacatures die eerder in
-SharePoint stonden opnieuw aanmaken in `/beheer` en op status
-"gepubliceerd" zetten, dan verschijnen ze bij de eerstvolgende build weer
-op de site.
+Een tenant-beheerder heeft admin consent gegeven. Wouter kan nu inloggen
+op `/beheer`.
 
-## Geblokkeerd: admin consent bij inloggen op /beheer
+## Afgerond: GITHUB_REBUILD_TOKEN
 
-Wouter komt er niet in: Entra ID vraagt een goedkeuring ("approval
-required") bij het inloggen op de App Registration `Werkenbij-HR-Portaal`.
-Dit is typisch een tenant-instelling die user consent voor nieuwe
-apps blokkeert, een tenant-beheerder moet eenmalig admin consent geven
-voor deze App Registration (Entra admin center → App registrations →
-Werkenbij-HR-Portaal → API permissions → "Grant admin consent for
-[tenant]"). Moet opgelost worden voordat de vacatures opnieuw
-aangemaakt kunnen worden in `/beheer`. **Ligt nu bij de IT-afdeling.**
+Personal access token aangemaakt en als Application Setting
+`GITHUB_REBUILD_TOKEN` op de Static Web App gezet. Een statuswijziging in
+`/beheer` triggert vanaf nu automatisch een nieuwe build, in plaats van te
+wachten op de vaste 9:00/14:00-build.
 
-## Volgende stap (GITHUB_REBUILD_TOKEN)
+## Bezig: site vullen met vacatures
 
-- Een GitHub **fine-grained personal access token** aanmaken, alleen
-  scoped tot deze repository, met permission "Actions: Read and write"
-  (GitHub → instellingen van je account → Developer settings → Personal
-  access tokens → Fine-grained tokens → Generate new token).
-- Deze token als Application Setting instellen op de Static Web App:
-  naam `GITHUB_REBUILD_TOKEN`, waarde het gegenereerde token. Zonder deze
-  instelling wordt er nog geen rebuild getriggerd bij een
-  statuswijziging (valt dan terug op de vaste 9:00/14:00-build).
+Sinds de omzetting van `GetVacatures` naar Table Storage stond de site
+leeg (oude SharePoint-vacatures vervallen). Wouter is deze aan het
+opnieuw aanmaken in `/beheer`: 1 testvacature staat er al in.
+
+Daarbij kwam een 404 op de gegenereerde detailpagina naar boven: die is
+statisch (gegenereerd bij een build), en er was nog geen build geweest
+sinds het aanmaken van die testvacature (`GITHUB_REBUILD_TOKEN` stond op
+dat moment nog niet). Opgelost met een eenmalige handmatige
+`workflow_dispatch`-trigger; met het token nu actief gebeurt dit
+voortaan automatisch.
+
+Nog te doen: 3 extra testvacatures. Wouter kan dit zelf in `/beheer`, of
+Claude levert de content aan om te kopiëren/plakken (netwerktoegang tot
+de live site ontbreekt vanuit de sandbox, dus zelf de API aanroepen kan
+niet).
 
 ## Nog open
 
