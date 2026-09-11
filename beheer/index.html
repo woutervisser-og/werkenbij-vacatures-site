@@ -25,21 +25,8 @@
 
   <div id="melding"></div>
 
-  <div class="beheer-tabel-wrap">
-    <table class="beheer-tabel" id="vacature-tabel" hidden>
-      <thead>
-        <tr>
-          <th>Titel</th>
-          <th>Afdeling</th>
-          <th>Status</th>
-          <th>Sluitingsdatum</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="vacature-tabel-body"></tbody>
-    </table>
-    <div class="beheer-leeg" id="leeg-status">Vacatures laden...</div>
-  </div>
+  <div id="vacature-secties"></div>
+  <div class="beheer-leeg" id="leeg-status">Vacatures laden...</div>
 </main>
 
 <script>
@@ -61,37 +48,143 @@
     return datum.toLocaleDateString("nl-NL");
   }
 
+  // Vaste volgorde van de status-secties: actief/relevant eerst,
+  // gearchiveerd als laatste, eigen sectie (i.p.v. tussen de actieve
+  // vacatures door zoals voorheen in 1 platte tabel).
+  const STATUS_VOLGORDE = ["gepubliceerd", "ingepland", "concept", "gesloten", "gearchiveerd"];
+  const STATUS_LABELS = {
+    gepubliceerd: "Gepubliceerd",
+    ingepland: "Ingepland",
+    concept: "Concept",
+    gesloten: "Gesloten",
+    gearchiveerd: "Gearchiveerd"
+  };
+  const KOLOMMEN = [
+    { key: "titel", label: "Titel" },
+    { key: "afdeling", label: "Afdeling" },
+    { key: "sluitingsdatum", label: "Sluitingsdatum" },
+    { key: "sollicitaties", label: "Sollicitaties" }
+  ];
+
+  let alleVacatures = [];
+  let sollicitatieAantallen = {}; // vacatureId -> aantal
+  let sorteerKolom = "titel";
+  let sorteerRichting = "asc";
+
   function laadVacatures() {
-    fetch("/api/vacatures")
-      .then(response => {
+    Promise.all([
+      fetch("/api/vacatures").then(response => {
         if (!response.ok) throw new Error("Status: " + response.status);
         return response.json();
-      })
-      .then(vacatures => {
-        const tabel = document.getElementById("vacature-tabel");
-        const tabelBody = document.getElementById("vacature-tabel-body");
-        const leegStatus = document.getElementById("leeg-status");
-        tabelBody.innerHTML = "";
-
-        if (vacatures.length === 0) {
-          leegStatus.textContent = "Nog geen vacatures. Klik op '+ Nieuwe vacature' om te beginnen.";
-          leegStatus.hidden = false;
-          tabel.hidden = true;
-          return;
-        }
-
-        vacatures
-          .sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""))
-          .forEach(vacature => tabelBody.appendChild(maakVacatureRij(vacature)));
-
-        tabel.hidden = false;
-        leegStatus.hidden = true;
+      }),
+      // Aantal sollicitaties per vacature: als dit om wat voor reden ook
+      // faalt, gewoon zonder tellers verder gaan i.p.v. de hele pagina te
+      // laten breken.
+      fetch("/api/sollicitatiebeheer")
+        .then(response => response.ok ? response.json() : [])
+        .catch(() => [])
+    ])
+      .then(([vacatures, sollicitaties]) => {
+        alleVacatures = vacatures;
+        sollicitatieAantallen = {};
+        (sollicitaties || []).forEach(sollicitatie => {
+          if (!sollicitatie.vacatureId) return;
+          sollicitatieAantallen[sollicitatie.vacatureId] = (sollicitatieAantallen[sollicitatie.vacatureId] || 0) + 1;
+        });
+        renderVacatures();
       })
       .catch(error => {
         document.getElementById("leeg-status").textContent =
           "Er ging iets mis bij het laden van de vacatures.";
         console.error(error);
       });
+  }
+
+  function maakVergelijker(kolom, richting) {
+    const factor = richting === "asc" ? 1 : -1;
+    return (a, b) => {
+      if (kolom === "sollicitaties") {
+        const aantalA = sollicitatieAantallen[a.id] || 0;
+        const aantalB = sollicitatieAantallen[b.id] || 0;
+        return (aantalA - aantalB) * factor;
+      }
+      const waardeA = (a[kolom] || "").toLowerCase();
+      const waardeB = (b[kolom] || "").toLowerCase();
+      return waardeA.localeCompare(waardeB) * factor;
+    };
+  }
+
+  function renderVacatures() {
+    const container = document.getElementById("vacature-secties");
+    const leegStatus = document.getElementById("leeg-status");
+    container.innerHTML = "";
+
+    if (alleVacatures.length === 0) {
+      leegStatus.textContent = "Nog geen vacatures. Klik op '+ Nieuwe vacature' om te beginnen.";
+      leegStatus.hidden = false;
+      return;
+    }
+    leegStatus.hidden = true;
+
+    const gesorteerd = [...alleVacatures].sort(maakVergelijker(sorteerKolom, sorteerRichting));
+
+    STATUS_VOLGORDE.forEach(status => {
+      const vacaturesInSectie = gesorteerd.filter(v => (v.status || "concept") === status);
+      if (vacaturesInSectie.length === 0) return;
+      container.appendChild(maakStatusSectie(status, vacaturesInSectie));
+    });
+  }
+
+  function maakStatusSectie(status, vacatures) {
+    const sectie = document.createElement("section");
+    sectie.className = "beheer-sectie";
+
+    const kop = document.createElement("h2");
+    kop.className = "beheer-sectie-kop";
+    kop.textContent = (STATUS_LABELS[status] || status) + " ";
+    const aantal = document.createElement("span");
+    aantal.className = "beheer-sectie-aantal";
+    aantal.textContent = vacatures.length;
+    kop.appendChild(aantal);
+    sectie.appendChild(kop);
+
+    const wrap = document.createElement("div");
+    wrap.className = "beheer-tabel-wrap";
+    const tabel = document.createElement("table");
+    tabel.className = "beheer-tabel tabel-vacatures";
+
+    const thead = document.createElement("thead");
+    const headRij = document.createElement("tr");
+    KOLOMMEN.forEach(kolomDef => {
+      const th = document.createElement("th");
+      th.className = "sorteerbaar";
+      th.textContent = kolomDef.label;
+      if (sorteerKolom === kolomDef.key) {
+        th.textContent += sorteerRichting === "asc" ? " ▲" : " ▼";
+        th.classList.add("sorteer-actief");
+      }
+      th.addEventListener("click", () => {
+        if (sorteerKolom === kolomDef.key) {
+          sorteerRichting = sorteerRichting === "asc" ? "desc" : "asc";
+        } else {
+          sorteerKolom = kolomDef.key;
+          sorteerRichting = "asc";
+        }
+        renderVacatures();
+      });
+      headRij.appendChild(th);
+    });
+    headRij.appendChild(document.createElement("th"));
+    thead.appendChild(headRij);
+    tabel.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    vacatures.forEach(vacature => tbody.appendChild(maakVacatureRij(vacature)));
+    tabel.appendChild(tbody);
+
+    wrap.appendChild(tabel);
+    sectie.appendChild(wrap);
+    return sectie;
   }
 
   function maakVacatureRij(vacature) {
@@ -105,16 +198,22 @@
     afdelingCel.textContent = vacature.afdeling || "—";
     rij.appendChild(afdelingCel);
 
-    const statusCel = document.createElement("td");
-    const badge = document.createElement("span");
-    badge.className = "status-badge status-" + (vacature.status || "concept");
-    badge.textContent = vacature.status || "concept";
-    statusCel.appendChild(badge);
-    rij.appendChild(statusCel);
-
     const sluitingCel = document.createElement("td");
     sluitingCel.textContent = formatteerDatum(vacature.sluitingsdatum);
     rij.appendChild(sluitingCel);
+
+    const sollicitatiesCel = document.createElement("td");
+    const aantalSollicitaties = sollicitatieAantallen[vacature.id] || 0;
+    if (aantalSollicitaties > 0) {
+      const link = document.createElement("a");
+      link.className = "beheer-sollicitaties-link";
+      link.href = "/beheer/sollicitaties.html?vacatureId=" + encodeURIComponent(vacature.id);
+      link.textContent = aantalSollicitaties + (aantalSollicitaties === 1 ? " sollicitatie" : " sollicitaties");
+      sollicitatiesCel.appendChild(link);
+    } else {
+      sollicitatiesCel.textContent = "0";
+    }
+    rij.appendChild(sollicitatiesCel);
 
     const actiesCel = document.createElement("td");
     actiesCel.className = "acties";
