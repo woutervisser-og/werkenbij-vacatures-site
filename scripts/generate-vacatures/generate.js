@@ -255,17 +255,58 @@ function renderBlokken(vacature) {
   return (vacature.bodyBlokken || []).map(blok => renderBlok(blok, vacature)).join("\n");
 }
 
-function renderHeader(vacature) {
-  if (!vacature.header || !vacature.header.bron) return "";
-  if (vacature.header.type === "video") {
-    return `<div class="header-video"><iframe src="${escapeHtml(vacature.header.bron)}" allowfullscreen loading="lazy"></iframe></div>`;
-  }
-  return `<img class="header-afbeelding" src="${escapeHtml(vacature.header.bron)}" alt="${escapeHtml(vacature.titel)}">`;
+// De headerafbeelding/video als volle-breedte hero, met titel, meta-info
+// en een "Solliciteer direct"-knop er rechtstreeks op overlayd (i.p.v.
+// een losse titel-sectie eronder). Alleen gebruikt als er daadwerkelijk
+// een header is; zonder header valt bouwHtmlPagina terug op een gewone
+// titel-sectie (zie renderTitelSectie hieronder).
+function renderVacatureHero(vacature, salaris) {
+  const media = vacature.header.type === "video"
+    ? `<div class="vacature-hero-media vacature-hero-video"><iframe src="${escapeHtml(vacature.header.bron)}" allowfullscreen loading="lazy"></iframe></div>`
+    : `<img class="vacature-hero-media" src="${escapeHtml(vacature.header.bron)}" alt="${escapeHtml(vacature.titel)}">`;
+
+  return `<div class="vacature-hero">
+    ${media}
+    <div class="vacature-hero-schaduw" aria-hidden="true"></div>
+    <div class="vacature-hero-content">
+      <span class="tag">${escapeHtml(vacature.afdeling || "Vacature")}</span>
+      <h1>${escapeHtml(vacature.titel)}</h1>
+      <div class="detail-meta">
+        <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
+        <span class="meta-pill">${escapeHtml(vacature.locatie || "")}</span>
+        ${salaris ? `<span class="meta-pill">${escapeHtml(salaris)}</span>` : ""}
+      </div>
+      <a href="#solliciteer-blok" class="btn">Solliciteer direct!</a>
+    </div>
+  </div>`;
+}
+
+// Fallback zonder headerafbeelding: gewoon de titel + meta-info als
+// platte sectie bovenaan de content, zoals voorheen.
+function renderTitelSectie(vacature, salaris) {
+  return `<div class="section-head reveal">
+    <span class="tag">${escapeHtml(vacature.afdeling || "Vacature")}</span>
+    <h2>${escapeHtml(vacature.titel)}</h2>
+  </div>
+  <div class="detail-meta reveal">
+    <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
+    <span class="meta-pill">${escapeHtml(vacature.locatie || "")}</span>
+    ${salaris ? `<span class="meta-pill">${escapeHtml(salaris)}</span>` : ""}
+  </div>`;
+}
+
+function renderBroodkruimel(vacature) {
+  return `<nav class="broodkruimel" aria-label="Broodkruimelpad">
+    <a href="/index.html">Home</a> <span class="scheiding" aria-hidden="true">/</span>
+    <a href="/vacatures.html">Vacatures</a> <span class="scheiding" aria-hidden="true">/</span>
+    <span>${escapeHtml(vacature.titel)}</span>
+  </nav>`;
 }
 
 function bouwHtmlPagina(vacature) {
   const metaDescription = vindSamenvatting(vacature.bodyBlokken) || vacature.titel;
   const isFotoHeader = vacature.header && vacature.header.type !== "video" && vacature.header.bron;
+  const heeftHeaderMedia = Boolean(vacature.header && vacature.header.bron);
   const salaris = salarisLabel(vacature);
 
   return `<!DOCTYPE html>
@@ -289,13 +330,10 @@ ${bouwJsonLd(vacature)}
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 <style>
-  .header-afbeelding { width: 100%; height: 340px; object-fit: cover; display: block; }
-  .header-video { position: relative; width: 100%; padding-top: 42%; }
-  .header-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .detail-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
   .detail-omschrijving { max-width: 720px; font-size: 15.5px; color: #333; line-height: 1.7; }
   .detail-omschrijving p { margin-bottom: 16px; }
-  .solliciteer-blok { background: var(--og-cream); border-radius: 12px; padding: 32px; max-width: 560px; margin-top: 40px; }
+  .solliciteer-blok { background: var(--og-cream); border-radius: 12px; padding: 32px; max-width: 560px; margin-top: 40px; scroll-margin-top: 100px; }
   .form-veld { margin-bottom: 18px; }
   .form-veld label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
   .form-veld input, .form-veld textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; font-size: 14px; transition: border-color 0.2s ease; }
@@ -346,10 +384,16 @@ ${bouwJsonLd(vacature)}
   .recruiter-bel-btn:hover { transform: translateY(-2px); }
 </style>
 </head>
-<body>
+<body class="${heeftHeaderMedia ? "pagina-met-hero" : ""}">
 
 <header>
-  <a href="/index.html" class="logo">o<span>g</span> clean fuels</a>
+  <a href="/index.html" class="logo" aria-label="OG Clean Fuels, naar de homepage">
+    <span class="logo-icoon-wrap">
+      <img class="logo-icoon logo-icoon-wit" src="/images/logo/og-icoon-wit.png" alt="">
+      <img class="logo-icoon logo-icoon-kleur" src="/images/logo/og-icoon-kleur.png" alt="">
+    </span>
+    <span class="logo-tekst">Clean Fuels</span>
+  </a>
   <nav>
     <a href="/index.html">Home</a>
     <a href="/vacatures.html" class="active">Vacatures</a>
@@ -357,19 +401,11 @@ ${bouwJsonLd(vacature)}
   </nav>
 </header>
 
-${renderHeader(vacature)}
+${heeftHeaderMedia ? renderVacatureHero(vacature, salaris) : ""}
+${renderBroodkruimel(vacature)}
 
 <section class="content">
-  <div class="section-head reveal">
-    <span class="tag">${escapeHtml(vacature.afdeling || "Vacature")}</span>
-    <h2>${escapeHtml(vacature.titel)}</h2>
-  </div>
-
-  <div class="detail-meta reveal">
-    <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
-    <span class="meta-pill">${escapeHtml(vacature.locatie || "")}</span>
-    ${salaris ? `<span class="meta-pill">${escapeHtml(salaris)}</span>` : ""}
-  </div>
+  ${!heeftHeaderMedia ? renderTitelSectie(vacature, salaris) : ""}
 
   <div class="detail-omschrijving reveal">${renderBlokken(vacature)}</div>
 
@@ -386,7 +422,7 @@ ${renderHeader(vacature)}
     <a class="recruiter-bel-btn" href="tel:${RECRUITER.telefoon}">Bellen met ${RECRUITER.naam.split(" ")[0]} 📞</a>
   </div>
 
-  <div class="solliciteer-blok reveal">
+  <div class="solliciteer-blok reveal" id="solliciteer-blok">
     <h3 style="margin-bottom:20px;">Solliciteer <span class="titel-highlight">direct</span></h3>
     <form id="sollicitatie-form">
       <input type="hidden" name="vacatureId" value="${escapeHtml(vacature.id)}">

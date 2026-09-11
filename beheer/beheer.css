@@ -12,7 +12,12 @@ body { background: var(--og-grey); }
   background: var(--og-white);
   border-bottom: 1px solid #e5e5e2;
 }
-.beheer-topbar .logo { font-size: 19px; }
+/* Het beheerportaal gebruikt nog de simpele tekst-variant van het logo
+   (geen brand-icoon nodig in een intern dashboard); overschrijft de
+   flex-opmaak die styles.css voor het icoon+tekst-logo van de publieke
+   site gebruikt. */
+.beheer-topbar .logo { display: inline; font-size: 19px; }
+.beheer-topbar .logo span { color: var(--og-orange); }
 .beheer-gebruiker { font-size: 14px; color: #4a4a4a; }
 .beheer-gebruiker a { color: var(--og-orange-dark); text-decoration: none; font-weight: 600; margin-left: 14px; }
 
