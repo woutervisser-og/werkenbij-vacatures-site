@@ -99,6 +99,17 @@ header nav a.active { color: var(--og-orange-dark); }
   border-radius: 3px;
   margin-bottom: 18px;
 }
+.label-tag-licht { background: var(--og-white); color: var(--og-orange-dark); }
+
+/* ===== Titel-highlight: een deel van een kop in een gekleurd blokje,
+   zoals "BOLD. EAGER. HUMAN." in het brandbook ===== */
+.titel-highlight {
+  display: inline-block;
+  background: var(--og-orange);
+  color: var(--og-white);
+  padding: 2px 14px;
+  border-radius: 8px;
+}
 
 /* ===== Hero ===== */
 .hero {
@@ -211,6 +222,14 @@ section.content {
   gap: 26px;
 }
 
+/* Voor een vast aantal kaarten (bv. de 3 kernwaarden) die altijd naast
+   elkaar horen te staan, in plaats van los uit te lijnen bij een oneven
+   aantal (zoals auto-fit dat doet). */
+.card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 860px) {
+  .card-grid-3 { grid-template-columns: 1fr; }
+}
+
 .teaser-card {
   border: 1px solid #eee;
   background: var(--og-cream);
@@ -280,6 +299,24 @@ section.content {
 }
 .value-block h3 { font-size: 19px; margin-bottom: 10px; }
 .value-block p { font-size: 14.5px; color: #4a4a4a; }
+
+/* ===== Volle-kleur tekstblokken, zoals de WHY/HOW/WHAT-kaarten in het
+   brandbook: content opbreken met een stevige achtergrondkleur in plaats
+   van steeds dezelfde neutrale kaart. Te combineren met .teaser-card of
+   .value-block. ===== */
+.paneel-orange { background: var(--og-orange); color: var(--og-white); }
+.paneel-orange-licht { background: var(--og-orange-light); color: var(--og-dark); }
+.paneel-orange-donker { background: var(--og-orange-dark); color: var(--og-white); }
+
+.paneel-orange .label-tag,
+.paneel-orange-donker .label-tag,
+.paneel-orange .icon-label,
+.paneel-orange-donker .icon-label { background: var(--og-white); color: var(--og-orange-dark); padding: 4px 12px; border-radius: 3px; }
+.paneel-orange-licht .icon-label { color: var(--og-orange-dark); }
+.paneel-orange h3, .paneel-orange-donker h3 { color: var(--og-white); }
+.paneel-orange-licht h3 { color: var(--og-orange-dark); }
+.paneel-orange p, .paneel-orange-donker p { color: rgba(255,255,255,0.92); }
+.paneel-orange-licht p { color: #5a4322; }
 
 footer {
   background: var(--og-dark);
@@ -356,7 +393,7 @@ footer .logo-footer {
   gap: 14px;
 }
 .blok-arbeidsvoorwaarde {
-  background: var(--og-grey);
+  background: var(--og-cream);
   border-radius: 10px;
   padding: 16px 18px;
   display: flex;
@@ -369,7 +406,7 @@ footer .logo-footer {
   display: flex;
   gap: 22px;
   align-items: center;
-  background: var(--og-grey);
+  background: var(--og-cream);
   border-radius: 12px;
   padding: 26px;
 }
