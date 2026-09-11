@@ -480,7 +480,10 @@ footer .logo-footer {
 /* ===== Body-blokken (vacature-detailpagina's) ===== */
 .blok { margin-bottom: 36px; }
 .blok:last-child { margin-bottom: 0; }
-.blok-icoon { margin-right: 8px; }
+
+/* Optionele kop boven een blok (tekst, tekst in kolommen, afbeelding +
+   tekst, veelgestelde vragen), los van de grotere sectie-koppen. */
+.blok-kop { font-size: 23px; margin-bottom: 16px; }
 
 .blok-intro-gecentreerd { text-align: center; max-width: 640px; margin-left: auto; margin-right: auto; }
 .blok-intro-gecentreerd .eyebrow { position: static; }
@@ -553,8 +556,19 @@ footer .logo-footer {
 .blok-afbeelding-tekst img { width: 100%; border-radius: 12px; object-fit: cover; max-height: 320px; }
 .blok-afbeelding-tekst.blok-richting-rechts img { order: 2; }
 
+/* Opsommingstekens uit de huisstijl (een klein oranje blokje) i.p.v.
+   losse emoji's/iconen per punt. */
 .blok-bullets ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.blok-bullets li { display: flex; align-items: flex-start; }
+.blok-bullets li { display: flex; align-items: flex-start; gap: 12px; }
+.blok-bullets li::before {
+  content: "";
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  margin-top: 6px;
+  background: var(--og-orange);
+  border-radius: 2px;
+}
 
 .blok-arbeidsvoorwaarden {
   display: grid;
@@ -567,8 +581,17 @@ footer .logo-footer {
   padding: 16px 18px;
   display: flex;
   align-items: center;
+  gap: 12px;
   font-weight: 600;
   font-size: 14.5px;
+}
+.blok-arbeidsvoorwaarde::before {
+  content: "";
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  background: var(--og-orange);
+  border-radius: 2px;
 }
 
 .blok-collega-quote {
@@ -624,14 +647,23 @@ footer .logo-footer {
 .blok-faq summary { font-weight: 700; cursor: pointer; }
 .blok-faq details > div { margin-top: 10px; }
 
+/* Verwijst naar het sollicitatieformulier verderop op de pagina, dus als
+   link uitgevoerd (i.p.v. een platte div) al ziet hij eruit als een knop. */
 .blok-sluitingsdatum-banner {
+  display: block;
   background: var(--og-dark);
   color: var(--og-white);
   font-family: 'Anton', sans-serif;
   text-align: center;
+  text-decoration: none;
   padding: 14px 20px;
   border-radius: 10px;
   font-size: 15px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.blok-sluitingsdatum-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
 
 @media (max-width: 720px) {

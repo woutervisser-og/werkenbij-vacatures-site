@@ -143,7 +143,7 @@ function renderSluitingsdatumBanner(vacature) {
     dagenResterend === 0 ? "Sluit vandaag" :
     dagenResterend === 1 ? "Sluit morgen" :
     `Nog ${dagenResterend} dagen om te solliciteren`;
-  return `<div class="blok blok-sluitingsdatum-banner">${tekst}</div>`;
+  return `<a href="#solliciteer-blok" class="blok blok-sluitingsdatum-banner">${tekst}</a>`;
 }
 
 function renderBlok(blok, vacature) {
@@ -162,12 +162,18 @@ function renderBlok(blok, vacature) {
       </div>`;
 
     case "tekst":
-      return `<div class="blok blok-tekst">${paragrafen(blok.inhoud)}</div>`;
+      return `<div class="blok blok-tekst">
+        ${blok.kop ? `<h3 class="blok-kop">${escapeHtml(blok.kop)}</h3>` : ""}
+        ${paragrafen(blok.inhoud)}
+      </div>`;
 
     case "tekst_kolommen":
-      return `<div class="blok blok-tekst-kolommen">
-        <div>${paragrafen(blok.kolom1)}</div>
-        <div>${paragrafen(blok.kolom2)}</div>
+      return `<div class="blok">
+        ${blok.kop ? `<h3 class="blok-kop">${escapeHtml(blok.kop)}</h3>` : ""}
+        <div class="blok-tekst-kolommen">
+          <div>${paragrafen(blok.kolom1)}</div>
+          <div>${paragrafen(blok.kolom2)}</div>
+        </div>
       </div>`;
 
     case "uitgelichte_quote":
@@ -179,25 +185,25 @@ function renderBlok(blok, vacature) {
       </blockquote>`;
 
     case "afbeelding_tekst":
-      return `<div class="blok blok-afbeelding-tekst blok-richting-${blok.richting === "rechts" ? "rechts" : "links"}">
-        ${blok.afbeelding ? `<img src="${escapeHtml(blok.afbeelding)}" alt="">` : ""}
-        <div class="blok-tekstinhoud">${paragrafen(blok.tekst)}</div>
+      return `<div class="blok">
+        ${blok.kop ? `<h3 class="blok-kop">${escapeHtml(blok.kop)}</h3>` : ""}
+        <div class="blok-afbeelding-tekst blok-richting-${blok.richting === "rechts" ? "rechts" : "links"}">
+          ${blok.afbeelding ? `<img src="${escapeHtml(blok.afbeelding)}" alt="">` : ""}
+          <div class="blok-tekstinhoud">${paragrafen(blok.tekst)}</div>
+        </div>
       </div>`;
 
     case "bullet_lijst":
       return `<div class="blok blok-bullets">
         ${blok.titel ? `<h4>${escapeHtml(blok.titel)}</h4>` : ""}
         <ul>
-          ${(blok.punten || []).map(punt =>
-            `<li>${punt.icoon ? `<span class="blok-icoon">${escapeHtml(punt.icoon)}</span>` : ""}${escapeHtml(punt.tekst)}</li>`
-          ).join("")}
+          ${(blok.punten || []).map(punt => `<li>${escapeHtml(punt.tekst)}</li>`).join("")}
         </ul>
       </div>`;
 
     case "arbeidsvoorwaarden_grid":
       return `<div class="blok blok-arbeidsvoorwaarden">
         ${(blok.items || []).map(item => `<div class="blok-arbeidsvoorwaarde">
-          ${item.icoon ? `<span class="blok-icoon">${escapeHtml(item.icoon)}</span>` : ""}
           <span>${escapeHtml(item.tekst)}</span>
         </div>`).join("")}
       </div>`;
@@ -237,6 +243,7 @@ function renderBlok(blok, vacature) {
 
     case "veelgestelde_vragen":
       return `<div class="blok blok-faq">
+        ${blok.kop ? `<h3 class="blok-kop">${escapeHtml(blok.kop)}</h3>` : ""}
         ${(blok.vragen || []).map(item => `<details>
           <summary>${escapeHtml(item.vraag)}</summary>
           <div>${paragrafen(item.antwoord)}</div>

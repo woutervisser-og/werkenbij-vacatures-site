@@ -288,11 +288,15 @@
     },
     tekst: {
       label: "Tekst",
-      velden: [{ naam: "inhoud", label: "Inhoud", type: "tekstblok" }]
+      velden: [
+        { naam: "kop", label: "Kop (optioneel)", type: "tekst" },
+        { naam: "inhoud", label: "Inhoud", type: "tekstblok" }
+      ]
     },
     tekst_kolommen: {
       label: "Tekst in kolommen",
       velden: [
+        { naam: "kop", label: "Kop (optioneel)", type: "tekst" },
         { naam: "kolom1", label: "Kolom 1", type: "tekstblok" },
         { naam: "kolom2", label: "Kolom 2", type: "tekstblok" }
       ]
@@ -304,6 +308,7 @@
     afbeelding_tekst: {
       label: "Afbeelding + tekst",
       velden: [
+        { naam: "kop", label: "Kop (optioneel)", type: "tekst" },
         { naam: "afbeelding", label: "Afbeelding", type: "afbeelding" },
         { naam: "tekst", label: "Tekst", type: "tekstblok" },
         { naam: "richting", label: "Richting", type: "keuze", opties: ["links", "rechts"] }
@@ -316,7 +321,6 @@
         {
           naam: "punten", label: "Punten", type: "lijst",
           subvelden: [
-            { naam: "icoon", label: "Icoon (emoji)", type: "tekst" },
             { naam: "tekst", label: "Tekst", type: "tekst" }
           ]
         }
@@ -328,7 +332,6 @@
         {
           naam: "items", label: "Items", type: "lijst",
           subvelden: [
-            { naam: "icoon", label: "Icoon (emoji)", type: "tekst" },
             { naam: "tekst", label: "Tekst", type: "tekst" }
           ]
         }
@@ -374,6 +377,7 @@
     veelgestelde_vragen: {
       label: "Veelgestelde vragen",
       velden: [
+        { naam: "kop", label: "Kop (optioneel)", type: "tekst" },
         {
           naam: "vragen", label: "Vragen", type: "lijst",
           subvelden: [
