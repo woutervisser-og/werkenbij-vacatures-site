@@ -218,6 +218,40 @@ deed nog niets — `solliciteer.js` was een lege placeholder).
   formulier, inclusief een clientside geweigerd bestandstype, en het
   beheeroverzicht).
 
+## Afgerond: huisstijl conform Employer Branding Brandbook V2
+
+De publieke site (`index.html`, `vacatures.html`, `over-ons.html`, de
+gegenereerde vacature-detailpagina's) volgt nu het brandbook dat Wouter
+heeft aangeleverd. Alleen de oranje-familie (#F18700/#F9B662/#C96100)
+plus cream/wit, geen groen: dat zit in het officiële palet niet, alleen
+in het logo-icoon zelf.
+
+- Nieuwe `.titel-highlight`-utility: een deel van een kop in een gekleurd
+  blokje, zoals "BOLD. EAGER. HUMAN." en "YOUNG PROFESSIONALS" in het
+  brandbook.
+- Nieuwe `.paneel-orange`/`-licht`/`-donker`-utilities: tekstblokken
+  opbreken met een volle achtergrondkleur i.p.v. steeds dezelfde
+  neutrale kaart, zoals de WHY/HOW/WHAT-kaarten in het brandbook.
+  Toegepast op de Bold/Eager/Human-kaarten, met dezelfde volgorde en
+  kleurtoewijzing op zowel `index.html` als `over-ons.html`.
+- Koppen op een lichte achtergrond (`.section-head h2`) in oranje i.p.v.
+  zwart: in het brandbook staan titels op cream/wit altijd in een tint
+  uit de oranje-familie.
+- De kleine eyebrow/tag-labeltjes (bv. "WAAROM OG CLEAN FUELS", "OVER
+  ONS") zijn nu een dicht oranje kleurblok met witte tekst, zoals in het
+  brandbook ("TYPOGRAPHY", "COLOR PALETTE") — voorheen zwart (`.eyebrow`)
+  of alleen gekleurde tekst zonder blok (`.tag`).
+- Grijze achtergronden in de arbeidsvoorwaarden-/collega-quote-
+  body-blokken en het contact-/sollicitatieblok vervangen door het
+  warmere `--og-cream`.
+- Subtiele scale-in toegevoegd aan de bestaande scroll-reveal-animatie,
+  en de label-/tag-chips krijgen een kleine, licht vertraagde "pop"
+  zodra hun kaart in beeld komt.
+
+Tot stand gekomen in een paar iteraties op basis van screenshot-feedback
+van Wouter (kaarten op over-ons.html moesten gelijk aan index.html,
+titels waren nog zwart, eyebrow/tag misten de kleurblok-achtergrond).
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
