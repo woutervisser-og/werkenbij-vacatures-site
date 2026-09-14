@@ -653,32 +653,6 @@ footer .logo-footer {
   .stat-uitgelicht-cijfer { font-size: 100px; }
 }
 
-/* ===== Video-blok voor marketingpagina's: dezelfde volle-breedte
-   .blok-video als in de body-blokken van een vacature, met een nette
-   "komt nog"-status zolang er geen echte video-URL is ingevuld. ===== */
-.blok-video-leeg {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  background: linear-gradient(120deg, var(--og-dark), #2b2b2b);
-  color: var(--og-white);
-}
-.blok-video-leeg-knop {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--og-orange);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-}
-.blok-video-leeg p { font-family: 'Komu', sans-serif; text-transform: uppercase; font-size: 15px; letter-spacing: 0.04em; }
-
 /* ===== Voordelen-grid: bredere kaarten met afwisselende kleurvlakken
    i.p.v. een rij losse, identieke pilletjes. ===== */
 .voordelen-grid {
