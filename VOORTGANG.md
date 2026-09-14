@@ -668,9 +668,24 @@ regressie).
   verdwijnen onder 640px zonder vervanging (bestaand gedrag van vóór deze
   sessie, tijdens het header-werk hierboven bevestigd maar niet
   aangepakt — apart te plannen).
-- Voorstel (nog niet gebouwd, wacht op prioriteit van Wouter): in
-  `beheer/vacature.html` een knop "Kopieer opzet van EN" per taaltab die
-  alleen de blokstructuur (type/volgorde/aantal, geen tekst) overneemt,
-  en een losse functie om de inhoud automatisch te laten voorvertalen via
-  een LLM (concept, altijd met verplichte controle vóór opslaan/live
-  zetten).
+- Voorstel (nog niet gebouwd, wacht op prioriteit van Wouter): een losse
+  functie om de inhoud automatisch te laten voorvertalen via een LLM
+  (concept, altijd met verplichte controle vóór opslaan/live zetten) —
+  de structuur-kopieerknop hiervoor staat er inmiddels (zie hieronder).
+
+## Afgerond: knop "Kopieer opzet van EN" in het beheerformulier
+
+Eerste van de 2 voorgestelde vertaal-workflow-verbeteringen gebouwd. Op
+elke niet-EN taaltab in `beheer/vacature.html` staat nu een knop die de
+blokstructuur van de EN-tab overneemt: bloktype, volgorde, aantal
+lijst-items (bullet-punten, FAQ-vragen, teamleden) en afbeeldingen (vaak
+taal-onafhankelijk). Tekst-/tekstblok-velden blijven bewust leeg, want de
+inhoud moet toch handmatig vertaald worden. Confirm-stap voorkomt per
+ongeluk overschrijven als de doeltaal al blokken heeft.
+
+Bugfix onderweg: de knop bleef eerst zichtbaar op de EN-tab zelf, doordat
+de eigen `.kopieer-en-rij { display:flex }`-regel het `hidden`-attribuut
+overschreef (gelijke CSS-specificiteit, bronvolgorde wint). Opgelost met
+een expliciete `.kopieer-en-rij[hidden] { display:none }`-regel. Lokaal
+getest tegen Azurite met een testvacature (3 bloktypes inclusief een
+lijst-veld en een afbeelding).
