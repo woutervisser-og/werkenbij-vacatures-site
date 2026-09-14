@@ -10,7 +10,14 @@
 <body>
 
 <div class="beheer-topbar">
-  <span class="logo">o<span>g</span> clean fuels — beheer</span>
+  <div class="beheer-topbar-merk">
+    <a href="/beheer/index.html" class="logo" aria-label="OG Clean Fuels beheer, naar het overzicht">
+      <span class="logo-afbeelding-wrap">
+        <img class="logo-afbeelding logo-afbeelding-kleur" src="/images/logo/og-logo-kleur.png" alt="OG Clean Fuels">
+      </span>
+    </a>
+    <span class="label-tag">Beheer</span>
+  </div>
   <span class="beheer-gebruiker" id="gebruiker-info"></span>
 </div>
 
@@ -141,9 +148,14 @@
 
     const kop = document.createElement("h2");
     kop.className = "beheer-sectie-kop";
-    kop.textContent = (STATUS_LABELS[status] || status) + " ";
+
+    const dot = document.createElement("span");
+    dot.className = "status-dot status-dot--" + status;
+    kop.appendChild(dot);
+    kop.appendChild(document.createTextNode((STATUS_LABELS[status] || status) + " "));
+
     const aantal = document.createElement("span");
-    aantal.className = "beheer-sectie-aantal";
+    aantal.className = "beheer-sectie-aantal status-aantal--" + status;
     aantal.textContent = vacatures.length;
     kop.appendChild(aantal);
     sectie.appendChild(kop);
