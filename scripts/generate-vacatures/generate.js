@@ -18,6 +18,17 @@ const VACATURES_API_URL = metSchema(
   process.env.VACATURES_API_URL || "victorious-sea-0b50b4303.7.azurestaticapps.net/api/GetVacatures"
 );
 
+// Publieke basis-URL van de site zelf (voor hreflang-tags), afgeleid van
+// VACATURES_API_URL i.p.v. een aparte omgevingsvariabele, zodat er geen
+// extra workflow-wijziging nodig is.
+const SITE_BASE_URL = VACATURES_API_URL.replace(/\/api\/GetVacatures$/, "");
+
+// Meertaligheid: EN is de verplichte basistaal, de rest optioneel per
+// vacature. Moet in sync blijven met ONDERSTEUNDE_TALEN in
+// api/shared/vacaturesTable.js (los gehouden, want dit script draait als
+// standalone Node-script buiten de Functions-app om).
+const ONDERSTEUNDE_TALEN = ["en", "nl", "fr", "de", "it", "se"];
+
 // Vaste recruiter gegevens, zelfde voor elke vacature. Pas hier aan
 // zodra naam, contactgegevens of foto wijzigen.
 const RECRUITER = {
@@ -29,8 +40,29 @@ const RECRUITER = {
   foto: "/images/iska-van-der-vlugt.webp"
 };
 
-// Waar de gegenereerde pagina's terechtkomen, relatief vanaf de repository root.
-const OUTPUT_MAP = path.join(__dirname, "..", "..", "vacature");
+// Waar de gegenereerde pagina's terechtkomen, relatief vanaf de repository
+// root: EN in de root ("vacature/"), overige talen in een submap
+// ("nl/vacature/", "fr/vacature/", ...). Blijft "vacature" (enkelvoud) i.p.v.
+// het "vacatures" uit het spec-voorbeeld, want vacatures.html linkt al naar
+// /vacature/<slug>.html en die aanpassen is stap 5 (taalswitcher).
+function outputMapVoorTaal(taalcode) {
+  return taalcode === "en"
+    ? path.join(__dirname, "..", "..", "vacature")
+    : path.join(__dirname, "..", "..", taalcode, "vacature");
+}
+
+function publiekeUrlVoorTaal(taalcode, slug) {
+  const segment = taalcode === "en" ? "vacature" : `${taalcode}/vacature`;
+  return `${SITE_BASE_URL}/${segment}/${slug}.html`;
+}
+
+function renderHreflangTags(beschikbareTalen, slug) {
+  const tags = beschikbareTalen.map(taal =>
+    `<link rel="alternate" hreflang="${taal}" href="${publiekeUrlVoorTaal(taal, slug)}">`
+  );
+  tags.push(`<link rel="alternate" hreflang="x-default" href="${publiekeUrlVoorTaal("en", slug)}">`);
+  return tags.join("\n");
+}
 
 // Zet een titel om naar een URL-vriendelijke "slug", bijvoorbeeld
 // "Sales Manager B2B Clean Fuels" wordt "sales-manager-b2b-clean-fuels".
@@ -310,14 +342,14 @@ function renderBroodkruimel(vacature) {
   </nav>`;
 }
 
-function bouwHtmlPagina(vacature) {
+function bouwHtmlPagina(vacature, { taalcode, beschikbareTalen, slug }) {
   const metaDescription = vindSamenvatting(vacature.bodyBlokken) || vacature.titel;
   const isFotoHeader = vacature.header && vacature.header.type !== "video" && vacature.header.bron;
   const heeftHeaderMedia = Boolean(vacature.header && vacature.header.bron);
   const salaris = salarisLabel(vacature);
 
   return `<!DOCTYPE html>
-<html lang="nl">
+<html lang="${taalcode}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -328,6 +360,8 @@ function bouwHtmlPagina(vacature) {
 <meta property="og:description" content="${escapeHtml(metaDescription)}">
 <meta property="og:type" content="website">
 ${isFotoHeader ? `<meta property="og:image" content="${escapeHtml(vacature.header.bron)}">` : ""}
+
+${renderHreflangTags(beschikbareTalen, slug)}
 
 <script type="application/ld+json">
 ${bouwJsonLd(vacature)}
@@ -450,28 +484,55 @@ async function main() {
   }
   const vacatures = await response.json();
 
-  if (!fs.existsSync(OUTPUT_MAP)) {
-    fs.mkdirSync(OUTPUT_MAP, { recursive: true });
-  }
-
   const gebruikteSlugs = new Set();
+  let aantalPaginas = 0;
 
   vacatures.forEach(vacature => {
-    let slug = maakSlug(vacature.titel) || String(vacature.id);
+    // EN-vertaling, met terugval op de platte (NL-alias) velden voor een
+    // vacature die (nog) geen "translations"-object heeft.
+    const enVertaling = (vacature.translations && vacature.translations.en) ||
+      { title: vacature.titel, bodyBlocks: vacature.bodyBlokken || [] };
+    const talenData = vacature.translations || { en: enVertaling };
 
-    // Bij 2 vacatures met (bijna) dezelfde titel, voorkom dat de 2e
-    // per ongeluk de 1e overschrijft door het ID toe te voegen.
+    // 1 slug per vacature, gebaseerd op de EN-titel: dezelfde slug wordt
+    // in elke taal-submap hergebruikt, zodat de taalswitcher straks simpel
+    // de taalprefix kan wisselen i.p.v. een aparte mapping te moeten
+    // bijhouden.
+    let slug = maakSlug(enVertaling.title) || String(vacature.id);
     if (gebruikteSlugs.has(slug)) {
       slug = `${slug}-${vacature.id}`;
     }
     gebruikteSlugs.add(slug);
 
-    const bestandspad = path.join(OUTPUT_MAP, `${slug}.html`);
-    fs.writeFileSync(bestandspad, bouwHtmlPagina(vacature));
-    console.log(`Gegenereerd: vacature/${slug}.html`);
+    // Alleen talen die daadwerkelijk een titel hebben genereren: geen lege
+    // pagina's voor een taal die voor déze vacature nog niet vertaald is.
+    const beschikbareTalen = ONDERSTEUNDE_TALEN.filter(taal => talenData[taal] && talenData[taal].title);
+    if (!beschikbareTalen.includes("en")) beschikbareTalen.unshift("en");
+
+    beschikbareTalen.forEach(taalcode => {
+      const vertaling = talenData[taalcode] || enVertaling;
+      const vertaaldeVacature = {
+        ...vacature,
+        titel: vertaling.title,
+        bodyBlokken: vertaling.bodyBlocks || []
+      };
+
+      const outputMap = outputMapVoorTaal(taalcode);
+      if (!fs.existsSync(outputMap)) {
+        fs.mkdirSync(outputMap, { recursive: true });
+      }
+
+      const bestandspad = path.join(outputMap, `${slug}.html`);
+      const html = bouwHtmlPagina(vertaaldeVacature, { taalcode, beschikbareTalen, slug });
+      fs.writeFileSync(bestandspad, html);
+
+      const relatiefPad = taalcode === "en" ? `vacature/${slug}.html` : `${taalcode}/vacature/${slug}.html`;
+      console.log(`Gegenereerd: ${relatiefPad}`);
+      aantalPaginas++;
+    });
   });
 
-  console.log(`Klaar, ${vacatures.length} vacature pagina's gegenereerd.`);
+  console.log(`Klaar, ${aantalPaginas} pagina's gegenereerd voor ${vacatures.length} vacatures.`);
 }
 
 main().catch(error => {
