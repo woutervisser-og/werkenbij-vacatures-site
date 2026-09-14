@@ -664,10 +664,6 @@ regressie).
   door de workflow en kunnen op termijn verwijderd worden (Settings →
   Secrets and variables → Actions), zodra bevestigd is dat er verder
   nergens meer naar verwezen wordt.
-- Geen hamburgermenu op mobiel: `header nav` en de taal-selector
-  verdwijnen onder 640px zonder vervanging (bestaand gedrag van vóór deze
-  sessie, tijdens het header-werk hierboven bevestigd maar niet
-  aangepakt — apart te plannen).
 - Voorstel (nog niet gebouwd, wacht op een Anthropic API-key): een losse
   functie om de inhoud automatisch te laten voorvertalen via een LLM
   (concept, altijd met verplichte controle vóór opslaan/live zetten) —
@@ -700,3 +696,47 @@ alleen op de actieve taal, niet op alle talen tegelijk. Geen dialoog als
 er toch al 0 blokken zijn. Lokaal getest: annuleren laat de blokken
 ongemoeid, bevestigen leegt ze, een herhaalde klik bij 0 blokken doet
 niets.
+
+## Afgerond: hamburgermenu op mobiel + taal-selector met vlaggen
+
+Sloot een bestaand gat: onder 640px verdwenen `header nav` en de
+taal-selector zonder enige vervanging. Nu een hamburger-knop die uitklapt
+naar een volle-breedte paneel met de nav-links (verticaal, links
+uitgelijnd).
+
+- Nieuwe `.header-rechts`-wrapper om taal-selector + hamburger-knop
+  samen, zodat de bestaande 3-koloms desktop-grid (logo/nav/rechts)
+  ongewijzigd blijft. Op mobiel wordt deze wrapper `display:contents`
+  (zijn eigen doos verdwijnt, kinderen worden losse flex-items van
+  `<header>` zelf) — een eerste implementatiepoging met geneste flex-
+  containers gaf centrerings-/uitlijningsbugs, dit loste het op.
+- **Taal-selector blijft, op verzoek van Wouter, altijd zichtbaar naast
+  de hamburger-knop** — niet verstopt in het uitklapmenu, werkt met zijn
+  normale dropdown-gedrag (identiek aan desktop).
+- **Vlag per taal toegevoegd aan de taalkeuzelijst** (EN/NL/FR/DE/IT/SE),
+  zoals op de corporate website — als emoji, geen aparte afbeeldingen
+  nodig.
+- Header wordt bij openen van het hamburgermenu altijd effen wit, ook op
+  hero-pagina's, zodat nav/taal-selector/hamburger-icoon leesbaar blijven
+  ongeacht scrollpositie.
+- Zelfde structuur toegepast in `generate.js` voor de
+  vacature-detailpagina's.
+
+Lokaal getest met Playwright op mobiele viewport (390px) en desktop:
+openen/sluiten van het menu, taal-dropdown binnen en buiten het
+uitgeklapte menu, header-achtergrond stabiliseert naar volledig effen wit
+(via computed style geverifieerd, niet alleen visueel), desktop
+ongewijzigd.
+
+## Afgerond: hero-secties — eyebrow weg, titel dichter bij body, intro ingekort
+
+Op verzoek, gebaseerd op de opzet van de corporate website:
+
+- Eyebrow/tag-labeltje boven de H1 verwijderd op alle 5 marketing-hero's.
+- Hero-padding omgedraaid (110px/130px → 170px/70px): de H1 zit nu
+  dichter bij de content eronder dan bij het menu erboven.
+- Introtekst op "Working at OG" was met 3-4 zinnen te lang; ingekort naar
+  2 zinnen in alle 6 talen, kernboodschap behouden. De overige
+  hero-intro's waren al maximaal 2 zinnen, dus ongewijzigd.
+
+Lokaal getest op alle 5 marketingpagina's, desktop en mobiel.
