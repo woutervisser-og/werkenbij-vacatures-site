@@ -361,7 +361,6 @@ ${bouwJsonLd(vacature)}
     </span>
   </a>
   <nav>
-    <a href="/index.html">Home</a>
     <a href="/vacatures.html" class="active">Vacatures</a>
     <a href="/werken-bij-og.html">Werken bij OG</a>
     <a href="/over-ons.html">Over ons</a>
