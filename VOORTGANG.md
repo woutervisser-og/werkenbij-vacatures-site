@@ -856,3 +856,14 @@ opgeruimd. Gemerged via [PR #41](https://github.com/woutervisser-og/werkenbij-va
 de oude statussen (`in_behandeling`, `bewaard`, `gearchiveerd`) nog
 aandacht nodig hebben. Automatische notificaties bij aging-drempels nog
 steeds niet gebouwd, blijft een losse vervolgstap.
+
+## Afgerond: kanban-bord breder op grote schermen
+
+Het bord voelde onnodig smal aan op een groot scherm. Nieuwe modifier
+`.beheer-main-breed` (max-width 1760px i.p.v. de standaard 1320px van
+`.beheer-main`), alleen toegepast op `beheer/sollicitaties.html` — andere
+beheerpagina's blijven op de bestaande breedte. Kanban-kolombreedte van
+260 naar 300px voor iets meer ademruimte per kaart.
+
+Lokaal geverifieerd op 1920px breedte: 5 kolommen zichtbaar i.p.v. ~4
+voorheen. Gemerged via [PR #42](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/42).
