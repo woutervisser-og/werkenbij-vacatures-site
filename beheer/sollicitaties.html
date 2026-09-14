@@ -173,6 +173,7 @@
 
     const bijlagenCel = document.createElement("td");
     const cvLink = document.createElement("a");
+    bijlagenCel.className = "bijlagen-links";
     cvLink.href = "/api/sollicitatiebeheer/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=cv";
     cvLink.textContent = "CV";
     cvLink.className = "btn btn-klein btn-secundair";
@@ -182,7 +183,6 @@
       briefLink.href = "/api/sollicitatiebeheer/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=motivatiebrief";
       briefLink.textContent = "Motivatiebrief";
       briefLink.className = "btn btn-klein btn-secundair";
-      briefLink.style.marginLeft = "6px";
       bijlagenCel.appendChild(briefLink);
     }
     rij.appendChild(bijlagenCel);

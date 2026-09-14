@@ -349,44 +349,6 @@ ${bouwJsonLd(vacature)}
   #form-status.form-status-fout { color: #b3261e; }
   .form-veld-fout { color: #b3261e; font-size: 13px; margin-top: 4px; }
   #sollicitatie-form fieldset[disabled] { opacity: 0.6; }
-
-  .recruiter-blok {
-    background: var(--og-cream);
-    border-radius: 12px;
-    padding: 32px;
-    margin-top: 48px;
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    flex-wrap: wrap;
-  }
-  .recruiter-foto-blok { text-align: center; flex-shrink: 0; }
-  .recruiter-foto {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    margin: 0 auto 8px;
-    border: 3px solid var(--og-orange);
-  }
-  .recruiter-naam { font-style: italic; font-size: 14px; }
-  .recruiter-tekst { flex: 1; min-width: 240px; }
-  .recruiter-tekst h3 { color: var(--og-orange-dark); font-size: 20px; margin-bottom: 10px; }
-  .recruiter-tekst p { font-size: 14.5px; color: #333; margin-bottom: 6px; }
-  .recruiter-tekst a { color: var(--og-orange-dark); font-weight: 600; }
-  .recruiter-bel-btn {
-    background: var(--og-white);
-    color: var(--og-dark);
-    font-weight: 700;
-    padding: 14px 24px;
-    border-radius: 8px;
-    text-decoration: none;
-    white-space: nowrap;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    transition: transform 0.2s ease;
-  }
-  .recruiter-bel-btn:hover { transform: translateY(-2px); }
 </style>
 </head>
 <body class="${heeftHeaderMedia ? "pagina-met-hero" : ""}">
@@ -399,9 +361,11 @@ ${bouwJsonLd(vacature)}
     </span>
   </a>
   <nav>
-    <a href="/index.html">Home</a>
     <a href="/vacatures.html" class="active">Vacatures</a>
+    <a href="/werken-bij-og.html">Werken bij OG</a>
     <a href="/over-ons.html">Over ons</a>
+    <a href="/contact.html">Contact</a>
+    <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">Corporate site ↗</a>
   </nav>
 </header>
 
