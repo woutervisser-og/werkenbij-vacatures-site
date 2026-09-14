@@ -332,13 +332,22 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
   inset: 0;
   background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.8) 100%);
 }
+/* Zelfde breedte/marge-logica als .hero-content en section.content:
+   lijnt links uit met de content-blokken eronder i.p.v. met de kale
+   6%-viewportrand, die op brede schermen duidelijk verder naar links
+   staat dan de gecentreerde max-width:1100px content. */
 .vacature-hero-content {
   position: relative;
   z-index: 1;
   color: var(--og-white);
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
   padding: 150px 6% 56px;
-  max-width: 780px;
 }
+.vacature-hero-content h1,
+.vacature-hero-content .detail-meta,
+.vacature-hero-content .btn { max-width: 780px; }
 .vacature-hero-content h1 {
   font-size: 44px;
   margin: 16px 0 20px;
@@ -349,6 +358,8 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
 .vacature-hero-content .btn { margin-right: 0; }
 
 .broodkruimel {
+  max-width: 1100px;
+  margin: 0 auto;
   padding: 16px 6%;
   font-size: 13.5px;
   color: #767672;
