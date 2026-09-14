@@ -91,6 +91,11 @@ table.beheer-tabel th {
 table.beheer-tabel tr:last-child td { border-bottom: none; }
 table.beheer-tabel td.acties { display: flex; gap: 8px; justify-content: flex-end; white-space: nowrap; }
 
+/* Bijlagen-knoppen (CV/motivatiebrief): op eigen regel onder elkaar met
+   vaste ruimte ertussen, i.p.v. een inline marginLeft-hack die scheef
+   uitpakt zodra de kolom te smal wordt om ze naast elkaar te zetten. */
+.bijlagen-links { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+
 /* Vacature-overzicht: 1 sectie (met eigen tabel) per status i.p.v. 1
    platte tabel met een status-kolom, zodat bv. gearchiveerde vacatures
    niet tussen de actieve door staan. */

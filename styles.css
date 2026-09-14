@@ -474,6 +474,49 @@ section.content {
 .paneel-orange p, .paneel-orange-donker p { color: rgba(255,255,255,0.92); }
 .paneel-orange-licht p { color: #5a4322; }
 
+.content-intro-tekst { max-width: 640px; font-size: 15.5px; color: #4a4a4a; line-height: 1.7; margin-bottom: 20px; }
+
+/* ===== Recruiter/contact-blok: hergebruikt op vacature-detailpagina's
+   (contact voor die specifieke vacature) en op de contactpagina
+   (algemeen HR-contact). ===== */
+.recruiter-blok {
+  background: var(--og-cream);
+  border-radius: 12px;
+  padding: 32px;
+  margin-top: 48px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.recruiter-foto-blok { text-align: center; flex-shrink: 0; }
+.recruiter-foto {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 8px;
+  border: 3px solid var(--og-orange);
+}
+.recruiter-naam { font-style: italic; font-size: 14px; }
+.recruiter-tekst { flex: 1; min-width: 240px; }
+.recruiter-tekst h3 { color: var(--og-orange-dark); font-size: 20px; margin-bottom: 10px; }
+.recruiter-tekst p { font-size: 14.5px; color: #333; margin-bottom: 6px; }
+.recruiter-tekst a { color: var(--og-orange-dark); font-weight: 600; }
+.recruiter-bel-btn {
+  background: var(--og-white);
+  color: var(--og-dark);
+  font-weight: 700;
+  padding: 14px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+.recruiter-bel-btn:hover { transform: translateY(-2px); }
+
 footer {
   background: var(--og-dark);
   color: var(--og-white);
