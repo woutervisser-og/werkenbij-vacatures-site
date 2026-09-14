@@ -147,6 +147,7 @@
       <div class="blok-toevoegen-rij">
         <select id="nieuw-blok-type"></select>
         <button type="button" class="btn btn-klein btn-secundair" id="blok-toevoegen-knop">+ Blok toevoegen</button>
+        <button type="button" class="btn btn-klein btn-gevaar" id="verwijder-alle-blokken-knop">Verwijder alle blokken</button>
       </div>
       <div id="blokken-container"></div>
     </fieldset>
@@ -479,6 +480,16 @@
   document.getElementById("blok-toevoegen-knop").addEventListener("click", () => {
     bodyBlokken.push(nieuweBlokData(blokTypeSelect.value));
     renderBlokken();
+  });
+
+  document.getElementById("verwijder-alle-blokken-knop").addEventListener("click", () => {
+    if (bodyBlokken.length === 0) return;
+    if (!confirm(`Weet je het zeker? Dit verwijdert alle ${bodyBlokken.length} blokken van ${TAAL_LABELS[actieveTaal]}. Dit kan niet ongedaan gemaakt worden.`)) {
+      return;
+    }
+    bodyBlokken.splice(0, bodyBlokken.length);
+    renderBlokken();
+    toonMelding(`Alle blokken van ${TAAL_LABELS[actieveTaal]} verwijderd.`, "ok");
   });
 
   // ===== Opzet van EN kopiëren naar een andere taal =====
