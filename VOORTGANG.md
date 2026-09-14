@@ -867,3 +867,32 @@ beheerpagina's blijven op de bestaande breedte. Kanban-kolombreedte van
 
 Lokaal geverifieerd op 1920px breedte: 5 kolommen zichtbaar i.p.v. ~4
 voorheen. Gemerged via [PR #42](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/42).
+
+## Afgerond: kanban-bord zonder scroll, aparte afwijzen/archiveren-knoppen en lijsten
+
+Vervolgverzoek: het bord mocht geen horizontaal scrollen meer nodig
+hebben, en de archiveer-dropdown per kaart moest vervangen worden door 2
+losse knoppen met elk een eigen lijst.
+
+- **Bord**: `.kanban-bord` is nu een CSS grid met 6 gelijke kolommen
+  (`repeat(6, minmax(0,1fr))`) i.p.v. vaste kolombreedte + horizontaal
+  scrollen, dus het bord past altijd binnen de beschikbare breedte. Onder
+  1100px valt het terug op de oude scrollende opzet (vaste kolombreedte),
+  zodat het op kleinere schermen leesbaar blijft.
+- **Acties**: de "Verplaats naar archief..."-dropdown op elke kaart/rij
+  vervangen door 2 kleine knoppen naast elkaar: "Afgewezen" en
+  "Archiveren" (koppelen respectievelijk aan de bestaande statussen
+  `afgewezen` en `ingetrokken`).
+- **Losse lijsten**: i.p.v. 1 gecombineerde archiefweergave nu 2 tabs:
+  "Afgewezen" (status `afgewezen`) en "Archief" (status `ingetrokken`).
+- **Bugfix** (gevonden tijdens het testen): het kanban-bord bleef
+  zichtbaar doorschemeren achter de andere tabs, omdat de expliciete
+  `display`-waarde op `.kanban-bord` het `hidden`-attribuut overschreef
+  (normale author-CSS wint altijd van de UA-stijl voor `[hidden]`,
+  ongeacht specificiteit). Opgelost met een `#kanban-bord[hidden]{display:
+  none}`-regel. Dit was er waarschijnlijk al vóór deze wijziging.
+
+Lokaal getest tegen Azurite: op 1920px geen scroll meer nodig, knoppen
+wijzigen de status correct en de kandidaat verdwijnt uit bord/lijst, de
+Afgewezen- en Archief-tab tonen elk de juiste, gescheiden set kandidaten.
+Testdata na afloop opgeruimd. Gemerged via [PR #43](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/43).
