@@ -812,3 +812,47 @@ kaartje), lijst/tabelweergave als alternatief, filters (vacature, fase,
 "langer dan X dagen", zoekbalk), en het volledige kandidaatdossier
 (notities, documenten, tijdlijn). Automatische notificaties bij
 aging-drempels expliciet uitgesteld tot ná die stap.
+
+## Afgerond: kanban-bord, kandidaatdossier en notities voor sollicitatiebeheer
+
+Vervolg op de fase-tracking datamodel/backend (zie hierboven), na akkoord
+("Ga nu voor die kanban e.d.!"). Volledige frontend voor het bord + het
+kandidaatdossier gebouwd in `beheer/sollicitaties.html` (herschreven) en
+het nieuwe `beheer/sollicitatie-dossier.html`.
+
+- **Kanban-bord** als hoofdweergave: 6 kolommen (`BORD_FASES`: nieuw t/m
+  aangenomen), native HTML5 drag-and-drop tussen kolommen (geen library).
+  Elke kaart toont naam, vacaturetitel, een aging-indicator (groene stip
+  < 3 dagen, oranje 3-7 dagen, rood > 7 dagen, berekend uit de laatste
+  `statusHistory`-entry) en een archiveer-select om direct naar
+  afgewezen/ingetrokken te verplaatsen.
+- **Lijst-weergave**: sorteerbare tabel, zelfde click-op-kolomkop-patroon
+  als `beheer/index.html`.
+- **Archief-weergave**: losse eenvoudige tabel voor de 2 exit-statussen
+  (afgewezen/ingetrokken), geen fase- of sleepbediening, alleen
+  verwijderen.
+- **Filters**: vacature, fase, "langer dan X dagen in huidige fase" en
+  zoeken op naam. Vacature-opties worden client-side afgeleid uit de
+  geladen sollicitaties (geen extra API-call). Bestaande `?vacatureId=`
+  deep-link (vanuit het vacature-overzicht) blijft werken.
+- **Kandidaatdossier** (nieuwe pagina, per kandidaat via `?id=`):
+  statuswijziging (alle 8 statussen) en archiveren, notitieveld met eigen
+  opslaanknop (los van status), volledige tijdlijn (van→naar, tijdstip,
+  wie), contactgegevens, motivatie, documentdownloads (CV/motivatiebrief
+  via de bestaande `SollicitatieBijlage`-Function) en een
+  verwijderknop.
+- **Backend**: `SollicitatieUpdate` accepteert nu `status` en/of
+  `notities` onafhankelijk van elkaar (minstens 1 verplicht); een
+  tijdlijn-entry komt er alleen bij als de status daadwerkelijk wijzigt.
+
+Lokaal end-to-end getest tegen Azurite met testdata (5 sollicitaties, 2
+vacatures, verschillende fases): bord/lijst/archief renderen correct,
+sleep-en-neerzet tussen kolommen werkt en werkt door naar de backend,
+alle filters getest, dossierpagina getest (laden, statuswijziging +
+tijdlijn-update, notities opslaan, CV-downloadlink). Testdata na afloop
+opgeruimd. Gemerged via [PR #41](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/41).
+
+**Nog open** (zelfde punt als hierboven): of bestaande sollicitaties in
+de oude statussen (`in_behandeling`, `bewaard`, `gearchiveerd`) nog
+aandacht nodig hebben. Automatische notificaties bij aging-drempels nog
+steeds niet gebouwd, blijft een losse vervolgstap.
