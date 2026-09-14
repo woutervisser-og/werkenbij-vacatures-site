@@ -483,6 +483,28 @@ gekleurde linkerrand op de hele sectie (voelt als standaard AI-callout-
 design, eerder al afgekeurd door Wouter). Lokaal getest met tijdelijke
 testvacatures in alle 5 statussen.
 
+## Afgerond: portaalnaam i.p.v. label, meer huisstijl-oranje, uitlijning vacature-hero gefixt
+
+Vervolg op de huisstijl-update van het beheerportaal hierboven, op verzoek
+van Wouter:
+
+- Het "Beheer"-label in de topbar vervangen door de portaalnaam
+  **"Working at OG portal"** (Komu, oranje-donker), plus een oranje
+  accentlijn bovenaan de topbar.
+- Meer huisstijl-oranje/creativiteit in het portaal: paginakoppen in
+  oranje-donker, tabelkoppen/lijst-items/blok-headers van grijs naar het
+  warmere cream, oranje focus-ring op formuliervelden, warmere hover op
+  secundaire knoppen.
+- **Bugfix, los gevonden tijdens het testen en apart gemeld door Wouter**:
+  de header van de vacature-detailpagina's (headerfoto/video met titel
+  erop) lijnde niet uit met de rest van de pagina op brede schermen.
+  Oorzaak: `.vacature-hero-content` zit in een flex-container
+  (`.vacature-hero`), waardoor `max-width:1100px; margin:0 auto` niet
+  werkte zoals bij `section.content` (de box kromp mee met de
+  tekstbreedte i.p.v. eerst de volle breedte te pakken). Opgelost met
+  `width:100%`. Dezelfde onderliggende fout zat ook in `.broodkruimel`,
+  ook gefixt.
+
 ## Nog open
 
 - Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
