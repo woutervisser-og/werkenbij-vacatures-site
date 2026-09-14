@@ -142,14 +142,14 @@ function renderTaalNavSelector(huidigeTaal, beschikbareTalen, slug) {
     return `<a href="${padVoorTaal(taal, slug)}" class="${actiefClass.trim()}" role="menuitem">${label}</a>`;
   });
   return `
-  <div class="taal-nav-selector">
-    <button class="taal-nav-knop" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Taal">
-      ${GLOBE_SVG}
-      <span class="taal-nav-code">${TAAL_LABELS[huidigeTaal] || huidigeTaal.toUpperCase()}</span>
-      ${CHEVRON_SVG}
-    </button>
-    <div class="taal-nav-lijst" role="menu">${items.join("\n")}</div>
-  </div>`;
+    <div class="taal-nav-selector">
+      <button class="taal-nav-knop" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Taal">
+        ${GLOBE_SVG}
+        <span class="taal-nav-code">${TAAL_LABELS[huidigeTaal] || huidigeTaal.toUpperCase()}</span>
+        ${CHEVRON_SVG}
+      </button>
+      <div class="taal-nav-lijst" role="menu">${items.join("\n")}</div>
+    </div>`;
 }
 
 // Zet een titel om naar een URL-vriendelijke "slug", bijvoorbeeld
@@ -502,7 +502,11 @@ ${bouwJsonLd(vacature)}
     <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}">${t("nav.contact")}</a>
     <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">${t("nav.corporateSite")}</a>
   </nav>
-  ${renderTaalNavSelector(taalcode, beschikbareTalen, slug)}
+  <div class="header-rechts">${renderTaalNavSelector(taalcode, beschikbareTalen, slug)}
+    <button type="button" class="hamburger-knop" id="hamburger-knop" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </header>
 
 ${heeftHeaderMedia ? renderVacatureHero(vacature, salaris, t) : ""}

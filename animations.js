@@ -59,3 +59,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+// Hamburgermenu op mobiel: klik op de knop klapt de nav + taal-selector
+// uit/in (".mobiel-menu-open" op <header>, zie styles.css). Alleen
+// zichtbaar/werkzaam onder 640px, maar de listener kan altijd gewoon
+// staan (de knop is dan simpelweg niet zichtbaar/klikbaar).
+document.addEventListener("DOMContentLoaded", () => {
+  const header = document.querySelector("header");
+  const hamburger = document.getElementById("hamburger-knop");
+  if (!header || !hamburger) return;
+
+  hamburger.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const open = header.classList.toggle("mobiel-menu-open");
+    hamburger.setAttribute("aria-expanded", String(open));
+  });
+});
