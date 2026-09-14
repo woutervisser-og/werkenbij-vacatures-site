@@ -2,19 +2,177 @@
   "routes": [
     {
       "route": "/beheer/*",
-      "allowedRoles": ["authenticated"]
+      "allowedRoles": [
+        "authenticated"
+      ]
     },
     {
       "route": "/api/vacatures*",
-      "allowedRoles": ["authenticated"]
+      "allowedRoles": [
+        "authenticated"
+      ]
     },
     {
       "route": "/api/media*",
-      "allowedRoles": ["authenticated"]
+      "allowedRoles": [
+        "authenticated"
+      ]
     },
     {
       "route": "/api/sollicitatiebeheer/*",
-      "allowedRoles": ["authenticated"]
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
+      "route": "/",
+      "redirect": "/en/index.html",
+      "statusCode": 302
+    },
+    {
+      "route": "/index.html",
+      "redirect": "/en/index.html",
+      "statusCode": 302
+    },
+    {
+      "route": "/vacatures.html",
+      "redirect": "/en/vacatures.html",
+      "statusCode": 302
+    },
+    {
+      "route": "/werken-bij-og.html",
+      "redirect": "/en/werken-bij-og.html",
+      "statusCode": 302
+    },
+    {
+      "route": "/over-ons.html",
+      "redirect": "/en/over-ons.html",
+      "statusCode": 302
+    },
+    {
+      "route": "/contact.html",
+      "redirect": "/en/contact.html",
+      "statusCode": 302
+    },
+    {
+      "route": "/en/index.html",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/en/vacatures.html",
+      "rewrite": "/vacatures.html"
+    },
+    {
+      "route": "/en/werken-bij-og.html",
+      "rewrite": "/werken-bij-og.html"
+    },
+    {
+      "route": "/en/over-ons.html",
+      "rewrite": "/over-ons.html"
+    },
+    {
+      "route": "/en/contact.html",
+      "rewrite": "/contact.html"
+    },
+    {
+      "route": "/nl/index.html",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/nl/vacatures.html",
+      "rewrite": "/vacatures.html"
+    },
+    {
+      "route": "/nl/werken-bij-og.html",
+      "rewrite": "/werken-bij-og.html"
+    },
+    {
+      "route": "/nl/over-ons.html",
+      "rewrite": "/over-ons.html"
+    },
+    {
+      "route": "/nl/contact.html",
+      "rewrite": "/contact.html"
+    },
+    {
+      "route": "/fr/index.html",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/fr/vacatures.html",
+      "rewrite": "/vacatures.html"
+    },
+    {
+      "route": "/fr/werken-bij-og.html",
+      "rewrite": "/werken-bij-og.html"
+    },
+    {
+      "route": "/fr/over-ons.html",
+      "rewrite": "/over-ons.html"
+    },
+    {
+      "route": "/fr/contact.html",
+      "rewrite": "/contact.html"
+    },
+    {
+      "route": "/de/index.html",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/de/vacatures.html",
+      "rewrite": "/vacatures.html"
+    },
+    {
+      "route": "/de/werken-bij-og.html",
+      "rewrite": "/werken-bij-og.html"
+    },
+    {
+      "route": "/de/over-ons.html",
+      "rewrite": "/over-ons.html"
+    },
+    {
+      "route": "/de/contact.html",
+      "rewrite": "/contact.html"
+    },
+    {
+      "route": "/it/index.html",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/it/vacatures.html",
+      "rewrite": "/vacatures.html"
+    },
+    {
+      "route": "/it/werken-bij-og.html",
+      "rewrite": "/werken-bij-og.html"
+    },
+    {
+      "route": "/it/over-ons.html",
+      "rewrite": "/over-ons.html"
+    },
+    {
+      "route": "/it/contact.html",
+      "rewrite": "/contact.html"
+    },
+    {
+      "route": "/se/index.html",
+      "rewrite": "/index.html"
+    },
+    {
+      "route": "/se/vacatures.html",
+      "rewrite": "/vacatures.html"
+    },
+    {
+      "route": "/se/werken-bij-og.html",
+      "rewrite": "/werken-bij-og.html"
+    },
+    {
+      "route": "/se/over-ons.html",
+      "rewrite": "/over-ons.html"
+    },
+    {
+      "route": "/se/contact.html",
+      "rewrite": "/contact.html"
     }
   ],
   "responseOverrides": {

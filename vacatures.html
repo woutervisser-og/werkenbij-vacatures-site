@@ -4,48 +4,51 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vacatures | Werken bij OG Clean Fuels</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
 <header>
   <a href="index.html" class="logo" aria-label="OG Clean Fuels, naar de homepage">
     <span class="logo-afbeelding-wrap">
-      <img class="logo-afbeelding logo-afbeelding-wit" src="images/logo/og-logo-wit.png" alt="">
-      <img class="logo-afbeelding logo-afbeelding-kleur" src="images/logo/og-logo-kleur.png" alt="OG Clean Fuels">
+      <img class="logo-afbeelding logo-afbeelding-wit" src="/images/logo/og-logo-wit.png" alt="">
+      <img class="logo-afbeelding logo-afbeelding-kleur" src="/images/logo/og-logo-kleur.png" alt="OG Clean Fuels">
     </span>
   </a>
   <nav>
-    <a href="vacatures.html" class="active">Vacatures</a>
-    <a href="werken-bij-og.html">Werken bij OG</a>
-    <a href="over-ons.html">Over ons</a>
-    <a href="contact.html">Contact</a>
-    <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">Corporate site ↗</a>
+    <a href="vacatures.html" class="active" data-i18n="nav.vacatures">Vacatures</a>
+    <a href="werken-bij-og.html" data-i18n="nav.werkenBijOg">Werken bij OG</a>
+    <a href="over-ons.html" data-i18n="nav.overOns">Over ons</a>
+    <a href="contact.html" data-i18n="nav.contact">Contact</a>
+    <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener" data-i18n="nav.corporateSite">Corporate site ↗</a>
   </nav>
 </header>
 
 <section class="content">
   <div class="section-head reveal">
-    <span class="tag">Openstaande functies</span>
-    <h2>Onze <span class="titel-highlight">vacatures</span></h2>
+    <span class="tag" data-i18n="vacaturesPagina.tag">Openstaande functies</span>
+    <h2><span data-i18n="vacaturesPagina.titelVoor">Onze </span><span class="titel-highlight" data-i18n="vacaturesPagina.highlight">vacatures</span></h2>
   </div>
 
   <div class="card-grid reveal" id="vacature-lijst">
-    <p id="laad-status">Vacatures laden...</p>
+    <p id="laad-status" data-i18n="vacaturesPagina.laden">Vacatures laden...</p>
   </div>
 </section>
 
 <footer>
   <span class="logo-footer">OG Clean Fuels</span>
-  <p>&copy; 2026 OG Clean Fuels. Alle rechten voorbehouden.</p>
+  <p data-i18n="footer.copyright">&copy; 2026 OG Clean Fuels. Alle rechten voorbehouden.</p>
 </footer>
 
-<script src="animations.js"></script>
+<script src="/i18n/i18n.js"></script>
+<script src="/animations.js"></script>
 <script>
   const VACATURE_BRON = "/api/GetVacatures";
 
   // Zelfde slug-logica als in het generatie script, zodat de link hier
-  // exact overeenkomt met de bestandsnaam die gegenereerd is.
+  // exact overeenkomt met de bestandsnaam die gegenereerd is. Altijd op
+  // basis van de EN-titel (ongeacht getoonde taal), want dat is ook de
+  // slug die generate.js gebruikt voor elke taalversie van 1 vacature.
   function maakSlug(tekst) {
     return (tekst || "")
       .toLowerCase()
@@ -64,44 +67,71 @@
     return ruweTekst.length > lengte ? ruweTekst.slice(0, lengte).trim() + "..." : ruweTekst;
   }
 
-  fetch(VACATURE_BRON)
-    .then(response => {
-      if (!response.ok) throw new Error("Status: " + response.status);
-      return response.json();
-    })
-    .then(vacatures => {
-      const container = document.getElementById("vacature-lijst");
-      container.innerHTML = "";
+  // Kiest de vertaling voor de huidige taal, met terugval op EN als deze
+  // vacature (nog) geen vertaling heeft voor die taal — de kaart linkt dan
+  // ook naar de EN-detailpagina, niet naar een niet-bestaande taalversie.
+  function kiesVertaling(vacature, huidigeTaal) {
+    const vertalingen = vacature.translations || {};
+    const eigenVertaling = vertalingen[huidigeTaal];
+    if (eigenVertaling && eigenVertaling.title) {
+      return { taal: huidigeTaal, vertaling: eigenVertaling };
+    }
+    return { taal: "en", vertaling: vertalingen.en || { title: vacature.titel, bodyBlocks: vacature.bodyBlokken } };
+  }
 
-      if (vacatures.length === 0) {
-        container.innerHTML = "<p>Er staan op dit moment geen vacatures open.</p>";
-        return;
-      }
+  function enTitelVoorSlug(vacature) {
+    return (vacature.translations && vacature.translations.en && vacature.translations.en.title) || vacature.titel;
+  }
 
-      vacatures.forEach(vacature => {
-        const kaart = document.createElement("a");
-        kaart.className = "vacature-card";
-        kaart.href = `/vacature/${maakSlug(vacature.titel)}.html`;
-        kaart.style.textDecoration = "none";
-        kaart.style.color = "inherit";
-        kaart.innerHTML = `
-          <div class="afdeling">${vacature.afdeling || ""}</div>
-          <h3>${vacature.titel || ""}</h3>
-          <div class="meta-row">
-            <span class="meta-pill">${vacature.dienstverband || ""}</span>
-            <span class="meta-pill">${vacature.locatie || ""}</span>
-          </div>
-          <p class="omschrijving">${maakSamenvatting(vacature.bodyBlokken, 100)}</p>
-          <span class="btn">Lees meer &amp; solliciteer</span>
-        `;
-        container.appendChild(kaart);
+  function laadVacatures() {
+    const huidigeTaal = window.OG_HUIDIGE_TAAL || "en";
+
+    fetch(VACATURE_BRON)
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(vacatures => {
+        const container = document.getElementById("vacature-lijst");
+        container.innerHTML = "";
+
+        if (vacatures.length === 0) {
+          container.innerHTML = `<p>${window.t("vacaturesPagina.geenVacatures")}</p>`;
+          return;
+        }
+
+        vacatures.forEach(vacature => {
+          const { taal: gekozenTaal, vertaling } = kiesVertaling(vacature, huidigeTaal);
+          const slug = maakSlug(enTitelVoorSlug(vacature));
+
+          const kaart = document.createElement("a");
+          kaart.className = "vacature-card";
+          kaart.href = `/${gekozenTaal}/vacature/${slug}.html`;
+          kaart.style.textDecoration = "none";
+          kaart.style.color = "inherit";
+          kaart.innerHTML = `
+            <div class="afdeling">${vacature.afdeling || ""}</div>
+            <h3>${vertaling.title || ""}</h3>
+            <div class="meta-row">
+              <span class="meta-pill">${vacature.dienstverband || ""}</span>
+              <span class="meta-pill">${vacature.locatie || ""}</span>
+            </div>
+            <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
+            <span class="btn">${window.t("common.leesMeerSolliciteer")}</span>
+          `;
+          container.appendChild(kaart);
+        });
+      })
+      .catch(error => {
+        document.getElementById("vacature-lijst").innerHTML =
+          `<p>${window.t("vacaturesPagina.foutmelding")}</p>`;
+        console.error(error);
       });
-    })
-    .catch(error => {
-      document.getElementById("vacature-lijst").innerHTML =
-        "<p>Er ging iets mis bij het laden van de vacatures. Probeer het later opnieuw.</p>";
-      console.error(error);
-    });
+  }
+
+  // Wacht op de i18n-vertalingen (voor window.t() en de huidige taal),
+  // pas daarna de vacatures ophalen en renderen.
+  window.OG_I18N_KLAAR.then(laadVacatures);
 </script>
 
 </body>

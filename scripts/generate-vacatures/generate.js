@@ -29,6 +29,51 @@ const SITE_BASE_URL = VACATURES_API_URL.replace(/\/api\/GetVacatures$/, "");
 // standalone Node-script buiten de Functions-app om).
 const ONDERSTEUNDE_TALEN = ["en", "nl", "fr", "de", "it", "se"];
 
+// ===== Site-chrome-vertalingen (menu, footer, knoppen, formulier) =====
+// Dit script genereert, anders dan de algemene pagina's (index.html etc.,
+// die client-side i18n/i18n.js gebruiken omdat ze 1 fysiek bestand voor
+// alle talen delen), al een apart fysiek bestand per taal — dus wordt de
+// chrome-tekst hier gewoon rechtstreeks bij het bouwen ingevuld, uit
+// dezelfde /i18n/<taal>.json-bestanden als de rest van de site. Geen
+// aparte runtime-JS nodig op deze pagina's.
+const I18N_MAP = path.join(__dirname, "..", "..", "i18n");
+const i18nCache = {};
+
+function leesI18nBestand(taalcode) {
+  if (!i18nCache[taalcode]) {
+    try {
+      i18nCache[taalcode] = JSON.parse(fs.readFileSync(path.join(I18N_MAP, `${taalcode}.json`), "utf8"));
+    } catch {
+      i18nCache[taalcode] = {};
+    }
+  }
+  return i18nCache[taalcode];
+}
+
+function zoekVertaalKey(dict, key) {
+  return key.split(".").reduce((acc, deel) => (acc && typeof acc === "object" ? acc[deel] : undefined), dict);
+}
+
+// Bouwt een t(key, vervangingen)-functie voor 1 specifieke taal: valt
+// terug op EN als een key in die taal ontbreekt of leeg is (fr/de/it/se
+// zijn nog niet volledig gevuld), zodat er nooit een lege tekst in de
+// gegenereerde HTML terechtkomt.
+function maakVertaler(taalcode) {
+  const eigenDict = leesI18nBestand(taalcode);
+  const basisDict = taalcode === "en" ? eigenDict : leesI18nBestand("en");
+  return function t(key, vervangingen) {
+    let tekst = zoekVertaalKey(eigenDict, key);
+    if (tekst === undefined || tekst === "") tekst = zoekVertaalKey(basisDict, key);
+    if (tekst === undefined || tekst === "") tekst = key;
+    if (vervangingen) {
+      Object.keys(vervangingen).forEach(naam => {
+        tekst = tekst.replace(new RegExp(`\\{\\{${naam}\\}\\}`, "g"), vervangingen[naam]);
+      });
+    }
+    return tekst;
+  };
+}
+
 // Vaste recruiter gegevens, zelfde voor elke vacature. Pas hier aan
 // zodra naam, contactgegevens of foto wijzigen.
 const RECRUITER = {
@@ -41,27 +86,33 @@ const RECRUITER = {
 };
 
 // Waar de gegenereerde pagina's terechtkomen, relatief vanaf de repository
-// root: EN in de root ("vacature/"), overige talen in een submap
-// ("nl/vacature/", "fr/vacature/", ...). Blijft "vacature" (enkelvoud) i.p.v.
-// het "vacatures" uit het spec-voorbeeld, want vacatures.html linkt al naar
-// /vacature/<slug>.html (die aanpassen naar een taalbewuste link is nog niet
-// gedaan, zie "Nog open" in VOORTGANG.md).
+// root: elke taal (óók EN) in zijn eigen submap ("en/vacature/",
+// "nl/vacature/", ...) — volledig symmetrisch, geen enkele taal zonder
+// prefix. De kale /vacature/<slug>.html van vóór deze wijziging bestaat
+// niet meer als fysiek bestand; staticwebapp.config.json regelt de
+// algemene /en//nl/-routing voor de rest van de site, maar een generieke
+// wildcard-redirect voor oude /vacature/-links is met SWA's routing niet
+// haalbaar (geen capture-group-rewrites), dus die blijven daadwerkelijk
+// niet meer werken.
 function outputMapVoorTaal(taalcode) {
-  return taalcode === "en"
-    ? path.join(__dirname, "..", "..", "vacature")
-    : path.join(__dirname, "..", "..", taalcode, "vacature");
+  return path.join(__dirname, "..", "..", taalcode, "vacature");
 }
 
 // Site-relatief pad (voor de taalswitcher op de pagina zelf, werkt op elk
 // domein) en de volledige publieke URL (voor hreflang-tags, die moeten
 // absoluut zijn) delen dezelfde segment-logica.
 function padVoorTaal(taalcode, slug) {
-  const segment = taalcode === "en" ? "vacature" : `${taalcode}/vacature`;
-  return `/${segment}/${slug}.html`;
+  return `/${taalcode}/vacature/${slug}.html`;
 }
 
 function publiekeUrlVoorTaal(taalcode, slug) {
   return `${SITE_BASE_URL}${padVoorTaal(taalcode, slug)}`;
+}
+
+// Voor de algemene site-pagina's (nav/breadcrumb-links vanuit de
+// vacature-template): dezelfde /<taal>/<bestand>-conventie.
+function padVoorAlgemenePagina(taalcode, bestand) {
+  return `/${taalcode}/${bestand}`;
 }
 
 function renderHreflangTags(beschikbareTalen, slug) {
@@ -129,11 +180,22 @@ function vindSamenvatting(bodyBlokken) {
   return inkorten(ruweTekst);
 }
 
-function salarisLabel(vacature) {
-  if (vacature.salarisInOverleg) return "Salaris in overleg";
-  if (vacature.salarisMin && vacature.salarisMax) return `€ ${vacature.salarisMin} - € ${vacature.salarisMax}`;
-  if (vacature.salarisMin) return `Vanaf € ${vacature.salarisMin}`;
-  if (vacature.salarisMax) return `Tot € ${vacature.salarisMax}`;
+// Geeft direct de kant-en-klare <span class="meta-pill">-HTML terug (of
+// "" als er geen salaris is). De platte "€ X - € Y"-range is bewust niet
+// vertaald: dat is valuta-notatie, geen tekst.
+function salarisLabel(vacature, t) {
+  if (vacature.salarisInOverleg) {
+    return `<span class="meta-pill">${t("vacature.salarisInOverleg")}</span>`;
+  }
+  if (vacature.salarisMin && vacature.salarisMax) {
+    return `<span class="meta-pill">€ ${vacature.salarisMin} - € ${vacature.salarisMax}</span>`;
+  }
+  if (vacature.salarisMin) {
+    return `<span class="meta-pill">${t("vacature.salarisVanaf", { bedrag: vacature.salarisMin })}</span>`;
+  }
+  if (vacature.salarisMax) {
+    return `<span class="meta-pill">${t("vacature.salarisTot", { bedrag: vacature.salarisMax })}</span>`;
+  }
   return "";
 }
 
@@ -325,7 +387,7 @@ function renderBlokken(vacature) {
 // een losse titel-sectie eronder). Alleen gebruikt als er daadwerkelijk
 // een header is; zonder header valt bouwHtmlPagina terug op een gewone
 // titel-sectie (zie renderTitelSectie hieronder).
-function renderVacatureHero(vacature, salaris) {
+function renderVacatureHero(vacature, salaris, t) {
   const media = vacature.header.type === "video"
     ? `<div class="vacature-hero-media vacature-hero-video"><iframe src="${escapeHtml(vacature.header.bron)}" allowfullscreen loading="lazy"></iframe></div>`
     : `<img class="vacature-hero-media" src="${escapeHtml(vacature.header.bron)}" alt="${escapeHtml(vacature.titel)}">`;
@@ -334,55 +396,57 @@ function renderVacatureHero(vacature, salaris) {
     ${media}
     <div class="vacature-hero-schaduw" aria-hidden="true"></div>
     <div class="vacature-hero-content">
-      <span class="tag">${escapeHtml(vacature.afdeling || "Vacature")}</span>
+      <span class="tag">${escapeHtml(vacature.afdeling || t("vacature.tagFallback"))}</span>
       <h1>${escapeHtml(vacature.titel)}</h1>
       <div class="detail-meta">
         <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
         <span class="meta-pill">${escapeHtml(vacature.locatie || "")}</span>
-        ${salaris ? `<span class="meta-pill">${escapeHtml(salaris)}</span>` : ""}
+        ${salaris}
       </div>
-      <a href="#solliciteer-blok" class="btn">Solliciteer direct!</a>
+      <a href="#solliciteer-blok" class="btn">${t("vacature.solliciteerDirect")}</a>
     </div>
   </div>`;
 }
 
 // Fallback zonder headerafbeelding: gewoon de titel + meta-info als
 // platte sectie bovenaan de content, zoals voorheen.
-function renderTitelSectie(vacature, salaris) {
+function renderTitelSectie(vacature, salaris, t) {
   return `<div class="section-head reveal">
-    <span class="tag">${escapeHtml(vacature.afdeling || "Vacature")}</span>
+    <span class="tag">${escapeHtml(vacature.afdeling || t("vacature.tagFallback"))}</span>
     <h2>${escapeHtml(vacature.titel)}</h2>
   </div>
   <div class="detail-meta reveal">
     <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
     <span class="meta-pill">${escapeHtml(vacature.locatie || "")}</span>
-    ${salaris ? `<span class="meta-pill">${escapeHtml(salaris)}</span>` : ""}
+    ${salaris}
   </div>`;
 }
 
-function renderBroodkruimel(vacature) {
+function renderBroodkruimel(vacature, taalcode, t) {
   return `<nav class="broodkruimel" aria-label="Broodkruimelpad">
-    <a href="/index.html">Home</a> <span class="scheiding" aria-hidden="true">/</span>
-    <a href="/vacatures.html">Vacatures</a> <span class="scheiding" aria-hidden="true">/</span>
+    <a href="${padVoorAlgemenePagina(taalcode, "index.html")}">${t("breadcrumb.home")}</a> <span class="scheiding" aria-hidden="true">/</span>
+    <a href="${padVoorAlgemenePagina(taalcode, "vacatures.html")}">${t("nav.vacatures")}</a> <span class="scheiding" aria-hidden="true">/</span>
     <span>${escapeHtml(vacature.titel)}</span>
   </nav>`;
 }
 
 function bouwHtmlPagina(vacature, { taalcode, beschikbareTalen, slug }) {
+  const t = maakVertaler(taalcode);
   const metaDescription = vindSamenvatting(vacature.bodyBlokken) || vacature.titel;
   const isFotoHeader = vacature.header && vacature.header.type !== "video" && vacature.header.bron;
   const heeftHeaderMedia = Boolean(vacature.header && vacature.header.bron);
-  const salaris = salarisLabel(vacature);
+  const salaris = salarisLabel(vacature, t);
+  const titelSuffix = t("meta.titelSuffix");
 
   return `<!DOCTYPE html>
 <html lang="${taalcode}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(vacature.titel)} | Werken bij OG Clean Fuels</title>
+<title>${escapeHtml(vacature.titel)} | ${escapeHtml(titelSuffix)}</title>
 <meta name="description" content="${escapeHtml(metaDescription)}">
 
-<meta property="og:title" content="${escapeHtml(vacature.titel)} | Werken bij OG Clean Fuels">
+<meta property="og:title" content="${escapeHtml(vacature.titel)} | ${escapeHtml(titelSuffix)}">
 <meta property="og:description" content="${escapeHtml(metaDescription)}">
 <meta property="og:type" content="website">
 ${isFotoHeader ? `<meta property="og:image" content="${escapeHtml(vacature.header.bron)}">` : ""}
@@ -414,27 +478,27 @@ ${bouwJsonLd(vacature)}
 <body class="${heeftHeaderMedia ? "pagina-met-hero" : ""}">
 
 <header>
-  <a href="/index.html" class="logo" aria-label="OG Clean Fuels, naar de homepage">
+  <a href="${padVoorAlgemenePagina(taalcode, "index.html")}" class="logo" aria-label="OG Clean Fuels, naar de homepage">
     <span class="logo-afbeelding-wrap">
       <img class="logo-afbeelding logo-afbeelding-wit" src="/images/logo/og-logo-wit.png" alt="">
       <img class="logo-afbeelding logo-afbeelding-kleur" src="/images/logo/og-logo-kleur.png" alt="OG Clean Fuels">
     </span>
   </a>
   <nav>
-    <a href="/vacatures.html" class="active">Vacatures</a>
-    <a href="/werken-bij-og.html">Werken bij OG</a>
-    <a href="/over-ons.html">Over ons</a>
-    <a href="/contact.html">Contact</a>
-    <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">Corporate site ↗</a>
+    <a href="${padVoorAlgemenePagina(taalcode, "vacatures.html")}" class="active">${t("nav.vacatures")}</a>
+    <a href="${padVoorAlgemenePagina(taalcode, "werken-bij-og.html")}">${t("nav.werkenBijOg")}</a>
+    <a href="${padVoorAlgemenePagina(taalcode, "over-ons.html")}">${t("nav.overOns")}</a>
+    <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}">${t("nav.contact")}</a>
+    <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">${t("nav.corporateSite")}</a>
   </nav>
 </header>
 
-${heeftHeaderMedia ? renderVacatureHero(vacature, salaris) : ""}
-${renderBroodkruimel(vacature)}
+${heeftHeaderMedia ? renderVacatureHero(vacature, salaris, t) : ""}
+${renderBroodkruimel(vacature, taalcode, t)}
 ${renderTaalSwitcher(taalcode, beschikbareTalen, slug)}
 
 <section class="content">
-  ${!heeftHeaderMedia ? renderTitelSectie(vacature, salaris) : ""}
+  ${!heeftHeaderMedia ? renderTitelSectie(vacature, salaris, t) : ""}
 
   <div class="detail-omschrijving reveal">${renderBlokken(vacature)}</div>
 
@@ -444,47 +508,47 @@ ${renderTaalSwitcher(taalcode, beschikbareTalen, slug)}
       <div class="recruiter-naam">${RECRUITER.naam},<br>${RECRUITER.functie}</div>
     </div>
     <div class="recruiter-tekst">
-      <h3>Interesse of vragen over de functie?</h3>
-      <p>Neem contact met ons op! ✉ <a href="mailto:${RECRUITER.email}">${RECRUITER.email}</a></p>
-      <p>Voldoe je niet aan alle functie-eisen, maar spreekt de functie en onze missie je aan? Neem dan ook gerust contact op. We kijken graag verder dan alleen een cv.</p>
+      <h3>${t("recruiter.vraagKop")}</h3>
+      <p>✉ <a href="mailto:${RECRUITER.email}">${RECRUITER.email}</a></p>
+      <p>${t("recruiter.contactUitleg")}</p>
     </div>
-    <a class="recruiter-bel-btn" href="tel:${RECRUITER.telefoon}">Bellen met ${RECRUITER.naam.split(" ")[0]} 📞</a>
+    <a class="recruiter-bel-btn" href="tel:${RECRUITER.telefoon}">${t("recruiter.bellenMet", { naam: RECRUITER.naam.split(" ")[0] })}</a>
   </div>
 
   <div class="solliciteer-blok reveal" id="solliciteer-blok">
-    <h3 style="margin-bottom:20px;">Solliciteer <span class="titel-highlight">direct</span></h3>
+    <h3 style="margin-bottom:20px;"><span class="titel-highlight">${t("form.titel")}</span></h3>
     <form id="sollicitatie-form">
       <input type="hidden" name="vacatureId" value="${escapeHtml(vacature.id)}">
       <fieldset id="sollicitatie-velden" style="border:0;padding:0;margin:0;">
       <div class="form-veld">
-        <label for="first_name">Voornaam</label>
+        <label for="first_name">${t("form.voornaam")}</label>
         <input type="text" id="first_name" name="first_name" required>
       </div>
       <div class="form-veld">
-        <label for="last_name">Achternaam</label>
+        <label for="last_name">${t("form.achternaam")}</label>
         <input type="text" id="last_name" name="last_name" required>
       </div>
       <div class="form-veld">
-        <label for="email">E-mailadres</label>
+        <label for="email">${t("form.email")}</label>
         <input type="email" id="email" name="email" required>
       </div>
       <div class="form-veld">
-        <label for="tel">Telefoonnummer</label>
+        <label for="tel">${t("form.telefoon")}</label>
         <input type="tel" id="tel" name="tel">
       </div>
       <div class="form-veld">
-        <label for="motivation">Motivatie (optioneel als je een motivatiebrief uploadt)</label>
+        <label for="motivation">${t("form.motivatieLabel")}</label>
         <textarea id="motivation" name="motivation"></textarea>
       </div>
       <div class="form-veld">
-        <label for="cv">CV (PDF of Word, max 5MB)</label>
+        <label for="cv">${t("form.cvLabel")}</label>
         <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
       </div>
       <div class="form-veld">
-        <label for="motivation_letter">Motivatiebrief (optioneel, PDF of Word, max 5MB)</label>
+        <label for="motivation_letter">${t("form.motivatiebriefLabel")}</label>
         <input type="file" id="motivation_letter" name="motivation_letter" accept=".pdf,.doc,.docx">
       </div>
-      <button type="submit" class="btn" id="submit-btn">Versturen</button>
+      <button type="submit" class="btn" id="submit-btn">${t("form.versturen")}</button>
       </fieldset>
       <div id="form-status" role="status" aria-live="polite"></div>
     </form>
@@ -493,9 +557,22 @@ ${renderTaalSwitcher(taalcode, beschikbareTalen, slug)}
 
 <footer>
   <span class="logo-footer">OG Clean Fuels</span>
-  <p>&copy; 2026 OG Clean Fuels. Alle rechten voorbehouden.</p>
+  <p>${t("footer.copyright")}</p>
 </footer>
 
+<script>
+  window.OG_FORM_TEKSTEN = ${JSON.stringify({
+    cvVeldnaam: t("form.cvVeldnaam"),
+    motivatiebriefVeldnaam: t("form.motivatiebriefVeldnaam"),
+    cvVerplicht: t("form.cvVerplicht"),
+    bestandTypeFout: t("form.bestandTypeFout"),
+    bestandGrootteFout: t("form.bestandGrootteFout"),
+    versturen: t("form.versturen"),
+    bezigMetVersturen: t("form.bezigMetVersturen"),
+    succes: t("form.succes"),
+    fout: t("form.fout")
+  })};
+</script>
 <script src="/animations.js"></script>
 <script src="/solliciteer.js"></script>
 </body>
@@ -553,8 +630,7 @@ async function main() {
       const html = bouwHtmlPagina(vertaaldeVacature, { taalcode, beschikbareTalen, slug });
       fs.writeFileSync(bestandspad, html);
 
-      const relatiefPad = taalcode === "en" ? `vacature/${slug}.html` : `${taalcode}/vacature/${slug}.html`;
-      console.log(`Gegenereerd: ${relatiefPad}`);
+      console.log(`Gegenereerd: ${taalcode}/vacature/${slug}.html`);
       aantalPaginas++;
     });
   });

@@ -2,9 +2,15 @@
 // (zie scripts/generate-vacatures/generate.js voor de HTML). Uploadt het
 // CV (en eventuele motivatiebrief) los via /api/cv, en dient daarna de
 // sollicitatie zelf in bij /api/sollicitaties.
+//
+// Alle getoonde tekst komt uit window.OG_FORM_TEKSTEN, dat generate.js
+// per taal invult (zie /i18n/<taal>.json) — dit script zelf kent geen
+// taal, het toont gewoon wat er is meegegeven.
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("sollicitatie-form");
   if (!form) return;
+
+  const teksten = window.OG_FORM_TEKSTEN || {};
 
   const veldenset = document.getElementById("sollicitatie-velden");
   const submitKnop = document.getElementById("submit-btn");
@@ -12,6 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const TOEGESTANE_EXTENSIES = [".pdf", ".doc", ".docx"];
   const MAX_BESTANDSGROOTTE = 5 * 1024 * 1024; // 5MB
+
+  function vulIn(sjabloon, veld) {
+    return (sjabloon || "").replace(/\{\{veld\}\}/g, veld);
+  }
 
   function toonStatus(tekst, type) {
     statusEl.textContent = tekst;
@@ -22,8 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!file) return null;
     const naam = file.name.toLowerCase();
     const geldigeExtensie = TOEGESTANE_EXTENSIES.some(ext => naam.endsWith(ext));
-    if (!geldigeExtensie) return `${veldLabel}: alleen PDF of Word-bestanden zijn toegestaan.`;
-    if (file.size > MAX_BESTANDSGROOTTE) return `${veldLabel}: bestand is groter dan 5MB.`;
+    if (!geldigeExtensie) return vulIn(teksten.bestandTypeFout, veldLabel);
+    if (file.size > MAX_BESTANDSGROOTTE) return vulIn(teksten.bestandGrootteFout, veldLabel);
     return null;
   }
 
@@ -45,19 +55,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const cvBestand = document.getElementById("cv").files[0];
     const motivatiebriefBestand = document.getElementById("motivation_letter").files[0];
 
-    const cvFout = valideerBestand(cvBestand, "CV") || (!cvBestand ? "Upload je CV." : null);
+    const cvFout = valideerBestand(cvBestand, teksten.cvVeldnaam) || (!cvBestand ? teksten.cvVerplicht : null);
     if (cvFout) {
       toonStatus(cvFout, "fout");
       return;
     }
-    const motivatiebriefFout = valideerBestand(motivatiebriefBestand, "Motivatiebrief");
+    const motivatiebriefFout = valideerBestand(motivatiebriefBestand, teksten.motivatiebriefVeldnaam);
     if (motivatiebriefFout) {
       toonStatus(motivatiebriefFout, "fout");
       return;
     }
 
     veldenset.disabled = true;
-    submitKnop.textContent = "Bezig met versturen...";
+    submitKnop.textContent = teksten.bezigMetVersturen;
     toonStatus("", null);
 
     Promise.all([
@@ -87,12 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .then(() => {
         form.reset();
         veldenset.hidden = true;
-        toonStatus("Bedankt voor je sollicitatie! We nemen zo snel mogelijk contact met je op.", "ok");
+        toonStatus(teksten.succes, "ok");
       })
       .catch(error => {
         veldenset.disabled = false;
-        submitKnop.textContent = "Versturen";
-        toonStatus("Er ging iets mis bij het versturen. Probeer het nogmaals of neem contact op.", "fout");
+        submitKnop.textContent = teksten.versturen;
+        toonStatus(teksten.fout, "fout");
         console.error(error);
       });
   });
