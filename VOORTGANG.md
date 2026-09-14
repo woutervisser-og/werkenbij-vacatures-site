@@ -460,10 +460,17 @@ van Wouter over de tabel-indeling:
   screenshot van de corporate over-ons-pagina), geïnspireerd op die
   pagina's structuur maar met eigen werkenbij-tekst.
 
+## Afgerond: echte video verwerkt op werken-bij-og.html
+
+Het video-blok op werken-bij-og.html toonde een placeholder ("volgt
+binnenkort"); Wouter heeft de echte YouTube-video aangeleverd
+(`https://www.youtube.com/watch?v=jOmrQxv9BQI`). Verwerkt als iframe-embed,
+placeholder-CSS (`.blok-video-leeg`) verwijderd. Kon hier niet visueel
+geverifieerd worden (deze sandbox heeft geen netwerktoegang tot
+youtube.com), embed-markup zelf klopt en werkt zodra live.
+
 ## Nog open
 
-- Video-blok op werken-bij-og.html heeft nog geen echte video-URL
-  (duidelijk gemarkeerd in de HTML waar die moet komen).
 - Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
   namen/foto's/citaten. Te vervangen zodra er echte collega-input is.
 - Contactpagina gebruikt nog het voorbeeld-achtige telefoonnummer van
