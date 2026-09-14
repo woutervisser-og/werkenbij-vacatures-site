@@ -417,22 +417,29 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 .weergave-knop:hover { border-color: var(--og-orange-light); }
 .weergave-knop-actief { background: var(--og-orange); border-color: var(--og-orange); color: var(--og-white); }
 
-/* Kanban-bord: horizontaal scrollende rij kolommen, elke kolom een vaste
-   breedte zodat kaarten niet te breed/smal worden ongeacht het aantal
-   fases dat toevallig kandidaten bevat. */
+/* Kanban-bord: 6 gelijke kolommen die altijd samen binnen de beschikbare
+   breedte passen (geen horizontaal scrollen nodig op een normaal scherm).
+   Onder de 1100px-breakpoint worden kolommen te smal om kaarten leesbaar
+   te houden, en valt het bord terug op de oude horizontaal-scrollende
+   opzet met een vaste kolombreedte. */
 .kanban-bord {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 12px;
-  align-items: flex-start;
+  align-items: start;
 }
+/* Een expliciete display-waarde overschrijft anders het hidden-attribuut. */
+#kanban-bord[hidden] { display: none; }
 .kanban-kolom {
-  flex: 0 0 300px;
   background: var(--og-grey);
   border-radius: 12px;
   padding: 14px;
   min-height: 80px;
+  min-width: 0;
+}
+@media (max-width: 1100px) {
+  .kanban-bord { display: flex; overflow-x: auto; padding-bottom: 12px; }
+  .kanban-kolom { flex: 0 0 240px; }
 }
 .kanban-kolom-dragover { background: var(--og-cream); outline: 2px dashed var(--og-orange-light); }
 .kanban-kolom-kop {
@@ -461,15 +468,21 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 .kanban-kaart-naam { font-weight: 700; font-size: 14.5px; }
 .kanban-kaart-vacature { font-size: 13px; color: #767672; }
 .kanban-kaart-meta { display: flex; align-items: center; }
-.kanban-kaart .archiveer-select {
+/* Snelle acties op een kaart/rij: 2 kleine knoppen i.p.v. een dropdown. */
+.kaart-acties { display: flex; gap: 6px; flex-wrap: wrap; }
+.kaart-actie-knop {
   font-family: 'Open Sans', sans-serif;
-  font-size: 12.5px;
-  padding: 5px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
   border: 1px solid #e5e5e2;
   border-radius: 6px;
   background: var(--og-white);
   color: #767672;
+  cursor: pointer;
+  white-space: nowrap;
 }
+.kaart-actie-knop:hover { border-color: var(--og-orange-light); color: var(--og-orange-dark); }
 
 /* Aging-indicator: groen <3 dagen, oranje 3-7 dagen, rood >7 dagen sinds
    de laatste statuswijziging (of het indienen, als er nog geen wijziging

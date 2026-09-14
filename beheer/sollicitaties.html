@@ -54,6 +54,7 @@
   <div class="weergave-toggle">
     <button type="button" class="weergave-knop" data-weergave="bord">Bord</button>
     <button type="button" class="weergave-knop" data-weergave="lijst">Lijst</button>
+    <button type="button" class="weergave-knop" data-weergave="afgewezen">Afgewezen</button>
     <button type="button" class="weergave-knop" data-weergave="archief">Archief</button>
   </div>
 
@@ -66,14 +67,27 @@
     </table>
   </div>
 
+  <div id="afgewezen-weergave" class="beheer-tabel-wrap" hidden>
+    <table class="beheer-tabel">
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th>Vacature</th>
+          <th>Afgewezen op</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="afgewezen-tabel-body"></tbody>
+    </table>
+  </div>
+
   <div id="archief-weergave" class="beheer-tabel-wrap" hidden>
     <table class="beheer-tabel">
       <thead>
         <tr>
           <th>Naam</th>
           <th>Vacature</th>
-          <th>Status</th>
-          <th>Gewijzigd</th>
+          <th>Gearchiveerd op</th>
           <th></th>
         </tr>
       </thead>
@@ -87,9 +101,9 @@
 <script>
   // Zelfde 8 statussen als ALLOWED_STATUSSEN in api/shared/sollicitatiesTable.js:
   // 6 fases op volgorde (het kanban-bord) + 2 exit-statussen (afgewezen/
-  // ingetrokken), bereikbaar vanuit elke fase, geen bordkolom.
+  // ingetrokken), elk met een eigen lijst (zie "Afgewezen"/"Archief"
+  // hieronder), bereikbaar vanuit elke fase, geen bordkolom.
   const BORD_FASES = ["nieuw", "screening", "eerste_gesprek", "tweede_gesprek", "aanbod", "aangenomen"];
-  const EXIT_STATUSSEN = ["afgewezen", "ingetrokken"];
   const FASE_LABELS = {
     nieuw: "Nieuw",
     screening: "Screening",
@@ -273,15 +287,18 @@
       });
   }
 
-  function archiefSollicitaties() {
+  // "Afgewezen" en "Archief" zijn nu 2 losse lijsten (1 per exit-status),
+  // i.p.v. 1 gecombineerde archiefweergave.
+  function sollicitatiesMetStatus(status) {
     return alleSollicitaties
-      .filter(s => EXIT_STATUSSEN.includes(s.status))
+      .filter(s => s.status === status)
       .filter(voldoetAanBasisFilters);
   }
 
   function renderAlles() {
     document.getElementById("kanban-bord").hidden = huidigeWeergave !== "bord";
     document.getElementById("lijst-weergave").hidden = huidigeWeergave !== "lijst";
+    document.getElementById("afgewezen-weergave").hidden = huidigeWeergave !== "afgewezen";
     document.getElementById("archief-weergave").hidden = huidigeWeergave !== "archief";
 
     if (alleSollicitaties.length === 0) {
@@ -295,6 +312,7 @@
 
     if (huidigeWeergave === "bord") renderBord();
     else if (huidigeWeergave === "lijst") renderLijst();
+    else if (huidigeWeergave === "afgewezen") renderAfgewezen();
     else renderArchief();
   }
 
@@ -343,18 +361,33 @@
     return kolom;
   }
 
-  function maakArchiveerSelect(id) {
-    const select = document.createElement("select");
-    select.className = "archiveer-select";
-    select.innerHTML = `<option value="" selected disabled>Verplaats naar archief...</option>` +
-      EXIT_STATUSSEN.map(status => `<option value="${status}">${FASE_LABELS[status]}</option>`).join("");
-    select.addEventListener("click", event => event.stopPropagation());
-    select.addEventListener("change", event => {
+  // 2 kleine knoppen i.p.v. een dropdown: direct naar 1 van de 2
+  // exit-statussen, elk met een eigen lijst (zie hieronder).
+  function maakKaartActies(id) {
+    const wrap = document.createElement("div");
+    wrap.className = "kaart-acties";
+
+    const afwijzenKnop = document.createElement("button");
+    afwijzenKnop.type = "button";
+    afwijzenKnop.className = "kaart-actie-knop";
+    afwijzenKnop.textContent = "Afgewezen";
+    afwijzenKnop.addEventListener("click", event => {
       event.stopPropagation();
-      if (!select.value) return;
-      wijzigStatus(id, select.value);
+      wijzigStatus(id, "afgewezen");
     });
-    return select;
+    wrap.appendChild(afwijzenKnop);
+
+    const archiveerKnop = document.createElement("button");
+    archiveerKnop.type = "button";
+    archiveerKnop.className = "kaart-actie-knop";
+    archiveerKnop.textContent = "Archiveren";
+    archiveerKnop.addEventListener("click", event => {
+      event.stopPropagation();
+      wijzigStatus(id, "ingetrokken");
+    });
+    wrap.appendChild(archiveerKnop);
+
+    return wrap;
   }
 
   function maakKanbanKaart(sollicitatie) {
@@ -369,7 +402,7 @@
     });
     kaart.addEventListener("dragend", () => kaart.classList.remove("kanban-kaart-slepend"));
     kaart.addEventListener("click", event => {
-      if (event.target.closest(".archiveer-select")) return;
+      if (event.target.closest(".kaart-acties")) return;
       location.href = "/beheer/sollicitatie-dossier.html?id=" + encodeURIComponent(sollicitatie.id);
     });
 
@@ -388,7 +421,7 @@
     metaRij.appendChild(maakAgingEl(sollicitatie));
     kaart.appendChild(metaRij);
 
-    kaart.appendChild(maakArchiveerSelect(sollicitatie.id));
+    kaart.appendChild(maakKaartActies(sollicitatie.id));
 
     return kaart;
   }
@@ -446,7 +479,7 @@
     const rij = document.createElement("tr");
     rij.className = "sollicitatie-rij-klikbaar";
     rij.addEventListener("click", event => {
-      if (event.target.closest("select")) return;
+      if (event.target.closest("select") || event.target.closest(".kaart-acties")) return;
       location.href = "/beheer/sollicitatie-dossier.html?id=" + encodeURIComponent(sollicitatie.id);
     });
 
@@ -480,22 +513,31 @@
     rij.appendChild(agingCel);
 
     const archiefCel = document.createElement("td");
-    archiefCel.appendChild(maakArchiveerSelect(sollicitatie.id));
+    archiefCel.appendChild(maakKaartActies(sollicitatie.id));
     rij.appendChild(archiefCel);
 
     return rij;
   }
 
-  // ===== Archief-weergave =====
+  // ===== Afgewezen- en archief-weergave =====
+  // Elk een losse lijst voor 1 van de 2 exit-statussen, zelfde rij-opzet.
+  function renderAfgewezen() {
+    const body = document.getElementById("afgewezen-tabel-body");
+    body.innerHTML = "";
+    sollicitatiesMetStatus("afgewezen")
+      .sort((a, b) => (laatsteWijzigingTijdstip(b) || "").localeCompare(laatsteWijzigingTijdstip(a) || ""))
+      .forEach(sollicitatie => body.appendChild(maakExitRij(sollicitatie)));
+  }
+
   function renderArchief() {
     const body = document.getElementById("archief-tabel-body");
     body.innerHTML = "";
-    archiefSollicitaties()
-      .sort((a, b) => laatsteWijzigingTijdstip(b).localeCompare(laatsteWijzigingTijdstip(a) || ""))
-      .forEach(sollicitatie => body.appendChild(maakArchiefRij(sollicitatie)));
+    sollicitatiesMetStatus("ingetrokken")
+      .sort((a, b) => (laatsteWijzigingTijdstip(b) || "").localeCompare(laatsteWijzigingTijdstip(a) || ""))
+      .forEach(sollicitatie => body.appendChild(maakExitRij(sollicitatie)));
   }
 
-  function maakArchiefRij(sollicitatie) {
+  function maakExitRij(sollicitatie) {
     const rij = document.createElement("tr");
     rij.className = "sollicitatie-rij-klikbaar";
     rij.addEventListener("click", () => {
@@ -509,10 +551,6 @@
     const vacatureCel = document.createElement("td");
     vacatureCel.textContent = sollicitatie.vacatureTitel || "—";
     rij.appendChild(vacatureCel);
-
-    const statusCel = document.createElement("td");
-    statusCel.textContent = FASE_LABELS[sollicitatie.status] || sollicitatie.status;
-    rij.appendChild(statusCel);
 
     const datumCel = document.createElement("td");
     datumCel.textContent = formatteerDatum(laatsteWijzigingTijdstip(sollicitatie));
