@@ -11,12 +11,22 @@ body { background: var(--og-grey); }
   padding: 14px 6%;
   background: var(--og-white);
   border-bottom: 1px solid #e5e5e2;
+  border-top: 4px solid var(--og-orange);
 }
 /* Zelfde logo-afbeelding als op de publieke site, alleen compacter: de
    topbar hier is altijd een effen witte balk (geen hero eroverheen),
    dus alleen de kleurvariant is nodig, geen wit/kleur-scroll-wissel. */
-.beheer-topbar-merk { display: flex; align-items: center; gap: 14px; }
+.beheer-topbar-merk { display: flex; align-items: center; gap: 16px; }
 .beheer-topbar .logo-afbeelding-wrap { height: 34px; }
+.beheer-portal-naam {
+  font-family: 'Komu', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--og-orange-dark);
+  padding-left: 16px;
+  border-left: 2px solid #e5e5e2;
+}
 .beheer-gebruiker { font-size: 14px; color: #4a4a4a; }
 .beheer-gebruiker a { color: var(--og-orange-dark); text-decoration: none; font-weight: 600; margin-left: 14px; }
 
@@ -39,6 +49,7 @@ body { background: var(--og-grey); }
   text-transform: none;
   font-family: 'Open Sans', sans-serif;
   font-weight: 800;
+  color: var(--og-orange-dark);
 }
 
 .btn-klein {
@@ -51,7 +62,7 @@ body { background: var(--og-grey); }
   color: var(--og-dark);
   border: 1px solid #d8d8d4;
 }
-.btn-secundair:hover { background: var(--og-grey); transform: none; box-shadow: none; }
+.btn-secundair:hover { background: var(--og-cream); border-color: var(--og-orange-light); color: var(--og-orange-dark); transform: none; box-shadow: none; }
 .btn-gevaar {
   background: transparent;
   color: #b3261e;
@@ -77,7 +88,7 @@ table.beheer-tabel th {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #767672;
-  background: var(--og-grey);
+  background: var(--og-cream);
 }
 
 /* Meer ruimte voor de titelkolom, zodat die niet onnodig over 3 regels
@@ -171,7 +182,7 @@ table.beheer-tabel th.sorteer-actief { color: var(--og-orange-dark); }
   padding: 6px 10px;
   border: 1px solid #d8d8d4;
   border-radius: 20px;
-  background: var(--og-grey);
+  background: var(--og-cream);
   text-transform: capitalize;
 }
 
@@ -203,6 +214,21 @@ table.beheer-tabel th.sorteer-actief { color: var(--og-orange-dark); }
 }
 .form-veld textarea { resize: vertical; min-height: 90px; }
 .form-veld-checkbox { flex-direction: row; align-items: center; gap: 10px; }
+
+/* Oranje focus-ring op formuliervelden i.p.v. de standaard blauwe
+   browser-outline: herkenbare huisstijl-styling bij interactie. */
+.form-veld input:focus,
+.form-veld select:focus,
+.form-veld textarea:focus,
+.veld-rij input:focus,
+.veld-rij select:focus,
+.veld-rij textarea:focus,
+.blok-toevoegen-rij select:focus,
+.beheer-tabel select:focus {
+  outline: none;
+  border-color: var(--og-orange);
+  box-shadow: 0 0 0 3px rgba(241, 135, 0, 0.18);
+}
 
 fieldset.header-keuze { border: 1px solid #e5e5e2; border-radius: 10px; padding: 18px; margin-bottom: 20px; }
 fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a4a; padding: 0 6px; }
@@ -257,7 +283,7 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: var(--og-grey);
+  background: var(--og-cream);
 }
 .blok-label { font-weight: 700; font-size: 14.5px; }
 .blok-acties { display: flex; gap: 6px; }
@@ -298,7 +324,7 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: var(--og-grey);
+  background: var(--og-cream);
 }
 .lijst-item-veld { display: flex; flex-direction: column; gap: 4px; }
 
