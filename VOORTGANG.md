@@ -469,6 +469,20 @@ placeholder-CSS (`.blok-video-leeg`) verwijderd. Kon hier niet visueel
 geverifieerd worden (deze sandbox heeft geen netwerktoegang tot
 youtube.com), embed-markup zelf klopt en werkt zodra live.
 
+## Afgerond: huisstijl op beheerportaal (echt logo + statuskleuren)
+
+De topbar van `/beheer` gebruikte nog een tekst-benadering van het logo
+("og clean fuels — beheer"); vervangen door de echte logo-afbeelding
+(zelfde als op de publieke site), met een "Beheer"-badge ernaast
+(hergebruikt `.label-tag`). Logo linkt naar het vacature-overzicht.
+
+Vacature-statussecties in het overzicht krijgen nu elk een kleurstip +
+ingekleurde aantal-pil: gepubliceerd groen, ingepland oranje, concept
+lichtgrijs, gesloten roestbruin, gearchiveerd donkergrijs. Bewust geen
+gekleurde linkerrand op de hele sectie (voelt als standaard AI-callout-
+design, eerder al afgekeurd door Wouter). Lokaal getest met tijdelijke
+testvacatures in alle 5 statussen.
+
 ## Nog open
 
 - Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
