@@ -290,6 +290,19 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 .taal-tab-status-gevuld { background: var(--og-green); }
 .taal-tab-status-leeg { background: #d8d8d4; }
 
+.kopieer-en-rij {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--og-cream);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+.kopieer-en-rij[hidden] { display: none; }
+.kopieer-en-uitleg { font-size: 13px; color: #767672; }
+
 /* ===== Body-blokken editor ===== */
 .blok-toevoegen-rij { display: flex; gap: 10px; margin-bottom: 20px; }
 .blok-toevoegen-rij select {

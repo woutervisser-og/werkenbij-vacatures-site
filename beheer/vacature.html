@@ -139,6 +139,11 @@
         </div>
       </div>
 
+      <div class="kopieer-en-rij" id="kopieer-en-rij" hidden>
+        <button type="button" class="btn btn-klein btn-secundair" id="kopieer-en-opzet-knop">Kopieer opzet van EN</button>
+        <span class="kopieer-en-uitleg">Neemt bloktype, volgorde en afbeeldingen over; tekstvelden blijven leeg om te vertalen.</span>
+      </div>
+
       <div class="blok-toevoegen-rij">
         <select id="nieuw-blok-type"></select>
         <button type="button" class="btn btn-klein btn-secundair" id="blok-toevoegen-knop">+ Blok toevoegen</button>
@@ -445,6 +450,7 @@
     actieveTaal = taal;
     document.getElementById("veld-titel").value = vertalingen[taal].title || "";
     bodyBlokken = vertalingen[taal].bodyBlocks;
+    document.getElementById("kopieer-en-rij").hidden = taal === "en";
     renderBlokken();
     renderTaalTabbladen();
   }
@@ -474,6 +480,55 @@
   document.getElementById("blok-toevoegen-knop").addEventListener("click", () => {
     bodyBlokken.push(nieuweBlokData(blokTypeSelect.value));
     renderBlokken();
+  });
+
+  // ===== Opzet van EN kopiëren naar een andere taal =====
+  // Neemt de structuur over (bloktype, volgorde, aantal lijst-items,
+  // afbeeldingen — die zijn meestal taal-onafhankelijk), maar laat elk
+  // tekst-/tekstblok-veld leeg: de inhoud moet toch handmatig vertaald
+  // worden, dus die kopiëren we bewust niet mee.
+  function leegVeldVoorKopie(veldDef, bronWaarde) {
+    if (veldDef.type === "lijst") {
+      const bronLijst = Array.isArray(bronWaarde) ? bronWaarde : [];
+      return bronLijst.map(bronItem => {
+        const nieuwItem = {};
+        veldDef.subvelden.forEach(sub => {
+          nieuwItem[sub.naam] = leegVeldVoorKopie(sub, bronItem[sub.naam]);
+        });
+        return nieuwItem;
+      });
+    }
+    if (veldDef.type === "tekst" || veldDef.type === "tekstblok") {
+      return "";
+    }
+    return bronWaarde || ""; // afbeelding, keuze: structuur, wél overnemen
+  }
+
+  function kopieerBlokStructuur(blok) {
+    const definitie = BLOK_TYPES[blok.type];
+    const nieuw = { type: blok.type };
+    definitie.velden.forEach(veldDef => {
+      nieuw[veldDef.naam] = leegVeldVoorKopie(veldDef, blok[veldDef.naam]);
+    });
+    return nieuw;
+  }
+
+  document.getElementById("kopieer-en-opzet-knop").addEventListener("click", () => {
+    const enBlokken = vertalingen.en.bodyBlocks;
+    if (!enBlokken.length) {
+      toonMelding("EN heeft nog geen blokken om te kopiëren.", "fout");
+      return;
+    }
+    if (bodyBlokken.length > 0 && !confirm(
+      `Dit vervangt de huidige blokken van ${TAAL_LABELS[actieveTaal]} door de opzet van EN (lege tekstvelden). Doorgaan?`
+    )) {
+      return;
+    }
+    const nieuweBlokken = enBlokken.map(kopieerBlokStructuur);
+    vertalingen[actieveTaal].bodyBlocks = nieuweBlokken;
+    bodyBlokken = nieuweBlokken;
+    renderBlokken();
+    toonMelding(`Opzet van EN gekopieerd naar ${TAAL_LABELS[actieveTaal]}.`, "ok");
   });
 
   // Herbruikbare foto-kiezer: eigen upload + "bestaande kiezen" per
