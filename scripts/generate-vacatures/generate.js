@@ -44,16 +44,24 @@ const RECRUITER = {
 // root: EN in de root ("vacature/"), overige talen in een submap
 // ("nl/vacature/", "fr/vacature/", ...). Blijft "vacature" (enkelvoud) i.p.v.
 // het "vacatures" uit het spec-voorbeeld, want vacatures.html linkt al naar
-// /vacature/<slug>.html en die aanpassen is stap 5 (taalswitcher).
+// /vacature/<slug>.html (die aanpassen naar een taalbewuste link is nog niet
+// gedaan, zie "Nog open" in VOORTGANG.md).
 function outputMapVoorTaal(taalcode) {
   return taalcode === "en"
     ? path.join(__dirname, "..", "..", "vacature")
     : path.join(__dirname, "..", "..", taalcode, "vacature");
 }
 
-function publiekeUrlVoorTaal(taalcode, slug) {
+// Site-relatief pad (voor de taalswitcher op de pagina zelf, werkt op elk
+// domein) en de volledige publieke URL (voor hreflang-tags, die moeten
+// absoluut zijn) delen dezelfde segment-logica.
+function padVoorTaal(taalcode, slug) {
   const segment = taalcode === "en" ? "vacature" : `${taalcode}/vacature`;
-  return `${SITE_BASE_URL}/${segment}/${slug}.html`;
+  return `/${segment}/${slug}.html`;
+}
+
+function publiekeUrlVoorTaal(taalcode, slug) {
+  return `${SITE_BASE_URL}${padVoorTaal(taalcode, slug)}`;
 }
 
 function renderHreflangTags(beschikbareTalen, slug) {
@@ -62,6 +70,24 @@ function renderHreflangTags(beschikbareTalen, slug) {
   );
   tags.push(`<link rel="alternate" hreflang="x-default" href="${publiekeUrlVoorTaal("en", slug)}">`);
   return tags.join("\n");
+}
+
+const TAAL_LABELS = { en: "EN", nl: "NL", fr: "FR", de: "DE", it: "IT", se: "SE" };
+
+// Taalswitcher op de pagina zelf: toont alleen de talen die voor déze
+// vacature daadwerkelijk gegenereerd zijn (beschikbareTalen komt uit
+// dezelfde filtering als de hreflang-tags), actieve taal niet-klikbaar en
+// duidelijk gemarkeerd. Geen switcher tonen als er toch niets te wisselen
+// valt (alleen EN gevuld).
+function renderTaalSwitcher(huidigeTaal, beschikbareTalen, slug) {
+  if (beschikbareTalen.length <= 1) return "";
+  const items = beschikbareTalen.map(taal => {
+    const label = TAAL_LABELS[taal] || taal.toUpperCase();
+    return taal === huidigeTaal
+      ? `<span class="taal-actief" aria-current="true">${label}</span>`
+      : `<a href="${padVoorTaal(taal, slug)}">${label}</a>`;
+  });
+  return `<nav class="taal-switcher" aria-label="Taal">${items.join("\n")}</nav>`;
 }
 
 // Zet een titel om naar een URL-vriendelijke "slug", bijvoorbeeld
@@ -405,6 +431,7 @@ ${bouwJsonLd(vacature)}
 
 ${heeftHeaderMedia ? renderVacatureHero(vacature, salaris) : ""}
 ${renderBroodkruimel(vacature)}
+${renderTaalSwitcher(taalcode, beschikbareTalen, slug)}
 
 <section class="content">
   ${!heeftHeaderMedia ? renderTitelSectie(vacature, salaris) : ""}

@@ -31,13 +31,6 @@
 
   <form class="beheer-form" id="vacature-form">
     <div class="form-rij">
-      <div class="form-veld volle-breedte">
-        <label for="veld-titel">Titel *</label>
-        <input type="text" id="veld-titel" required>
-      </div>
-    </div>
-
-    <div class="form-rij">
       <div class="form-veld">
         <label for="veld-afdeling">Afdeling</label>
         <input type="text" id="veld-afdeling">
@@ -135,7 +128,17 @@
     </fieldset>
 
     <fieldset class="header-keuze">
-      <legend>Inhoud (body-blokken)</legend>
+      <legend>Vertalingen</legend>
+      <p class="taal-tabbladen-uitleg">EN is de basistaal en altijd verplicht. Overige talen zijn optioneel; het groene bolletje geeft aan welke al gevuld zijn.</p>
+      <div class="taal-tabbladen" id="taal-tabbladen"></div>
+
+      <div class="form-rij">
+        <div class="form-veld volle-breedte">
+          <label for="veld-titel">Titel</label>
+          <input type="text" id="veld-titel">
+        </div>
+      </div>
+
       <div class="blok-toevoegen-rij">
         <select id="nieuw-blok-type"></select>
         <button type="button" class="btn btn-klein btn-secundair" id="blok-toevoegen-knop">+ Blok toevoegen</button>
@@ -398,7 +401,58 @@
     }
   };
 
-  let bodyBlokken = [];
+  // ===== Meertaligheid: vertalingen per taal =====
+  // EN is de verplichte basistaal, de rest optioneel. Moet in sync
+  // blijven met ONDERSTEUNDE_TALEN in api/shared/vacaturesTable.js.
+  const TALEN = ["en", "nl", "fr", "de", "it", "se"];
+  const TAAL_LABELS = { en: "English", nl: "Nederlands", fr: "Français", de: "Deutsch", it: "Italiano", se: "Svenska" };
+
+  function legeVertaling() { return { title: "", bodyBlocks: [] }; }
+
+  let vertalingen = {};
+  TALEN.forEach(taal => { vertalingen[taal] = legeVertaling(); });
+  let actieveTaal = "en";
+
+  // bodyBlokken wijst steeds naar de array van de actieve taal (zelfde
+  // referentie als vertalingen[actieveTaal].bodyBlocks), zodat de hele
+  // bestaande body-blokken-editor hieronder ongewijzigd kan blijven: die
+  // leest/muteert gewoon deze module-variabele.
+  let bodyBlokken = vertalingen.en.bodyBlocks;
+
+  function renderTaalTabbladen() {
+    const container = document.getElementById("taal-tabbladen");
+    container.innerHTML = "";
+    TALEN.forEach(taal => {
+      const knop = document.createElement("button");
+      knop.type = "button";
+      knop.className = "taal-tab" + (taal === actieveTaal ? " taal-tab-actief" : "");
+
+      const statusBolletje = document.createElement("span");
+      const gevuld = Boolean((vertalingen[taal].title || "").trim());
+      statusBolletje.className = "taal-tab-status " + (gevuld ? "taal-tab-status-gevuld" : "taal-tab-status-leeg");
+      knop.appendChild(statusBolletje);
+
+      const labelEl = document.createElement("span");
+      labelEl.textContent = TAAL_LABELS[taal] + (taal === "en" ? " *" : "");
+      knop.appendChild(labelEl);
+
+      knop.addEventListener("click", () => wisselTaalTabblad(taal));
+      container.appendChild(knop);
+    });
+  }
+
+  function wisselTaalTabblad(taal) {
+    actieveTaal = taal;
+    document.getElementById("veld-titel").value = vertalingen[taal].title || "";
+    bodyBlokken = vertalingen[taal].bodyBlocks;
+    renderBlokken();
+    renderTaalTabbladen();
+  }
+
+  document.getElementById("veld-titel").addEventListener("input", () => {
+    vertalingen[actieveTaal].title = document.getElementById("veld-titel").value;
+    renderTaalTabbladen();
+  });
 
   const blokTypeSelect = document.getElementById("nieuw-blok-type");
   Object.entries(BLOK_TYPES).forEach(([type, definitie]) => {
@@ -683,6 +737,7 @@
     bodyBlokken.forEach((blok, index) => container.appendChild(maakBlokKaart(blok, index)));
   }
 
+  renderTaalTabbladen();
   renderBlokken();
 
   // ===== Bestaande vacature laden (bewerken) =====
@@ -696,7 +751,6 @@
         return response.json();
       })
       .then(vacature => {
-        document.getElementById("veld-titel").value = vacature.titel || "";
         document.getElementById("veld-afdeling").value = vacature.afdeling || "";
         document.getElementById("veld-locatie").value = vacature.locatie || "";
         document.getElementById("veld-dienstverband").value = vacature.dienstverband || "";
@@ -719,8 +773,14 @@
           toonHeaderPreview(headerBron);
         }
 
-        bodyBlokken = Array.isArray(vacature.bodyBlokken) ? vacature.bodyBlokken : [];
-        renderBlokken();
+        TALEN.forEach(taal => {
+          const vertaling = (vacature.translations && vacature.translations[taal]) || legeVertaling();
+          vertalingen[taal] = {
+            title: vertaling.title || "",
+            bodyBlocks: Array.isArray(vertaling.bodyBlocks) ? vertaling.bodyBlocks : []
+          };
+        });
+        wisselTaalTabblad("en");
       })
       .catch(error => {
         toonMelding("Kon de vacature niet laden.", "fout");
@@ -749,6 +809,16 @@
   document.getElementById("vacature-form").addEventListener("submit", event => {
     event.preventDefault();
 
+    // Titel-veld van het huidige tabblad staat nog los in het DOM-veld
+    // (input-listener schrijft 'm al door, maar voor de zekerheid ook hier).
+    vertalingen[actieveTaal].title = document.getElementById("veld-titel").value;
+
+    if (!vertalingen.en.title || !vertalingen.en.title.trim()) {
+      wisselTaalTabblad("en");
+      toonMelding("Titel (EN) is verplicht.", "fout");
+      return;
+    }
+
     const isVideo = document.getElementById("header-type-video").checked;
     const header = isVideo
       ? { type: "video", bron: document.getElementById("veld-video-url").value }
@@ -757,7 +827,7 @@
     const salarisInOverleg = document.getElementById("veld-salaris-overleg").checked;
 
     const vacature = {
-      titel: document.getElementById("veld-titel").value,
+      translations: vertalingen,
       afdeling: document.getElementById("veld-afdeling").value,
       locatie: document.getElementById("veld-locatie").value,
       dienstverband: document.getElementById("veld-dienstverband").value,
