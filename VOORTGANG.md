@@ -615,6 +615,33 @@ sollicitatieflow in het Nederlands op een taalpagina.
 taalprefix) werken niet meer — Azure Static Web Apps' routing
 ondersteunt geen wildcard-redirects die de slug behouden.
 
+## Afgerond: menu in lijn met corporate huisstijl, taal-selector, hero op contact/vacatures
+
+Op basis van een screenshot van de corporate website (ogcleanfuels.com)
+is de header herzien:
+
+- Menu-items staan nu echt gecentreerd (header is een 3-koloms grid:
+  logo / nav / taal-selector, i.p.v. logo-links-nav-rechts). Logo is
+  groter (54px → 64px) en staat met wat meer ruimte t.o.v. de linkerhoek.
+- Nieuwe taal-selector in de header (globe-icoon + taalcode + dropdown),
+  zoals de "NL ⌄"-knop op de corporate site. Op de 5 marketingpagina's
+  altijd alle 6 talen (client-side ingevuld door `i18n.js`); op
+  vacature-detailpagina's alleen de daadwerkelijk vertaalde talen
+  (build-time door `generate.js`) — vervangt de losse switcher die eerst
+  onder de breadcrumb stond.
+- Contact- en vacature-overzichtspagina hadden na de meertaligheid-ronde
+  geen hero-sectie, in tegenstelling tot de andere 3 marketingpagina's.
+  Beide hebben nu dezelfde hero-behandeling (transparante header over het
+  oranje kleurverloop, wit logo, effen bij scrollen), met hergebruik van
+  bestaande, al vertaalde koptekst (geen dubbele koppen, geen nieuwe
+  vertaalronde nodig behalve 1 nieuwe intro-regel voor vacatures).
+
+Kleurgebruik ongewijzigd. Lokaal getest tegen Azurite + een testvacature
+(EN+NL): alle 5 marketingpagina's + de vacature-detailpagina bekeken met
+Playwright in EN en NL, taal-dropdown-interactie getest, mobiele weergave
+gecontroleerd (nav + taal-selector verdwijnen zoals voorheen, geen
+regressie).
+
 ## Nog open
 
 - Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
@@ -637,3 +664,13 @@ ondersteunt geen wildcard-redirects die de slug behouden.
   door de workflow en kunnen op termijn verwijderd worden (Settings →
   Secrets and variables → Actions), zodra bevestigd is dat er verder
   nergens meer naar verwezen wordt.
+- Geen hamburgermenu op mobiel: `header nav` en de taal-selector
+  verdwijnen onder 640px zonder vervanging (bestaand gedrag van vóór deze
+  sessie, tijdens het header-werk hierboven bevestigd maar niet
+  aangepakt — apart te plannen).
+- Voorstel (nog niet gebouwd, wacht op prioriteit van Wouter): in
+  `beheer/vacature.html` een knop "Kopieer opzet van EN" per taaltab die
+  alleen de blokstructuur (type/volgorde/aantal, geen tekst) overneemt,
+  en een losse functie om de inhoud automatisch te laten voorvertalen via
+  een LLM (concept, altijd met verplichte controle vóór opslaan/live
+  zetten).
