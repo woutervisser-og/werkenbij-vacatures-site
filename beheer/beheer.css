@@ -8,16 +8,15 @@ body { background: var(--og-grey); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 6%;
+  padding: 14px 6%;
   background: var(--og-white);
   border-bottom: 1px solid #e5e5e2;
 }
-/* Het beheerportaal gebruikt nog de simpele tekst-variant van het logo
-   (geen brand-icoon nodig in een intern dashboard); overschrijft de
-   flex-opmaak die styles.css voor het icoon+tekst-logo van de publieke
-   site gebruikt. */
-.beheer-topbar .logo { display: inline; font-size: 19px; }
-.beheer-topbar .logo span { color: var(--og-orange); }
+/* Zelfde logo-afbeelding als op de publieke site, alleen compacter: de
+   topbar hier is altijd een effen witte balk (geen hero eroverheen),
+   dus alleen de kleurvariant is nodig, geen wit/kleur-scroll-wissel. */
+.beheer-topbar-merk { display: flex; align-items: center; gap: 14px; }
+.beheer-topbar .logo-afbeelding-wrap { height: 34px; }
 .beheer-gebruiker { font-size: 14px; color: #4a4a4a; }
 .beheer-gebruiker a { color: var(--og-orange-dark); text-decoration: none; font-weight: 600; margin-left: 14px; }
 
@@ -119,6 +118,31 @@ table.beheer-tabel td.acties { display: flex; gap: 8px; justify-content: flex-en
   border-radius: 20px;
   margin-left: 6px;
 }
+
+/* Statuskleuren per sectie: een kleurstip voor de titel plus een
+   ingekleurde aantal-pil, dezelfde kleurfamilies als de rest van de
+   huisstijl (groen voor actief, oranje voor gepland, grijs voor
+   concept/archief). Geen gekleurde linkerrand op de hele sectie: dat
+   oogt als een standaard AI-callout-blokje, wat Wouter niet wil. */
+.status-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.status-dot--gepubliceerd { background: var(--og-green); }
+.status-dot--ingepland { background: var(--og-orange); }
+.status-dot--concept { background: #b7b7b1; }
+.status-dot--gesloten { background: #a1431d; }
+.status-dot--gearchiveerd { background: #6b6b68; }
+
+.status-aantal--gepubliceerd { background: #d9f2df; color: var(--og-green-dark); }
+.status-aantal--ingepland { background: #fdead0; color: var(--og-orange-dark); }
+.status-aantal--concept { background: #ececea; color: #767672; }
+.status-aantal--gesloten { background: #f7ded2; color: #a1431d; }
+.status-aantal--gearchiveerd { background: #e2e2de; color: #55554f; }
 
 table.beheer-tabel th.sorteerbaar {
   cursor: pointer;
