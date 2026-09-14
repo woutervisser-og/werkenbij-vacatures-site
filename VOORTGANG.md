@@ -436,8 +436,39 @@ van Wouter over de tabel-indeling:
   `generate.js` naar de gedeelde `styles.css`, zodat ook `contact.html`
   'm kan gebruiken.
 
+## Afgerond: hero-uitlijning, consistente kaarten, creatievere blokken
+
+- Hero-tekst (h1/tekst/knoppen) lijnt nu links uit met de content-
+  blokken eronder: `.hero-content` gebruikt dezelfde
+  max-width:1100px + margin:auto-logica als `section.content`, i.p.v.
+  de kale 6%-viewportrand (duidelijk verder naar links op brede
+  schermen).
+- "Zo werken wij"/"Wat we belangrijk vinden"-kaarten op
+  werken-bij-og.html en over-ons.html gebruikten een ander component
+  (value-block/icon-label) dan de homepage (teaser-card/label-tag); nu
+  overal hetzelfde. Ongebruikte CSS opgeruimd.
+- "90% minder CO2"-blok op werken-bij-og.html: het generieke
+  cream-kaartje-met-gekleurde-rand (voelde als standaard AI-design)
+  vervangen door een opvallend full-bleed statistiek-blok.
+- Nieuw op werken-bij-og.html: een video-blok (nette "volgt
+  binnenkort"-status, klaar om een echte video-URL in te plakken),
+  creatievere "Naast je salaris"-kaarten, en een "Onze
+  collega's"-sectie met quotes (illustratief, bewust zonder naam/foto).
+- Over-ons.html fors uitgebreid: missie-sectie, full-bleed quote-blok,
+  en een "Maatschappelijke betrokkenheid"-sectie (OG Heroes, Beatrix
+  Kinderziekenhuis, OG Capitals — reële sponsoring, overgenomen uit een
+  screenshot van de corporate over-ons-pagina), geïnspireerd op die
+  pagina's structuur maar met eigen werkenbij-tekst.
+
 ## Nog open
 
+- Video-blok op werken-bij-og.html heeft nog geen echte video-URL
+  (duidelijk gemarkeerd in de HTML waar die moet komen).
+- Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
+  namen/foto's/citaten. Te vervangen zodra er echte collega-input is.
+- Contactpagina gebruikt nog het voorbeeld-achtige telefoonnummer van
+  de vacature-detailpagina's, en er staat geen bedrijfsadres/KvK-nummer
+  op (niet betrouwbaar bekend).
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
   uitgesteld, zie hierboven).
 - Afdeling en locatie zijn nu vrije tekstvelden (geen vaste keuzelijst,
