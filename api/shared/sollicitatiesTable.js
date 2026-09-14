@@ -21,6 +21,13 @@ const ALLOWED_STATUSSEN = [
   "ingetrokken"
 ];
 
+// De 6 fases die het kanban-bord als kolom toont, in vaste volgorde. De
+// 2 exit-statussen (laatste 2 van ALLOWED_STATUSSEN) zijn bewust geen
+// bordkolom: die zijn een actie vanuit elke fase, geen vaste volgende
+// stap in de lijn (zie beheer/sollicitaties.html).
+const BORD_FASES = ALLOWED_STATUSSEN.slice(0, 6);
+const EXIT_STATUSSEN = ALLOWED_STATUSSEN.slice(6);
+
 let tableClientPromise;
 
 function getSollicitatiesTableClient() {
@@ -74,6 +81,7 @@ function toEntity(id, sollicitatie, { ingediendOp }) {
     statusHistoryJson: JSON.stringify([
       { from: null, to: status, timestamp: ingediendOp, user: "kandidaat" }
     ]),
+    notities: "",
     ingediendOp
   };
 }
@@ -107,6 +115,7 @@ function toSollicitatieDto(entity) {
     motivatiebriefOorspronkelijkeNaam: entity.motivatiebriefOorspronkelijkeNaam,
     status: entity.status,
     statusHistory: JSON.parse(entity.statusHistoryJson || "[]"),
+    notities: entity.notities || "",
     ingediendOp: entity.ingediendOp
   };
 }
@@ -114,6 +123,8 @@ function toSollicitatieDto(entity) {
 module.exports = {
   PARTITION_KEY,
   ALLOWED_STATUSSEN,
+  BORD_FASES,
+  EXIT_STATUSSEN,
   getSollicitatiesTableClient,
   toEntity,
   toSollicitatieDto,
