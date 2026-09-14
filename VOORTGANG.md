@@ -762,3 +762,48 @@ bestaande `RECRUITER`-gegevens i.p.v. hardcoded contactinfo.
 Lokaal getest: alle 5 marketingpagina's + een vacature-detailpagina, in
 EN/NL/DE (umlaut-rendering gecontroleerd), desktop en mobiel, en dat
 interne footer-links de taalprefix correct meekrijgen (`i18n.js`).
+
+## Bezig: sollicitatie-fasetracking — datamodel + backend afgerond (stap 1+2)
+
+Eerste stap van een uitbreiding van de sollicitatiepagina in `/beheer`:
+een duidelijke fase-indeling per kandidaat (kanban-bord + tijdlijn), zodat
+de flow van sollicitatie tot aanname/afwijzing zichtbaar wordt. Bewust
+gesplitst: eerst datamodel + backend, het kanban-bord en de rest van de
+frontend volgen pas na akkoord.
+
+- **Nieuwe fases** (`ALLOWED_STATUSSEN` in `api/shared/sollicitatiesTable.js`):
+  nieuw → screening → eerste_gesprek → tweede_gesprek → aanbod →
+  aangenomen, plus 2 exit-statussen bereikbaar vanuit elke fase:
+  afgewezen, ingetrokken. Vervangt het oude 6-statussenmodel (nieuw/
+  in_behandeling/afgewezen/aangenomen/bewaard/gearchiveerd).
+- **`statusHistory`** (audit trail): elke wijziging is 1 entry met
+  from/to/timestamp/user, opgeslagen als `statusHistoryJson` (zelfde
+  JSON-string-conventie als vacatures' `translationsJson`). De eerste
+  entry ontstaat al bij het indienen (`from: null, to: "nieuw", user:
+  "kandidaat"`). `SollicitatieUpdate` voegt alleen een entry toe bij een
+  daadwerkelijke wijziging, niet bij het opnieuw opslaan van dezelfde
+  status.
+- Nieuwe gedeelde helper `api/shared/huidigeGebruiker.js`: leest de
+  ingelogde gebruiker uit de `x-ms-client-principal`-header voor het
+  "user"-veld.
+- Bestaande statusdropdown in `beheer/sollicitaties.html` bijgewerkt naar
+  de nieuwe 8 statussen (tussenoplossing tot het kanban-bord er is). Geen
+  migratiescript: oude sollicitaties zonder `statusHistoryJson` vallen
+  terug op een lege lijst.
+
+**Open aandachtspunt**: als er al echte sollicitaties in de oude
+statussen (`in_behandeling`, `bewaard`, `gearchiveerd`) staan, komen die
+niet 1-op-1 overeen met de nieuwe fases — nog te bevestigen door Wouter
+of dit relevant is.
+
+Lokaal getest tegen Azurite: initiële history-entry bij aanmaken, meerdere
+statuswijzigingen na elkaar (elke wijziging 1 nieuwe entry), dezelfde
+status nogmaals opslaan (geen duplicaat), en een oude/ongeldige
+statuswaarde (400).
+
+**Nog te doen** (wacht op akkoord van Wouter): kanban-bord als
+hoofdweergave (1 kolom per fase, drag-en-drop, aging-indicator per
+kaartje), lijst/tabelweergave als alternatief, filters (vacature, fase,
+"langer dan X dagen", zoekbalk), en het volledige kandidaatdossier
+(notities, documenten, tijdlijn). Automatische notificaties bij
+aging-drempels expliciet uitgesteld tot ná die stap.
