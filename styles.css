@@ -375,6 +375,33 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
 .broodkruimel a:hover { color: var(--og-orange-dark); text-decoration: underline; }
 .broodkruimel .scheiding { margin: 0 6px; }
 
+/* Taalswitcher op vacature-detailpagina's: alleen zichtbaar als er meer
+   dan 1 taal beschikbaar is voor die specifieke vacature (zie
+   generate.js). Actieve taal is een niet-klikbare span, geen link. */
+.taal-switcher {
+  display: flex;
+  gap: 8px;
+  max-width: 1100px;
+  margin: 0 auto 8px;
+  padding: 0 6%;
+}
+.taal-switcher a,
+.taal-switcher .taal-actief {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 4px 11px;
+  border-radius: 20px;
+}
+.taal-switcher a {
+  color: #767672;
+  background: var(--og-grey);
+  text-decoration: none;
+}
+.taal-switcher a:hover { background: var(--og-orange-light); color: var(--og-dark); }
+.taal-switcher .taal-actief { background: var(--og-orange); color: var(--og-white); }
+
 @media (max-width: 640px) {
   .vacature-hero { min-height: 420px; }
   .vacature-hero-content { padding: 120px 6% 40px; }
