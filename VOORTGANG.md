@@ -690,3 +690,13 @@ Lokaal getest tegen Azurite met een testvacature (2-3 bloktypes,
 inclusief een lijst-veld en een afbeelding): structuur en lege
 tekstvelden kloppen in alle 5 doeltalen, EN blijft ongewijzigd, confirm
 verschijnt pas bij een herhaalde overschrijf-poging.
+
+## Afgerond: knop "Verwijder alle blokken" in het beheerformulier
+
+Naast "+ Blok toevoegen" staat nu ook "Verwijder alle blokken": leegt in
+1 keer alle body-blokken van de actieve taaltab, met een confirm-stap
+("Weet je het zeker?") die het aantal blokken en de taal noemt. Werkt
+alleen op de actieve taal, niet op alle talen tegelijk. Geen dialoog als
+er toch al 0 blokken zijn. Lokaal getest: annuleren laat de blokken
+ongemoeid, bevestigen leegt ze, een herhaalde klik bij 0 blokken doet
+niets.
