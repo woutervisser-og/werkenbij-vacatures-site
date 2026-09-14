@@ -71,14 +71,12 @@ h1, h2, h3, .brand-headline {
    vertraagde "pop" zodra de kaart zelf zichtbaar wordt: geeft de
    kleurblokken net iets meer leven zonder overdreven te worden. */
 .reveal .label-tag,
-.reveal .icon-label,
 .reveal .tag {
   opacity: 0;
   transform: scale(0.75);
   transition: opacity 0.35s ease 0.25s, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s;
 }
 .reveal.is-visible .label-tag,
-.reveal.is-visible .icon-label,
 .reveal.is-visible .tag {
   opacity: 1;
   transform: scale(1);
@@ -213,7 +211,7 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
   background-size: 300% 300%;
   animation: gradientShift 14s ease infinite;
   color: var(--og-white);
-  padding: 110px 6% 130px;
+  padding: 110px 0 130px;
   position: relative;
   overflow: hidden;
 }
@@ -240,7 +238,11 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
   50% { transform: translateY(-18px); }
 }
 
-.hero-content { max-width: 680px; position: relative; z-index: 1; }
+/* Zelfde breedte/marge-logica als section.content hieronder, zodat de
+   hero-tekst links uitlijnt met de content-blokken eronder i.p.v. met
+   de kale 6%-viewportrand (die op brede schermen duidelijk verder naar
+   links staat dan de gecentreerde max-width:1100px content). */
+.hero-content { max-width: 1100px; margin: 0 auto; padding: 0 6%; position: relative; z-index: 1; }
 
 .eyebrow {
   display: inline-block;
@@ -451,36 +453,15 @@ section.content {
 .vacature-card .salaris { font-size: 14px; font-weight: 700; color: var(--og-orange-dark); margin-bottom: 18px; }
 .vacature-card .btn { align-self: flex-start; padding: 10px 22px; font-size: 14px; }
 
-.value-block {
-  background: var(--og-cream);
-  border-radius: 12px;
-  padding: 30px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.value-block:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(241, 135, 0, 0.15); }
-.value-block .icon-label {
-  color: var(--og-orange);
-  font-family: 'Komu', sans-serif;
-  font-size: 14px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.value-block h3 { font-size: 19px; margin-bottom: 10px; }
-.value-block p { font-size: 14.5px; color: #4a4a4a; }
-
 /* ===== Volle-kleur tekstblokken, zoals de WHY/HOW/WHAT-kaarten in het
    brandbook: content opbreken met een stevige achtergrondkleur in plaats
-   van steeds dezelfde neutrale kaart. Te combineren met .teaser-card of
-   .value-block. ===== */
+   van steeds dezelfde neutrale kaart. Te combineren met .teaser-card. ===== */
 .paneel-orange { background: var(--og-orange); color: var(--og-white); }
 .paneel-orange-licht { background: var(--og-orange-light); color: var(--og-dark); }
 .paneel-orange-donker { background: var(--og-orange-dark); color: var(--og-white); }
 
 .paneel-orange .label-tag,
-.paneel-orange-donker .label-tag,
-.paneel-orange .icon-label,
-.paneel-orange-donker .icon-label { background: var(--og-white); color: var(--og-orange-dark); padding: 4px 12px; border-radius: 3px; }
-.paneel-orange-licht .icon-label { color: var(--og-orange-dark); }
+.paneel-orange-donker .label-tag { background: var(--og-white); color: var(--og-orange-dark); padding: 4px 12px; border-radius: 3px; }
 .paneel-orange h3, .paneel-orange-donker h3 { color: var(--og-white); }
 .paneel-orange-licht h3 { color: var(--og-orange-dark); }
 .paneel-orange p, .paneel-orange-donker p { color: rgba(255,255,255,0.92); }
@@ -624,6 +605,138 @@ footer .logo-footer {
   .blok-quote p { font-size: 22px; }
   .blok-quote-mark { font-size: 110px; }
 }
+
+/* ===== Statistiek-uitgelicht: een opvallend cijfer als volle-breedte
+   blok i.p.v. het generieke "kaart met gekleurde linkerrand"-patroon
+   (dat oogt al snel als een standaard AI-gegenereerd tekstvakje). ===== */
+.stat-uitgelicht {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  background: linear-gradient(120deg, var(--og-dark), #2b2b2b);
+  color: var(--og-white);
+  overflow: hidden;
+  position: relative;
+}
+.stat-uitgelicht::after {
+  content: "";
+  position: absolute;
+  left: -100px;
+  top: -140px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: var(--og-orange);
+  opacity: 0.12;
+}
+.stat-uitgelicht-inner {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 64px 6%;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.stat-uitgelicht-cijfer {
+  font-family: 'Komu', sans-serif;
+  font-size: 160px;
+  line-height: 0.85;
+  color: var(--og-orange);
+  flex-shrink: 0;
+}
+.stat-uitgelicht-cijfer span { font-size: 0.4em; vertical-align: top; }
+.stat-uitgelicht-tekst { flex: 1; min-width: 260px; }
+.stat-uitgelicht-tekst p { font-size: 19px; line-height: 1.5; max-width: 480px; }
+@media (max-width: 640px) {
+  .stat-uitgelicht-cijfer { font-size: 100px; }
+}
+
+/* ===== Video-blok voor marketingpagina's: dezelfde volle-breedte
+   .blok-video als in de body-blokken van een vacature, met een nette
+   "komt nog"-status zolang er geen echte video-URL is ingevuld. ===== */
+.blok-video-leeg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: linear-gradient(120deg, var(--og-dark), #2b2b2b);
+  color: var(--og-white);
+}
+.blok-video-leeg-knop {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--og-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.blok-video-leeg p { font-family: 'Komu', sans-serif; text-transform: uppercase; font-size: 15px; letter-spacing: 0.04em; }
+
+/* ===== Voordelen-grid: bredere kaarten met afwisselende kleurvlakken
+   i.p.v. een rij losse, identieke pilletjes. ===== */
+.voordelen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+.voordeel-kaart {
+  border-radius: 14px;
+  padding: 28px 26px;
+  background: var(--og-cream);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.voordeel-kaart:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(241, 135, 0, 0.15); }
+.voordeel-kaart h4 {
+  font-family: 'Komu', sans-serif;
+  text-transform: uppercase;
+  font-size: 19px;
+  color: var(--og-orange-dark);
+  margin-bottom: 8px;
+}
+.voordeel-kaart p { font-size: 14px; color: #4a4a4a; }
+.voordeel-kaart.voordeel-licht { background: var(--og-orange-light); }
+.voordeel-kaart.voordeel-licht h4 { color: var(--og-dark); }
+.voordeel-kaart.voordeel-donker { background: var(--og-dark); }
+.voordeel-kaart.voordeel-donker h4 { color: var(--og-orange); }
+.voordeel-kaart.voordeel-donker p { color: rgba(255,255,255,0.85); }
+
+/* ===== Collega-quotes zonder foto (i.p.v. teruggrijpen op generieke
+   stockfoto's die eerder al bewust uit de vacature-detailpagina's zijn
+   gehaald). ===== */
+.collega-quotes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.collega-quote-kaart {
+  background: var(--og-cream);
+  border-radius: 12px;
+  padding: 26px;
+}
+.collega-quote-kaart blockquote { font-size: 15.5px; line-height: 1.5; margin-bottom: 12px; }
+.collega-quote-kaart .collega-rol { font-weight: 700; font-size: 13.5px; color: var(--og-orange-dark); }
+
+/* ===== Maatschappelijke-betrokkenheid kaarten (over-ons). ===== */
+.betrokkenheid-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+.betrokkenheid-kaart {
+  border: 1px solid #e5e5e2;
+  border-radius: 12px;
+  padding: 26px;
+}
+.betrokkenheid-kaart .label-tag { margin-bottom: 14px; }
+.betrokkenheid-kaart h3 { font-size: 17px; margin-bottom: 8px; color: var(--og-dark); }
+.betrokkenheid-kaart p { font-size: 14px; color: #4a4a4a; }
 
 .blok-afbeelding-tekst { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
 .blok-afbeelding-tekst img { width: 100%; border-radius: 12px; object-fit: cover; max-height: 320px; }
