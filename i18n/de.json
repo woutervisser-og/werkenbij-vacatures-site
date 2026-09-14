@@ -20,7 +20,8 @@
     "leesMeerSolliciteer": "Mehr lesen & bewerben",
     "labelBold": "Bold",
     "labelEager": "Eager",
-    "labelHuman": "Human"
+    "labelHuman": "Human",
+    "taalSelectorLabel": "Sprache ändern"
   },
   "home": {
     "eyebrow": "Arbeiten bei OG Clean Fuels",
@@ -157,7 +158,8 @@
     "highlight": "Stellenangebote",
     "laden": "Stellenangebote werden geladen...",
     "geenVacatures": "Derzeit sind keine Stellen offen.",
-    "foutmelding": "Beim Laden der Stellenangebote ist etwas schiefgelaufen. Bitte versuche es später erneut."
+    "foutmelding": "Beim Laden der Stellenangebote ist etwas schiefgelaufen. Bitte versuche es später erneut.",
+    "heroIntro": "Durchstöbere unsere offenen Stellen und finde die Rolle, die zu dir passt."
   },
   "vacature": {
     "tagFallback": "Stellenangebot",

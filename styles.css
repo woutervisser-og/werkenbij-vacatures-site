@@ -85,12 +85,17 @@ h1, h2, h3, .brand-headline {
   transform: scale(1);
 }
 
-/* ===== Header ===== */
+/* ===== Header =====
+   3 kolommen (logo / nav / taal-selector) i.p.v. simpele
+   "space-between", zodat de nav altijd echt gecentreerd op de pagina
+   staat — ongeacht de breedte van het logo of de taal-selector ernaast —
+   net als op de corporate website. */
 header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px 6%;
+  column-gap: 24px;
+  padding: 20px 5%;
   background: var(--og-white);
   border-bottom: 1px solid #eee;
   position: sticky;
@@ -98,6 +103,7 @@ header {
   z-index: 50;
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
+header nav { justify-self: center; display: flex; align-items: center; }
 
 /* Op pagina's met een hero (zie ".pagina-met-hero" op <body>) overlapt de
    header de hero: transparant met een wit logo bovenaan, en zodra je
@@ -125,11 +131,13 @@ body.pagina-met-hero header.header-solide {
 .logo {
   display: inline-flex;
   align-items: center;
+  justify-self: start;
+  margin-left: 12px;
   text-decoration: none;
 }
 .logo-afbeelding-wrap {
   position: relative;
-  height: 54px;
+  height: 64px;
 }
 .logo-afbeelding {
   position: absolute;
@@ -172,6 +180,62 @@ body.pagina-met-hero header:not(.header-solide) nav a,
 body.pagina-met-hero header:not(.header-solide) nav a.active {
   color: var(--og-white);
 }
+
+/* ===== Taal-selector in de header, zoals de "NL ⌄"-knop op de corporate
+   website. Op de 5 marketingpagina's toont de lijst alle 6 talen (JS in
+   i18n.js vult de links/actieve taal in); op vacature-detailpagina's
+   bakt generate.js alleen de daadwerkelijk vertaalde talen erin. ===== */
+.taal-nav-selector {
+  position: relative;
+  justify-self: end;
+  margin-right: 12px;
+}
+.taal-nav-knop {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--og-dark);
+  padding: 6px 2px;
+  transition: color 0.3s ease;
+}
+.taal-nav-knop svg { width: 17px; height: 17px; }
+.taal-nav-chevron { transition: transform 0.2s ease; }
+.taal-nav-selector.open .taal-nav-chevron { transform: rotate(180deg); }
+
+body.pagina-met-hero header:not(.header-solide) .taal-nav-knop {
+  color: var(--og-white);
+}
+
+.taal-nav-lijst {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 130px;
+  background: var(--og-white);
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+  padding: 6px;
+  z-index: 60;
+}
+.taal-nav-selector.open .taal-nav-lijst { display: flex; }
+.taal-nav-lijst a {
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--og-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+.taal-nav-lijst a:hover { background: var(--og-cream); }
+.taal-nav-lijst a.taal-nav-actief { background: var(--og-orange); color: var(--og-white); }
 
 /* ===== Label tag, zoals "COLOR PALETTE" in het brandbook ===== */
 /* Komu (net als de meeste lettertypes) heeft van nature veel meer
@@ -378,30 +442,6 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
 /* Taalswitcher op vacature-detailpagina's: alleen zichtbaar als er meer
    dan 1 taal beschikbaar is voor die specifieke vacature (zie
    generate.js). Actieve taal is een niet-klikbare span, geen link. */
-.taal-switcher {
-  display: flex;
-  gap: 8px;
-  max-width: 1100px;
-  margin: 0 auto 8px;
-  padding: 0 6%;
-}
-.taal-switcher a,
-.taal-switcher .taal-actief {
-  font-size: 12.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 4px 11px;
-  border-radius: 20px;
-}
-.taal-switcher a {
-  color: #767672;
-  background: var(--og-grey);
-  text-decoration: none;
-}
-.taal-switcher a:hover { background: var(--og-orange-light); color: var(--og-dark); }
-.taal-switcher .taal-actief { background: var(--og-orange); color: var(--og-white); }
-
 @media (max-width: 640px) {
   .vacature-hero { min-height: 420px; }
   .vacature-hero-content { padding: 120px 6% 40px; }
@@ -572,6 +612,7 @@ footer .logo-footer {
 
 @media (max-width: 640px) {
   header nav { display: none; }
+  .taal-nav-selector { display: none; }
 }
 
 /* ===== Body-blokken (vacature-detailpagina's) ===== */

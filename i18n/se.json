@@ -20,7 +20,8 @@
     "leesMeerSolliciteer": "Läs mer & ansök",
     "labelBold": "Bold",
     "labelEager": "Eager",
-    "labelHuman": "Human"
+    "labelHuman": "Human",
+    "taalSelectorLabel": "Byt språk"
   },
   "home": {
     "eyebrow": "Jobba på OG Clean Fuels",
@@ -157,7 +158,8 @@
     "highlight": "lediga jobb",
     "laden": "Laddar lediga jobb...",
     "geenVacatures": "Det finns för närvarande inga lediga jobb.",
-    "foutmelding": "Något gick fel när de lediga jobben skulle laddas. Försök igen senare."
+    "foutmelding": "Något gick fel när de lediga jobben skulle laddas. Försök igen senare.",
+    "heroIntro": "Bläddra bland våra lediga tjänster och hitta rollen som passar dig."
   },
   "vacature": {
     "tagFallback": "Ledigt jobb",

@@ -7,7 +7,7 @@
 <meta name="description" content="Vraag over een vacature of je sollicitatie? Neem contact op met ons recruitmentteam." data-i18n-attr="content:contact.metaDescription">
 <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+<body class="pagina-met-hero">
 
 <header>
   <a href="index.html" class="logo" aria-label="OG Clean Fuels, naar de homepage">
@@ -23,15 +23,32 @@
     <a href="contact.html" class="active" data-i18n="nav.contact">Contact</a>
     <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener" data-i18n="nav.corporateSite">Corporate site ↗</a>
   </nav>
+  <div class="taal-nav-selector">
+    <button class="taal-nav-knop" type="button" aria-haspopup="true" aria-expanded="false" data-i18n-attr="aria-label:common.taalSelectorLabel" aria-label="Taal wijzigen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+      <span class="taal-nav-code">NL</span>
+      <svg class="taal-nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="taal-nav-lijst" role="menu">
+      <a href="#" data-taal="en" role="menuitem">EN</a>
+      <a href="#" data-taal="nl" role="menuitem">NL</a>
+      <a href="#" data-taal="fr" role="menuitem">FR</a>
+      <a href="#" data-taal="de" role="menuitem">DE</a>
+      <a href="#" data-taal="it" role="menuitem">IT</a>
+      <a href="#" data-taal="se" role="menuitem">SE</a>
+    </div>
+  </div>
 </header>
 
-<section class="content">
-  <div class="section-head reveal">
-    <span class="tag" data-i18n="contact.sectie1Tag">Contact</span>
-    <h2><span data-i18n="contact.sectie1TitelPlain">Vragen?</span> <span class="titel-highlight" data-i18n="contact.sectie1Highlight">Wij helpen je verder</span></h2>
+<section class="hero">
+  <div class="hero-content">
+    <span class="eyebrow" data-i18n="contact.sectie1Tag">Contact</span>
+    <h1><span data-i18n="contact.sectie1TitelPlain">Vragen?</span> <span data-i18n="contact.sectie1Highlight">Wij helpen je verder</span></h1>
+    <p data-i18n="contact.intro">Heb je een vraag over een vacature, je sollicitatie, of wil je gewoon even sparren voordat je solliciteert? Neem contact op met ons recruitmentteam, we reageren snel.</p>
   </div>
-  <p class="content-intro-tekst" data-i18n="contact.intro">Heb je een vraag over een vacature, je sollicitatie, of wil je gewoon even sparren voordat je solliciteert? Neem contact op met ons recruitmentteam, we reageren snel.</p>
+</section>
 
+<section class="content">
   <div class="recruiter-blok reveal">
     <div class="recruiter-foto-blok">
       <img class="recruiter-foto" src="/images/iska-van-der-vlugt.webp" alt="Iska van der Vlugt">
