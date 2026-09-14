@@ -55,6 +55,26 @@
       .catch(() => ({}));
   }
 
+  // Vult de taal-selector in de header: zet de huidige taalcode op de
+  // knop, en de href van elke taaloptie naar dezelfde pagina in die taal.
+  function huidigePaginaBestand() {
+    const laatsteSegment = location.pathname.split("/").filter(Boolean).pop();
+    return laatsteSegment && SITE_PAGINAS.includes(laatsteSegment) ? laatsteSegment : "index.html";
+  }
+
+  function vulTaalSelectorIn() {
+    const bestand = huidigePaginaBestand();
+    document.querySelectorAll(".taal-nav-selector").forEach(selector => {
+      const code = selector.querySelector(".taal-nav-code");
+      if (code) code.textContent = taal.toUpperCase();
+      selector.querySelectorAll(".taal-nav-lijst a[data-taal]").forEach(link => {
+        const linkTaal = link.getAttribute("data-taal");
+        link.setAttribute("href", "/" + linkTaal + "/" + bestand);
+        link.classList.toggle("taal-nav-actief", linkTaal === taal);
+      });
+    });
+  }
+
   function pastInterneLinksAan() {
     if (taal === BASISTAAL) return;
     document.querySelectorAll("a[href]").forEach(link => {
@@ -90,6 +110,7 @@
       });
     });
     pastInterneLinksAan();
+    vulTaalSelectorIn();
     document.documentElement.lang = taal;
   }
 

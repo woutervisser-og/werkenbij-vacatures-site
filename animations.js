@@ -30,3 +30,32 @@ document.addEventListener("DOMContentLoaded", () => {
   bijwerken();
   window.addEventListener("scroll", bijwerken, { passive: true });
 });
+
+// Taal-selector in de header: klik op de knop opent/sluit de dropdown met
+// taalopties, een klik buiten de selector sluit 'm weer. Werkt voor elke
+// ".taal-nav-selector" op de pagina (er hoort er maar 1 te zijn, maar dit
+// blijft correct mocht dat ooit veranderen).
+document.addEventListener("DOMContentLoaded", () => {
+  const selectors = document.querySelectorAll(".taal-nav-selector");
+  if (!selectors.length) return;
+
+  selectors.forEach(selector => {
+    const knop = selector.querySelector(".taal-nav-knop");
+    if (!knop) return;
+    knop.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const wordtGeopend = !selector.classList.contains("open");
+      selectors.forEach(s => s.classList.remove("open"));
+      selector.classList.toggle("open", wordtGeopend);
+      knop.setAttribute("aria-expanded", String(wordtGeopend));
+    });
+  });
+
+  document.addEventListener("click", () => {
+    selectors.forEach(s => {
+      s.classList.remove("open");
+      const knop = s.querySelector(".taal-nav-knop");
+      if (knop) knop.setAttribute("aria-expanded", "false");
+    });
+  });
+});

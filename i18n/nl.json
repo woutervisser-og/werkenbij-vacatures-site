@@ -20,7 +20,8 @@
     "leesMeerSolliciteer": "Lees meer & solliciteer",
     "labelBold": "Bold",
     "labelEager": "Eager",
-    "labelHuman": "Human"
+    "labelHuman": "Human",
+    "taalSelectorLabel": "Taal wijzigen"
   },
   "home": {
     "eyebrow": "Werken bij OG Clean Fuels",
@@ -157,7 +158,8 @@
     "highlight": "vacatures",
     "laden": "Vacatures laden...",
     "geenVacatures": "Er staan op dit moment geen vacatures open.",
-    "foutmelding": "Er ging iets mis bij het laden van de vacatures. Probeer het later opnieuw."
+    "foutmelding": "Er ging iets mis bij het laden van de vacatures. Probeer het later opnieuw.",
+    "heroIntro": "Bekijk onze openstaande vacatures en vind de rol die bij je past."
   },
   "vacature": {
     "tagFallback": "Vacature",

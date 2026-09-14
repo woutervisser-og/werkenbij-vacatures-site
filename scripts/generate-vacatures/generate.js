@@ -125,20 +125,31 @@ function renderHreflangTags(beschikbareTalen, slug) {
 
 const TAAL_LABELS = { en: "EN", nl: "NL", fr: "FR", de: "DE", it: "IT", se: "SE" };
 
-// Taalswitcher op de pagina zelf: toont alleen de talen die voor déze
-// vacature daadwerkelijk gegenereerd zijn (beschikbareTalen komt uit
-// dezelfde filtering als de hreflang-tags), actieve taal niet-klikbaar en
-// duidelijk gemarkeerd. Geen switcher tonen als er toch niets te wisselen
-// valt (alleen EN gevuld).
-function renderTaalSwitcher(huidigeTaal, beschikbareTalen, slug) {
+const GLOBE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
+const CHEVRON_SVG = `<svg class="taal-nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+
+// Taal-selector in de header (zelfde component/CSS als de 5 marketing-
+// pagina's, zie i18n/i18n.js en styles.css), maar hier gebakken op
+// build-time: toont alleen de talen die voor déze vacature daadwerkelijk
+// gegenereerd zijn (beschikbareTalen komt uit dezelfde filtering als de
+// hreflang-tags). Geen selector tonen als er toch niets te wisselen valt
+// (alleen EN gevuld).
+function renderTaalNavSelector(huidigeTaal, beschikbareTalen, slug) {
   if (beschikbareTalen.length <= 1) return "";
   const items = beschikbareTalen.map(taal => {
     const label = TAAL_LABELS[taal] || taal.toUpperCase();
-    return taal === huidigeTaal
-      ? `<span class="taal-actief" aria-current="true">${label}</span>`
-      : `<a href="${padVoorTaal(taal, slug)}">${label}</a>`;
+    const actiefClass = taal === huidigeTaal ? " taal-nav-actief" : "";
+    return `<a href="${padVoorTaal(taal, slug)}" class="${actiefClass.trim()}" role="menuitem">${label}</a>`;
   });
-  return `<nav class="taal-switcher" aria-label="Taal">${items.join("\n")}</nav>`;
+  return `
+  <div class="taal-nav-selector">
+    <button class="taal-nav-knop" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Taal">
+      ${GLOBE_SVG}
+      <span class="taal-nav-code">${TAAL_LABELS[huidigeTaal] || huidigeTaal.toUpperCase()}</span>
+      ${CHEVRON_SVG}
+    </button>
+    <div class="taal-nav-lijst" role="menu">${items.join("\n")}</div>
+  </div>`;
 }
 
 // Zet een titel om naar een URL-vriendelijke "slug", bijvoorbeeld
@@ -491,11 +502,11 @@ ${bouwJsonLd(vacature)}
     <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}">${t("nav.contact")}</a>
     <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">${t("nav.corporateSite")}</a>
   </nav>
+  ${renderTaalNavSelector(taalcode, beschikbareTalen, slug)}
 </header>
 
 ${heeftHeaderMedia ? renderVacatureHero(vacature, salaris, t) : ""}
 ${renderBroodkruimel(vacature, taalcode, t)}
-${renderTaalSwitcher(taalcode, beschikbareTalen, slug)}
 
 <section class="content">
   ${!heeftHeaderMedia ? renderTitelSectie(vacature, salaris, t) : ""}

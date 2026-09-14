@@ -20,7 +20,8 @@
     "leesMeerSolliciteer": "Scopri di più & candidati",
     "labelBold": "Bold",
     "labelEager": "Eager",
-    "labelHuman": "Human"
+    "labelHuman": "Human",
+    "taalSelectorLabel": "Cambia lingua"
   },
   "home": {
     "eyebrow": "Lavorare in OG Clean Fuels",
@@ -157,7 +158,8 @@
     "highlight": "posizioni aperte",
     "laden": "Caricamento delle posizioni aperte...",
     "geenVacatures": "Al momento non ci sono posizioni aperte.",
-    "foutmelding": "Si è verificato un errore durante il caricamento delle posizioni aperte. Riprova più tardi."
+    "foutmelding": "Si è verificato un errore durante il caricamento delle posizioni aperte. Riprova più tardi.",
+    "heroIntro": "Scopri le nostre posizioni aperte e trova il ruolo giusto per te."
   },
   "vacature": {
     "tagFallback": "Posizione aperta",

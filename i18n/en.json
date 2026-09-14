@@ -20,7 +20,8 @@
     "leesMeerSolliciteer": "Read more & apply",
     "labelBold": "Bold",
     "labelEager": "Eager",
-    "labelHuman": "Human"
+    "labelHuman": "Human",
+    "taalSelectorLabel": "Change language"
   },
   "home": {
     "eyebrow": "Working at OG Clean Fuels",
@@ -157,7 +158,8 @@
     "highlight": "vacancies",
     "laden": "Loading vacancies...",
     "geenVacatures": "There are currently no open vacancies.",
-    "foutmelding": "Something went wrong loading the vacancies. Please try again later."
+    "foutmelding": "Something went wrong loading the vacancies. Please try again later.",
+    "heroIntro": "Browse our open vacancies and find the role that fits you."
   },
   "vacature": {
     "tagFallback": "Vacancy",

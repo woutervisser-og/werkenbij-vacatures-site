@@ -20,7 +20,8 @@
     "leesMeerSolliciteer": "Lire la suite & postuler",
     "labelBold": "Bold",
     "labelEager": "Eager",
-    "labelHuman": "Human"
+    "labelHuman": "Human",
+    "taalSelectorLabel": "Changer de langue"
   },
   "home": {
     "eyebrow": "Travailler chez OG Clean Fuels",
@@ -157,7 +158,8 @@
     "highlight": "offres d'emploi",
     "laden": "Chargement des offres d'emploi...",
     "geenVacatures": "Il n'y a actuellement aucune offre d'emploi ouverte.",
-    "foutmelding": "Une erreur s'est produite lors du chargement des offres d'emploi. Veuillez réessayer plus tard."
+    "foutmelding": "Une erreur s'est produite lors du chargement des offres d'emploi. Veuillez réessayer plus tard.",
+    "heroIntro": "Parcourez nos offres d'emploi et trouvez le poste qui vous correspond."
   },
   "vacature": {
     "tagFallback": "Offre d'emploi",
