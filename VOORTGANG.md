@@ -524,6 +524,44 @@ desktop en mobiel: blijft leesbaar bij de langere Nederlandse titels
 (i.t.t. de korte Engelse corporate-teksten), valt gewoon terug op meer
 regels.
 
+## Bezig: meertaligheid vacatures (EN basistaal, NL/FR/DE/IT/SE optioneel)
+
+Eerste 3 stappen van de meertaligheid-bouwspecificatie afgerond (datamodel,
+backend, generate.js). Taalswitcher op de website, `/beheer`-taal-tabs en
+het algemene vertaalbestand voor site-teksten volgen in latere stappen.
+
+- **Datamodel**: vacature-entity uitgebreid met een genest
+  `translations`-object per taal (`en`/`nl`/`fr`/`de`/`it`/`se` — `se`
+  bewust i.p.v. ISO `sv`, voor consistentie met de corporate site). `en`
+  is verplicht, de rest optioneel.
+- Bij deze gelegenheid het hele datamodel omgezet naar het Engels
+  (`title`, `department`, `location`, `employmentType`,
+  `salaryMin`/`Max`/`Negotiable`, `educationLevel`, `closingDate`,
+  `publicationDate`), met een **tijdelijke Nederlandse alias-laag** op de
+  API-output zodat het beheerformulier en `generate.js` bleven werken
+  tijdens de overgang. Die aliassen verdwijnen weer zodra het
+  beheerformulier ook wordt omgezet (latere stap). Bewust buiten scope:
+  status-waardes (blijven Nederlands) en het sollicitaties-datamodel.
+- `VacatureCreate`/`VacatureUpdate` valideren dat `translations.en.title`
+  niet leeg is. Een update via het (nog Nederlandse) beheerformulier
+  merget talen per stuk i.p.v. het hele `translations`-object te
+  vervangen, zodat andere talen niet verdwijnen.
+- Backwards compatible zonder migratiescript: een bestaande vacature van
+  vóór deze wijziging (platte NL-kolommen, geen `translationsJson`) valt
+  bij het lezen automatisch terug op de oude kolommen.
+- **`generate.js`**: genereert nu per vacature 1 pagina per taal die
+  daadwerkelijk gevuld is in `translations`, i.p.v. altijd precies 1
+  pagina. EN blijft in de root (`vacature/<slug>.html`, ongewijzigde
+  locatie i.v.m. bestaande links vanuit `vacatures.html`), overige talen
+  in een submap (`nl/vacature/...`, `fr/vacature/...`). hreflang-tags
+  toegevoegd (inclusief `x-default` naar EN). De site-chrome
+  (menu/footer/formulierlabels) is nog niet vertaald, blijft Nederlands
+  op elke taalpagina tot het losse vertaalbestand er is (latere stap).
+
+Lokaal getest tegen Azurite: testvacature met EN+NL aangemaakt, 2
+bestanden gegenereerd op de juiste plek met correcte `<html lang>` en
+hreflang-tags, een vacature zonder NL-vertaling levert geen NL-bestand op.
+
 ## Nog open
 
 - Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
