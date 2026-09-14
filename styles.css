@@ -278,7 +278,10 @@ body.pagina-met-hero header:not(.header-solide) .taal-nav-knop {
   background-size: 300% 300%;
   animation: gradientShift 14s ease infinite;
   color: var(--og-white);
-  padding: 110px 0 130px;
+  /* Meer ruimte boven (menu-kant) dan onder (body-kant), zodat de H1 net
+     als op de corporate website dichter bij de content eronder zit dan
+     bij het menu erboven. */
+  padding: 170px 0 70px;
   position: relative;
   overflow: hidden;
 }
