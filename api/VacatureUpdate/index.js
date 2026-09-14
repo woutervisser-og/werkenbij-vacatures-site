@@ -1,5 +1,6 @@
 const {
   getVacaturesTableClient,
+  normalizeVacatureInput,
   toEntity,
   toVacatureDto,
   PARTITION_KEY,
@@ -10,8 +11,9 @@ const { triggerRebuild, raaktPubliekeSite } = require("../shared/rebuildTrigger"
 module.exports = async function (context, req) {
   const id = context.bindingData.id;
   const input = req.body || {};
+  const genormaliseerd = normalizeVacatureInput(input);
 
-  if (input.status && !ALLOWED_STATUSSEN.includes(input.status)) {
+  if (genormaliseerd.status && !ALLOWED_STATUSSEN.includes(genormaliseerd.status)) {
     context.res = {
       status: 400,
       body: { error: `Ongeldige status, kies uit: ${ALLOWED_STATUSSEN.join(", ")}` }
@@ -24,10 +26,24 @@ module.exports = async function (context, req) {
     const bestaand = await tableClient.getEntity(PARTITION_KEY, id);
     const bestaandeVacature = toVacatureDto(bestaand);
 
+    const samengevoegd = { ...bestaandeVacature, ...genormaliseerd };
+    // Talen per stuk samenvoegen i.p.v. het hele translations-object te
+    // vervangen: anders verdwijnen andere talen zodra iemand (bv. het
+    // huidige, nog niet-meertalige beheerformulier) alleen de EN-tekst
+    // opslaat.
+    if (genormaliseerd.translations) {
+      samengevoegd.translations = { ...bestaandeVacature.translations, ...genormaliseerd.translations };
+    }
+
+    if (!samengevoegd.translations || !samengevoegd.translations.en || !samengevoegd.translations.en.title) {
+      context.res = { status: 400, body: { error: "Titel (EN) is verplicht" } };
+      return;
+    }
+
     const nu = new Date().toISOString();
     const bijgewerkt = toEntity(
       id,
-      { ...bestaandeVacature, ...input },
+      samengevoegd,
       { createdAt: bestaand.createdAt, updatedAt: nu }
     );
 

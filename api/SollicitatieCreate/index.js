@@ -33,7 +33,7 @@ module.exports = async function (context, req) {
     let vacatureTitel = "";
     try {
       const vacatureEntity = await vacaturesTableClient.getEntity(VACATURE_PARTITION_KEY, input.vacatureId);
-      vacatureTitel = vacatureEntity.titel || "";
+      vacatureTitel = vacatureEntity.title || vacatureEntity.titel || "";
     } catch (error) {
       if (error.statusCode === 404) {
         context.res = { status: 400, body: { error: "Onbekende vacature" } };
