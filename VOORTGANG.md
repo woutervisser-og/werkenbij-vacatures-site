@@ -526,9 +526,10 @@ regels.
 
 ## Bezig: meertaligheid vacatures (EN basistaal, NL/FR/DE/IT/SE optioneel)
 
-Eerste 3 stappen van de meertaligheid-bouwspecificatie afgerond (datamodel,
-backend, generate.js). Taalswitcher op de website, `/beheer`-taal-tabs en
-het algemene vertaalbestand voor site-teksten volgen in latere stappen.
+Stap 1 t/m 6 van de meertaligheid-bouwspecificatie afgerond (datamodel,
+backend, generate.js, taalswitcher op de website, taal-tabs in het
+beheerformulier). Alleen het algemene vertaalbestand voor de site-chrome
+(menu/footer/formulierlabels, stap 7) staat nog open.
 
 - **Datamodel**: vacature-entity uitgebreid met een genest
   `translations`-object per taal (`en`/`nl`/`fr`/`de`/`it`/`se` — `se`
@@ -561,6 +562,25 @@ het algemene vertaalbestand voor site-teksten volgen in latere stappen.
 Lokaal getest tegen Azurite: testvacature met EN+NL aangemaakt, 2
 bestanden gegenereerd op de juiste plek met correcte `<html lang>` en
 hreflang-tags, een vacature zonder NL-vertaling levert geen NL-bestand op.
+
+- **Taalswitcher op de website**: elke gegenereerde vacaturepagina toont,
+  direct onder de breadcrumb, alleen de talen die voor díe specifieke
+  vacature daadwerkelijk gegenereerd zijn (dezelfde lijst als de
+  hreflang-tags). Actieve taal is een niet-klikbare, oranje gemarkeerde
+  span. Geen switcher zichtbaar bij een vacature met maar 1 taal.
+- **Taal-tabs in het beheerformulier** (`beheer/vacature.html`): 6
+  tabbladen (EN/NL/FR/DE/IT/SE), elk met hetzelfde titel-veld + de
+  bestaande body-blokken-editor (die editor zelf ongewijzigd, alleen de
+  interne "bodyBlokken"-variabele wijst nu naar de array van de actieve
+  taal). Statusbolletje per tab (groen/grijs) toont live welke talen
+  gevuld zijn. EN blijft verplicht: opslaan wordt clientside geblokkeerd
+  als de EN-titel leeg is. Opslaan stuurt het volledige
+  `translations`-object naar de bestaande CRUD-endpoint.
+
+Lokaal getest via het echte formulier met Playwright: EN+NL+FR ingevuld
+en opgeslagen, API bevestigt correcte data (DE/IT/SE blijven leeg),
+generate.js genereert daarna precies 3 pagina's met een correcte
+taalswitcher op elke pagina.
 
 ## Nog open
 
