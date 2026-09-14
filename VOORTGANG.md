@@ -740,3 +740,25 @@ Op verzoek, gebaseerd op de opzet van de corporate website:
   hero-intro's waren al maximaal 2 zinnen, dus ongewijzigd.
 
 Lokaal getest op alle 5 marketingpagina's, desktop en mobiel.
+
+## Afgerond: footer uitgebouwd, oranje huisstijlkleur
+
+Was een minimale, donkere balk met alleen logo-tekst + copyright. Nu:
+
+- Achtergrond oranje (`--og-orange-dark`, de donkerste tint uit het
+  palet voor voldoende contrast met witte tekst) i.p.v. effen
+  donkergrijs.
+- 3 kolommen, logische indeling: merk (logo + "Bold. Eager. Human.",
+  hergebruikt de al bestaande, taal-onafhankelijke brand-pillar-labels),
+  menu (dezelfde 4 navigatielinks als de header), contact (e-mail,
+  telefoon, link naar de corporate site).
+- Aparte, dunnere onderbalk met alleen de copyright-regel.
+- Stapelt op mobiel (1 kolom) net als de rest van de site.
+
+1 nieuwe i18n-key (`footer.menuKop`, "Menu"/"Menü"/"Meny") aangevuld in
+alle 6 talen. Vacature-detailpagina's (`generate.js`) hergebruiken de al
+bestaande `RECRUITER`-gegevens i.p.v. hardcoded contactinfo.
+
+Lokaal getest: alle 5 marketingpagina's + een vacature-detailpagina, in
+EN/NL/DE (umlaut-rendering gecontroleerd), desktop en mobiel, en dat
+interne footer-links de taalprefix correct meekrijgen (`i18n.js`).
