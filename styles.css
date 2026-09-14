@@ -46,10 +46,13 @@ body {
   overflow-x: hidden;
 }
 
+/* letter-spacing bewust "normal": geverifieerd via devtools op de
+   corporate site (H1/H2 hebben daar geen eigen letter-spacing), i.p.v.
+   de eerdere 0.01em die een schatting was. */
 h1, h2, h3, .brand-headline {
   font-family: 'Komu', 'Open Sans', sans-serif;
   text-transform: uppercase;
-  letter-spacing: 0.01em;
+  letter-spacing: normal;
   line-height: 1.05;
 }
 
@@ -259,8 +262,11 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
   margin-bottom: 22px;
 }
 
+/* Formaat 1-op-1 overgenomen van de corporate site (devtools computed
+   waarden): H1 72px, line-height 0.9. */
 .hero h1 {
-  font-size: 52px;
+  font-size: 72px;
+  line-height: 0.9;
   margin-bottom: 20px;
 }
 .hero h1 .accent { color: var(--og-dark); }
@@ -349,7 +355,8 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
 .vacature-hero-content .detail-meta,
 .vacature-hero-content .btn { max-width: 780px; }
 .vacature-hero-content h1 {
-  font-size: 44px;
+  font-size: 72px;
+  line-height: 0.9;
   margin: 16px 0 20px;
   color: var(--og-white);
 }
@@ -371,7 +378,6 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
 @media (max-width: 640px) {
   .vacature-hero { min-height: 420px; }
   .vacature-hero-content { padding: 120px 6% 40px; }
-  .vacature-hero-content h1 { font-size: 30px; }
 }
 
 /* ===== Content sections ===== */
@@ -395,7 +401,7 @@ section.content {
   border-radius: 3px;
   margin-bottom: 4px;
 }
-.section-head h2 { font-size: 34px; margin-top: 10px; color: var(--og-orange-dark); }
+.section-head h2 { font-size: 40px; line-height: 1; margin-top: 10px; color: var(--og-orange-dark); }
 
 .card-grid {
   display: grid;
@@ -538,7 +544,6 @@ footer .logo-footer {
 }
 
 @media (max-width: 640px) {
-  .hero h1 { font-size: 36px; }
   header nav { display: none; }
 }
 
