@@ -573,8 +573,30 @@ ${renderBroodkruimel(vacature, taalcode, t)}
 </section>
 
 <footer>
-  <span class="logo-footer">OG Clean Fuels</span>
-  <p>${t("footer.copyright")}</p>
+  <div class="footer-content">
+    <div class="footer-kolom">
+      <span class="logo-footer">OG Clean Fuels</span>
+      <p class="footer-tagline">${t("common.labelBold")}. ${t("common.labelEager")}. ${t("common.labelHuman")}.</p>
+    </div>
+    <div class="footer-kolom">
+      <span class="footer-kop">${t("footer.menuKop")}</span>
+      <nav class="footer-nav">
+        <a href="${padVoorAlgemenePagina(taalcode, "vacatures.html")}">${t("nav.vacatures")}</a>
+        <a href="${padVoorAlgemenePagina(taalcode, "werken-bij-og.html")}">${t("nav.werkenBijOg")}</a>
+        <a href="${padVoorAlgemenePagina(taalcode, "over-ons.html")}">${t("nav.overOns")}</a>
+        <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}">${t("nav.contact")}</a>
+      </nav>
+    </div>
+    <div class="footer-kolom">
+      <span class="footer-kop">${t("nav.contact")}</span>
+      <a href="mailto:${RECRUITER.email}">${RECRUITER.email}</a>
+      <a href="tel:${RECRUITER.telefoon}">${RECRUITER.telefoonWeergave}</a>
+      <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">${t("nav.corporateSite")}</a>
+    </div>
+  </div>
+  <div class="footer-onder">
+    <p>${t("footer.copyright")}</p>
+  </div>
 </footer>
 
 <script>

@@ -7,7 +7,8 @@
     "corporateSite": "Unternehmenswebsite ↗"
   },
   "footer": {
-    "copyright": "© 2026 OG Clean Fuels. Alle Rechte vorbehalten."
+    "copyright": "© 2026 OG Clean Fuels. Alle Rechte vorbehalten.",
+    "menuKop": "Menü"
   },
   "breadcrumb": {
     "home": "Start"
