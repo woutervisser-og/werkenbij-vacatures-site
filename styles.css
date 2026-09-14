@@ -181,14 +181,21 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
   color: var(--og-white);
 }
 
+/* Bevat de taal-selector en (op mobiel) de hamburger-knop samen aan de
+   rechterkant van de header, als 1 grid-item. */
+.header-rechts {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
 /* ===== Taal-selector in de header, zoals de "NL ⌄"-knop op de corporate
    website. Op de 5 marketingpagina's toont de lijst alle 6 talen (JS in
    i18n.js vult de links/actieve taal in); op vacature-detailpagina's
    bakt generate.js alleen de daadwerkelijk vertaalde talen erin. ===== */
 .taal-nav-selector {
   position: relative;
-  justify-self: end;
-  margin-right: 12px;
 }
 .taal-nav-knop {
   display: flex;
@@ -227,6 +234,9 @@ body.pagina-met-hero header:not(.header-solide) .taal-nav-knop {
 }
 .taal-nav-selector.open .taal-nav-lijst { display: flex; }
 .taal-nav-lijst a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   border-radius: 6px;
   color: var(--og-dark);
@@ -236,6 +246,38 @@ body.pagina-met-hero header:not(.header-solide) .taal-nav-knop {
 }
 .taal-nav-lijst a:hover { background: var(--og-cream); }
 .taal-nav-lijst a.taal-nav-actief { background: var(--og-orange); color: var(--og-white); }
+.taal-nav-vlag { font-size: 16px; line-height: 1; }
+
+/* ===== Hamburger-knop: alleen zichtbaar op mobiel (zie media query
+   hieronder), opent/sluit het uitklapbare menu. Wordt een kruisje zodra
+   het menu open staat (".mobiel-menu-open" op <header>, door
+   animations.js toegevoegd). ===== */
+.hamburger-knop {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.hamburger-knop span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--og-dark);
+  border-radius: 2px;
+  transition: background 0.3s ease, transform 0.25s ease, opacity 0.25s ease;
+}
+body.pagina-met-hero header:not(.header-solide) .hamburger-knop span {
+  background: var(--og-white);
+}
+header.mobiel-menu-open .hamburger-knop span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+header.mobiel-menu-open .hamburger-knop span:nth-child(2) { opacity: 0; }
+header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ===== Label tag, zoals "COLOR PALETTE" in het brandbook ===== */
 /* Komu (net als de meeste lettertypes) heeft van nature veel meer
@@ -613,9 +655,65 @@ footer .logo-footer {
   text-transform: uppercase;
 }
 
+/* ===== Uitklapbaar hamburgermenu op mobiel =====
+   Onder 640px verdwijnt alleen de nav uit zijn normale plek en wordt de
+   hamburger-knop getoond; een klik (animations.js zet
+   ".mobiel-menu-open" op <header>) laat de nav als volle-breedte rij
+   onder de logo/taal-selector/hamburger-regel uitklappen. De
+   taal-selector blijft, op verzoek, altijd zichtbaar naast de
+   hamburger-knop (niet in het uitklapmenu verstopt) — met zijn normale
+   dropdown-gedrag, identiek aan desktop. ".header-rechts" (de
+   grid-wrapper voor desktop) wordt hier "display:contents": zijn eigen
+   doos verdwijnt, en taal-selector + hamburger-knop worden zo
+   rechtstreekse flex-items van <header> zelf. Een "margin-left:auto" op
+   de taal-selector groepeert taal-selector + hamburger samen rechts,
+   los van de nav (die pas verschijnt zodra het menu openstaat). */
 @media (max-width: 640px) {
-  header nav { display: none; }
-  .taal-nav-selector { display: none; }
+  header {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .header-rechts { display: contents; }
+
+  header nav {
+    display: none;
+    order: 2;
+    width: 100%;
+  }
+  .taal-nav-selector { margin-left: auto; }
+  .hamburger-knop { display: flex; }
+
+  header.mobiel-menu-open nav {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 14px;
+  }
+  header.mobiel-menu-open nav a {
+    margin-left: 0;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  /* Menu moet leesbaar zijn ongeacht of de (transparante) hero-header nog
+     actief is — altijd effen wit zodra het uitklapt. */
+  header.mobiel-menu-open {
+    background: var(--og-white) !important;
+    border-bottom-color: #eee;
+  }
+  header.mobiel-menu-open nav a {
+    color: var(--og-dark) !important;
+  }
+  /* De taal-selector en de hamburger-knop zelf zitten ook in de header-
+     doos die hierboven effen wit wordt zodra het menu openstaat — zonder
+     deze override zouden ze (op een hero-pagina, boven aan de pagina)
+     wit-op-wit en dus onzichtbaar blijven. */
+  header.mobiel-menu-open .taal-nav-knop {
+    color: var(--og-dark) !important;
+  }
+  header.mobiel-menu-open .hamburger-knop span {
+    background: var(--og-dark) !important;
+  }
 }
 
 /* ===== Body-blokken (vacature-detailpagina's) ===== */

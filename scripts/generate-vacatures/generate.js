@@ -124,6 +124,7 @@ function renderHreflangTags(beschikbareTalen, slug) {
 }
 
 const TAAL_LABELS = { en: "EN", nl: "NL", fr: "FR", de: "DE", it: "IT", se: "SE" };
+const TAAL_VLAGGEN = { en: "🇬🇧", nl: "🇳🇱", fr: "🇫🇷", de: "🇩🇪", it: "🇮🇹", se: "🇸🇪" };
 
 const GLOBE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
 const CHEVRON_SVG = `<svg class="taal-nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
@@ -138,18 +139,19 @@ function renderTaalNavSelector(huidigeTaal, beschikbareTalen, slug) {
   if (beschikbareTalen.length <= 1) return "";
   const items = beschikbareTalen.map(taal => {
     const label = TAAL_LABELS[taal] || taal.toUpperCase();
+    const vlag = TAAL_VLAGGEN[taal] || "";
     const actiefClass = taal === huidigeTaal ? " taal-nav-actief" : "";
-    return `<a href="${padVoorTaal(taal, slug)}" class="${actiefClass.trim()}" role="menuitem">${label}</a>`;
+    return `<a href="${padVoorTaal(taal, slug)}" class="${actiefClass.trim()}" role="menuitem"><span class="taal-nav-vlag">${vlag}</span> ${label}</a>`;
   });
   return `
-  <div class="taal-nav-selector">
-    <button class="taal-nav-knop" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Taal">
-      ${GLOBE_SVG}
-      <span class="taal-nav-code">${TAAL_LABELS[huidigeTaal] || huidigeTaal.toUpperCase()}</span>
-      ${CHEVRON_SVG}
-    </button>
-    <div class="taal-nav-lijst" role="menu">${items.join("\n")}</div>
-  </div>`;
+    <div class="taal-nav-selector">
+      <button class="taal-nav-knop" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Taal">
+        ${GLOBE_SVG}
+        <span class="taal-nav-code">${TAAL_LABELS[huidigeTaal] || huidigeTaal.toUpperCase()}</span>
+        ${CHEVRON_SVG}
+      </button>
+      <div class="taal-nav-lijst" role="menu">${items.join("\n")}</div>
+    </div>`;
 }
 
 // Zet een titel om naar een URL-vriendelijke "slug", bijvoorbeeld
@@ -502,7 +504,11 @@ ${bouwJsonLd(vacature)}
     <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}">${t("nav.contact")}</a>
     <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">${t("nav.corporateSite")}</a>
   </nav>
-  ${renderTaalNavSelector(taalcode, beschikbareTalen, slug)}
+  <div class="header-rechts">${renderTaalNavSelector(taalcode, beschikbareTalen, slug)}
+    <button type="button" class="hamburger-knop" id="hamburger-knop" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </header>
 
 ${heeftHeaderMedia ? renderVacatureHero(vacature, salaris, t) : ""}
