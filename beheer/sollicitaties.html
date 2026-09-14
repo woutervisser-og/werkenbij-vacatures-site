@@ -32,53 +32,96 @@
 
   <div id="melding"></div>
 
-  <div class="beheer-tabel-wrap">
-    <table class="beheer-tabel" id="sollicitatie-tabel" hidden>
+  <div class="sollicitatie-filters">
+    <div class="form-veld">
+      <label for="filter-vacature">Vacature</label>
+      <select id="filter-vacature"><option value="">Alle vacatures</option></select>
+    </div>
+    <div class="form-veld">
+      <label for="filter-fase">Fase</label>
+      <select id="filter-fase"><option value="">Alle fases</option></select>
+    </div>
+    <div class="form-veld">
+      <label for="filter-min-dagen">Langer dan (dagen) in huidige fase</label>
+      <input type="number" id="filter-min-dagen" min="0" placeholder="bv. 7">
+    </div>
+    <div class="form-veld sollicitatie-filter-zoek">
+      <label for="filter-zoek">Zoek op naam</label>
+      <input type="text" id="filter-zoek" placeholder="Naam kandidaat...">
+    </div>
+  </div>
+
+  <div class="weergave-toggle">
+    <button type="button" class="weergave-knop" data-weergave="bord">Bord</button>
+    <button type="button" class="weergave-knop" data-weergave="lijst">Lijst</button>
+    <button type="button" class="weergave-knop" data-weergave="archief">Archief</button>
+  </div>
+
+  <div id="kanban-bord" class="kanban-bord" hidden></div>
+
+  <div id="lijst-weergave" class="beheer-tabel-wrap" hidden>
+    <table class="beheer-tabel" id="lijst-tabel">
+      <thead><tr id="lijst-tabel-kop"></tr></thead>
+      <tbody id="lijst-tabel-body"></tbody>
+    </table>
+  </div>
+
+  <div id="archief-weergave" class="beheer-tabel-wrap" hidden>
+    <table class="beheer-tabel">
       <thead>
         <tr>
           <th>Naam</th>
           <th>Vacature</th>
-          <th>Contact</th>
-          <th>Ingediend</th>
           <th>Status</th>
-          <th>Bijlagen</th>
+          <th>Gewijzigd</th>
           <th></th>
         </tr>
       </thead>
-      <tbody id="sollicitatie-tabel-body"></tbody>
+      <tbody id="archief-tabel-body"></tbody>
     </table>
-    <div class="beheer-leeg" id="leeg-status">Sollicitaties laden...</div>
   </div>
+
+  <div class="beheer-leeg" id="leeg-status">Sollicitaties laden...</div>
 </main>
 
 <script>
-  // Zelfde 8 statussen als ALLOWED_STATUSSEN in api/shared/sollicitatiesTable.js
-  // (6 fases op volgorde + 2 exit-statussen). Dit dropdown-overzicht is een
-  // tijdelijke tussenoplossing tot het kanban-bord er is.
-  const STATUSSEN = ["nieuw", "screening", "eerste_gesprek", "tweede_gesprek", "aanbod", "aangenomen", "afgewezen", "ingetrokken"];
+  // Zelfde 8 statussen als ALLOWED_STATUSSEN in api/shared/sollicitatiesTable.js:
+  // 6 fases op volgorde (het kanban-bord) + 2 exit-statussen (afgewezen/
+  // ingetrokken), bereikbaar vanuit elke fase, geen bordkolom.
+  const BORD_FASES = ["nieuw", "screening", "eerste_gesprek", "tweede_gesprek", "aanbod", "aangenomen"];
+  const EXIT_STATUSSEN = ["afgewezen", "ingetrokken"];
+  const FASE_LABELS = {
+    nieuw: "Nieuw",
+    screening: "Screening",
+    eerste_gesprek: "Eerste gesprek",
+    tweede_gesprek: "Tweede gesprek",
+    aanbod: "Aanbod",
+    aangenomen: "Aangenomen",
+    afgewezen: "Afgewezen",
+    ingetrokken: "Ingetrokken door kandidaat"
+  };
 
   // Vanuit het vacature-overzicht kan hierheen doorgeklikt worden met
-  // ?vacatureId=..., zodat alleen de sollicitaties voor die ene vacature
-  // getoond worden i.p.v. de volledige, ongefilterde lijst.
+  // ?vacatureId=..., zodat de vacature-filter meteen op die vacature staat
+  // i.p.v. de volledige, ongefilterde lijst.
   const zoekParams = new URLSearchParams(location.search);
-  const vacatureIdFilter = zoekParams.get("vacatureId");
+  const vacatureIdUitUrl = zoekParams.get("vacatureId");
+
+  let alleSollicitaties = [];
+  let huidigeWeergave = "bord";
+  const filters = { vacatureId: vacatureIdUitUrl || "", fase: "", minDagen: "", zoek: "" };
+  let sorteerKolom = "ingediendOp";
+  let sorteerRichting = "desc";
 
   function toonFilterContext(titel) {
     const el = document.getElementById("filter-context");
-    if (!vacatureIdFilter) {
+    if (!vacatureIdUitUrl) {
       el.hidden = true;
       return;
     }
     el.innerHTML = `Gefilterd op vacature: <strong>${titel || "(onbekende vacature)"}</strong> &middot; ` +
       `<a href="/beheer/sollicitaties.html">alle sollicitaties tonen</a>`;
     el.hidden = false;
-  }
-
-  if (vacatureIdFilter) {
-    fetch("/api/vacatures/" + encodeURIComponent(vacatureIdFilter))
-      .then(response => response.ok ? response.json() : null)
-      .then(vacature => toonFilterContext(vacature && vacature.titel))
-      .catch(() => toonFilterContext(null));
   }
 
   fetch("/.auth/me")
@@ -92,13 +135,6 @@
     })
     .catch(() => {});
 
-  function formatteerDatum(isoDatum) {
-    if (!isoDatum) return "—";
-    const datum = new Date(isoDatum);
-    if (isNaN(datum)) return "—";
-    return datum.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
-  }
-
   function toonMelding(tekst, type) {
     const meldingEl = document.getElementById("melding");
     meldingEl.innerHTML = "";
@@ -109,6 +145,49 @@
     meldingEl.appendChild(el);
   }
 
+  function formatteerDatum(isoDatum) {
+    if (!isoDatum) return "—";
+    const datum = new Date(isoDatum);
+    if (isNaN(datum)) return "—";
+    return datum.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  }
+
+  // ===== Aging: tijd sinds de laatste statuswijziging (of, als er nog
+  // geen wijziging is geweest, sinds het indienen zelf) =====
+  function laatsteWijzigingTijdstip(sollicitatie) {
+    const history = sollicitatie.statusHistory || [];
+    if (history.length > 0) return history[history.length - 1].timestamp;
+    return sollicitatie.ingediendOp;
+  }
+  function dagenSinds(isoTimestamp) {
+    if (!isoTimestamp) return null;
+    const toen = new Date(isoTimestamp).getTime();
+    if (isNaN(toen)) return null;
+    return Math.floor((Date.now() - toen) / (1000 * 60 * 60 * 24));
+  }
+  function agingKlasse(dagen) {
+    if (dagen === null) return "aging-onbekend";
+    if (dagen < 3) return "aging-groen";
+    if (dagen <= 7) return "aging-oranje";
+    return "aging-rood";
+  }
+  function agingTekst(dagen) {
+    if (dagen === null) return "—";
+    if (dagen === 0) return "Vandaag";
+    if (dagen === 1) return "1 dag geleden";
+    return `${dagen} dagen geleden`;
+  }
+  function maakAgingEl(sollicitatie) {
+    const dagen = dagenSinds(laatsteWijzigingTijdstip(sollicitatie));
+    const wrap = document.createElement("span");
+    wrap.className = "aging";
+    const dot = document.createElement("span");
+    dot.className = "aging-dot " + agingKlasse(dagen);
+    wrap.appendChild(dot);
+    wrap.appendChild(document.createTextNode(agingTekst(dagen)));
+    return wrap;
+  }
+
   function laadSollicitaties() {
     fetch("/api/sollicitatiebeheer")
       .then(response => {
@@ -116,40 +195,260 @@
         return response.json();
       })
       .then(sollicitaties => {
-        const tabel = document.getElementById("sollicitatie-tabel");
-        const tabelBody = document.getElementById("sollicitatie-tabel-body");
-        const leegStatus = document.getElementById("leeg-status");
-        tabelBody.innerHTML = "";
-
-        const gefilterd = vacatureIdFilter
-          ? sollicitaties.filter(sollicitatie => sollicitatie.vacatureId === vacatureIdFilter)
-          : sollicitaties;
-
-        if (gefilterd.length === 0) {
-          leegStatus.textContent = vacatureIdFilter
-            ? "Nog geen sollicitaties voor deze vacature."
-            : "Nog geen sollicitaties binnengekomen.";
-          leegStatus.hidden = false;
-          tabel.hidden = true;
-          return;
+        alleSollicitaties = sollicitaties;
+        vulVacatureFilterIn();
+        if (vacatureIdUitUrl) {
+          const match = sollicitaties.find(s => s.vacatureId === vacatureIdUitUrl);
+          toonFilterContext(match && match.vacatureTitel);
         }
-
-        gefilterd
-          .sort((a, b) => (b.ingediendOp || "").localeCompare(a.ingediendOp || ""))
-          .forEach(sollicitatie => tabelBody.appendChild(maakSollicitatieRij(sollicitatie)));
-
-        tabel.hidden = false;
-        leegStatus.hidden = true;
+        renderAlles();
       })
       .catch(error => {
         document.getElementById("leeg-status").textContent =
           "Er ging iets mis bij het laden van de sollicitaties.";
+        document.getElementById("leeg-status").hidden = false;
         console.error(error);
       });
   }
 
-  function maakSollicitatieRij(sollicitatie) {
+  function vulVacatureFilterIn() {
+    const select = document.getElementById("filter-vacature");
+    const huidigeWaarde = select.value || filters.vacatureId;
+    const gezien = new Map();
+    alleSollicitaties.forEach(s => {
+      if (s.vacatureId && !gezien.has(s.vacatureId)) gezien.set(s.vacatureId, s.vacatureTitel || "(onbekend)");
+    });
+    select.innerHTML = '<option value="">Alle vacatures</option>';
+    [...gezien.entries()].sort((a, b) => a[1].localeCompare(b[1])).forEach(([id, titel]) => {
+      const optie = document.createElement("option");
+      optie.value = id;
+      optie.textContent = titel;
+      select.appendChild(optie);
+    });
+    select.value = huidigeWaarde;
+  }
+
+  // Fase-filter en "fase"-select in de lijst-weergave gebruiken alleen de
+  // 6 bordfases, niet de exit-statussen (die zijn nooit een gewone
+  // volgende stap om naartoe te filteren/verplaatsen).
+  const filterFaseSelect = document.getElementById("filter-fase");
+  BORD_FASES.forEach(fase => {
+    const optie = document.createElement("option");
+    optie.value = fase;
+    optie.textContent = FASE_LABELS[fase];
+    filterFaseSelect.appendChild(optie);
+  });
+
+  document.getElementById("filter-vacature").addEventListener("change", e => { filters.vacatureId = e.target.value; renderAlles(); });
+  document.getElementById("filter-fase").addEventListener("change", e => { filters.fase = e.target.value; renderAlles(); });
+  document.getElementById("filter-min-dagen").addEventListener("input", e => { filters.minDagen = e.target.value; renderAlles(); });
+  document.getElementById("filter-zoek").addEventListener("input", e => { filters.zoek = e.target.value; renderAlles(); });
+
+  document.querySelectorAll(".weergave-knop").forEach(knop => {
+    knop.addEventListener("click", () => {
+      huidigeWeergave = knop.dataset.weergave;
+      document.querySelectorAll(".weergave-knop").forEach(k => k.classList.toggle("weergave-knop-actief", k === knop));
+      renderAlles();
+    });
+  });
+
+  function voldoetAanBasisFilters(sollicitatie) {
+    if (filters.vacatureId && sollicitatie.vacatureId !== filters.vacatureId) return false;
+    if (filters.zoek) {
+      const naam = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.toLowerCase();
+      if (!naam.includes(filters.zoek.toLowerCase())) return false;
+    }
+    return true;
+  }
+
+  function actieveSollicitaties() {
+    return alleSollicitaties
+      .filter(s => BORD_FASES.includes(s.status))
+      .filter(voldoetAanBasisFilters)
+      .filter(s => !filters.fase || s.status === filters.fase)
+      .filter(s => {
+        if (!filters.minDagen) return true;
+        const dagen = dagenSinds(laatsteWijzigingTijdstip(s));
+        return dagen !== null && dagen >= Number(filters.minDagen);
+      });
+  }
+
+  function archiefSollicitaties() {
+    return alleSollicitaties
+      .filter(s => EXIT_STATUSSEN.includes(s.status))
+      .filter(voldoetAanBasisFilters);
+  }
+
+  function renderAlles() {
+    document.getElementById("kanban-bord").hidden = huidigeWeergave !== "bord";
+    document.getElementById("lijst-weergave").hidden = huidigeWeergave !== "lijst";
+    document.getElementById("archief-weergave").hidden = huidigeWeergave !== "archief";
+
+    if (alleSollicitaties.length === 0) {
+      document.getElementById("leeg-status").textContent = vacatureIdUitUrl
+        ? "Nog geen sollicitaties voor deze vacature."
+        : "Nog geen sollicitaties binnengekomen.";
+      document.getElementById("leeg-status").hidden = false;
+      return;
+    }
+    document.getElementById("leeg-status").hidden = true;
+
+    if (huidigeWeergave === "bord") renderBord();
+    else if (huidigeWeergave === "lijst") renderLijst();
+    else renderArchief();
+  }
+
+  // ===== Bord-weergave =====
+  function renderBord() {
+    const container = document.getElementById("kanban-bord");
+    container.innerHTML = "";
+    const sollicitaties = actieveSollicitaties();
+
+    BORD_FASES.forEach(fase => {
+      const kaartenInFase = sollicitaties.filter(s => s.status === fase);
+      container.appendChild(maakKanbanKolom(fase, kaartenInFase));
+    });
+  }
+
+  function maakKanbanKolom(fase, kaarten) {
+    const kolom = document.createElement("div");
+    kolom.className = "kanban-kolom";
+    kolom.dataset.fase = fase;
+
+    const kop = document.createElement("div");
+    kop.className = "kanban-kolom-kop";
+    kop.innerHTML = `${FASE_LABELS[fase]} <span class="beheer-sectie-aantal">${kaarten.length}</span>`;
+    kolom.appendChild(kop);
+
+    const lijst = document.createElement("div");
+    lijst.className = "kanban-kaarten";
+    kaarten
+      .sort((a, b) => (b.ingediendOp || "").localeCompare(a.ingediendOp || ""))
+      .forEach(sollicitatie => lijst.appendChild(maakKanbanKaart(sollicitatie)));
+    kolom.appendChild(lijst);
+
+    kolom.addEventListener("dragover", event => {
+      event.preventDefault();
+      kolom.classList.add("kanban-kolom-dragover");
+    });
+    kolom.addEventListener("dragleave", () => kolom.classList.remove("kanban-kolom-dragover"));
+    kolom.addEventListener("drop", event => {
+      event.preventDefault();
+      kolom.classList.remove("kanban-kolom-dragover");
+      const id = event.dataTransfer.getData("text/plain");
+      const sollicitatie = alleSollicitaties.find(s => s.id === id);
+      if (sollicitatie && sollicitatie.status !== fase) wijzigStatus(id, fase);
+    });
+
+    return kolom;
+  }
+
+  function maakArchiveerSelect(id) {
+    const select = document.createElement("select");
+    select.className = "archiveer-select";
+    select.innerHTML = `<option value="" selected disabled>Verplaats naar archief...</option>` +
+      EXIT_STATUSSEN.map(status => `<option value="${status}">${FASE_LABELS[status]}</option>`).join("");
+    select.addEventListener("click", event => event.stopPropagation());
+    select.addEventListener("change", event => {
+      event.stopPropagation();
+      if (!select.value) return;
+      wijzigStatus(id, select.value);
+    });
+    return select;
+  }
+
+  function maakKanbanKaart(sollicitatie) {
+    const kaart = document.createElement("div");
+    kaart.className = "kanban-kaart";
+    kaart.draggable = true;
+    kaart.dataset.id = sollicitatie.id;
+
+    kaart.addEventListener("dragstart", event => {
+      event.dataTransfer.setData("text/plain", sollicitatie.id);
+      kaart.classList.add("kanban-kaart-slepend");
+    });
+    kaart.addEventListener("dragend", () => kaart.classList.remove("kanban-kaart-slepend"));
+    kaart.addEventListener("click", event => {
+      if (event.target.closest(".archiveer-select")) return;
+      location.href = "/beheer/sollicitatie-dossier.html?id=" + encodeURIComponent(sollicitatie.id);
+    });
+
+    const naam = document.createElement("div");
+    naam.className = "kanban-kaart-naam";
+    naam.textContent = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
+    kaart.appendChild(naam);
+
+    const vacature = document.createElement("div");
+    vacature.className = "kanban-kaart-vacature";
+    vacature.textContent = sollicitatie.vacatureTitel || "—";
+    kaart.appendChild(vacature);
+
+    const metaRij = document.createElement("div");
+    metaRij.className = "kanban-kaart-meta";
+    metaRij.appendChild(maakAgingEl(sollicitatie));
+    kaart.appendChild(metaRij);
+
+    kaart.appendChild(maakArchiveerSelect(sollicitatie.id));
+
+    return kaart;
+  }
+
+  // ===== Lijst-weergave =====
+  const LIJST_KOLOMMEN = [
+    { key: "naam", label: "Naam" },
+    { key: "vacatureTitel", label: "Vacature" },
+    { key: "status", label: "Fase" },
+    { key: "ingediendOp", label: "Binnengekomen" },
+    { key: "aging", label: "Laatste wijziging" }
+  ];
+
+  function vergelijkswaarde(sollicitatie, kolom) {
+    if (kolom === "naam") return `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim().toLowerCase();
+    if (kolom === "aging") return dagenSinds(laatsteWijzigingTijdstip(sollicitatie)) ?? -1;
+    if (kolom === "status") return BORD_FASES.indexOf(sollicitatie.status);
+    return (sollicitatie[kolom] || "").toString().toLowerCase();
+  }
+
+  function renderLijst() {
+    const kopRij = document.getElementById("lijst-tabel-kop");
+    kopRij.innerHTML = "";
+    LIJST_KOLOMMEN.forEach(kolomDef => {
+      const th = document.createElement("th");
+      th.className = "sorteerbaar";
+      th.textContent = kolomDef.label;
+      if (sorteerKolom === kolomDef.key) {
+        th.textContent += sorteerRichting === "asc" ? " ▲" : " ▼";
+        th.classList.add("sorteer-actief");
+      }
+      th.addEventListener("click", () => {
+        if (sorteerKolom === kolomDef.key) sorteerRichting = sorteerRichting === "asc" ? "desc" : "asc";
+        else { sorteerKolom = kolomDef.key; sorteerRichting = "asc"; }
+        renderLijst();
+      });
+      kopRij.appendChild(th);
+    });
+    kopRij.appendChild(document.createElement("th"));
+
+    const factor = sorteerRichting === "asc" ? 1 : -1;
+    const sollicitaties = actieveSollicitaties().sort((a, b) => {
+      const waardeA = vergelijkswaarde(a, sorteerKolom);
+      const waardeB = vergelijkswaarde(b, sorteerKolom);
+      if (typeof waardeA === "number" && typeof waardeB === "number") return (waardeA - waardeB) * factor;
+      return String(waardeA).localeCompare(String(waardeB)) * factor;
+    });
+
+    const body = document.getElementById("lijst-tabel-body");
+    body.innerHTML = "";
+    sollicitaties.forEach(sollicitatie => body.appendChild(maakLijstRij(sollicitatie)));
+  }
+
+  function maakLijstRij(sollicitatie) {
     const rij = document.createElement("tr");
+    rij.className = "sollicitatie-rij-klikbaar";
+    rij.addEventListener("click", event => {
+      if (event.target.closest("select")) return;
+      location.href = "/beheer/sollicitatie-dossier.html?id=" + encodeURIComponent(sollicitatie.id);
+    });
 
     const naamCel = document.createElement("td");
     naamCel.textContent = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
@@ -159,56 +458,81 @@
     vacatureCel.textContent = sollicitatie.vacatureTitel || "—";
     rij.appendChild(vacatureCel);
 
-    const contactCel = document.createElement("td");
-    contactCel.innerHTML = `<a href="mailto:${encodeURIComponent(sollicitatie.email || "")}">${sollicitatie.email || "—"}</a>` +
-      (sollicitatie.telefoon ? `<br>${sollicitatie.telefoon}` : "");
-    rij.appendChild(contactCel);
+    const faseCel = document.createElement("td");
+    const faseSelect = document.createElement("select");
+    BORD_FASES.forEach(fase => {
+      const optie = document.createElement("option");
+      optie.value = fase;
+      optie.textContent = FASE_LABELS[fase];
+      if (fase === sollicitatie.status) optie.selected = true;
+      faseSelect.appendChild(optie);
+    });
+    faseSelect.addEventListener("change", () => wijzigStatus(sollicitatie.id, faseSelect.value));
+    faseCel.appendChild(faseSelect);
+    rij.appendChild(faseCel);
 
     const datumCel = document.createElement("td");
     datumCel.textContent = formatteerDatum(sollicitatie.ingediendOp);
     rij.appendChild(datumCel);
 
-    const statusCel = document.createElement("td");
-    const statusSelect = document.createElement("select");
-    STATUSSEN.forEach(status => {
-      const optie = document.createElement("option");
-      optie.value = status;
-      optie.textContent = status.replace("_", " ");
-      if (status === sollicitatie.status) optie.selected = true;
-      statusSelect.appendChild(optie);
+    const agingCel = document.createElement("td");
+    agingCel.appendChild(maakAgingEl(sollicitatie));
+    rij.appendChild(agingCel);
+
+    const archiefCel = document.createElement("td");
+    archiefCel.appendChild(maakArchiveerSelect(sollicitatie.id));
+    rij.appendChild(archiefCel);
+
+    return rij;
+  }
+
+  // ===== Archief-weergave =====
+  function renderArchief() {
+    const body = document.getElementById("archief-tabel-body");
+    body.innerHTML = "";
+    archiefSollicitaties()
+      .sort((a, b) => laatsteWijzigingTijdstip(b).localeCompare(laatsteWijzigingTijdstip(a) || ""))
+      .forEach(sollicitatie => body.appendChild(maakArchiefRij(sollicitatie)));
+  }
+
+  function maakArchiefRij(sollicitatie) {
+    const rij = document.createElement("tr");
+    rij.className = "sollicitatie-rij-klikbaar";
+    rij.addEventListener("click", () => {
+      location.href = "/beheer/sollicitatie-dossier.html?id=" + encodeURIComponent(sollicitatie.id);
     });
-    statusSelect.addEventListener("change", () => wijzigStatus(sollicitatie.id, statusSelect.value));
-    statusCel.appendChild(statusSelect);
+
+    const naamCel = document.createElement("td");
+    naamCel.textContent = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
+    rij.appendChild(naamCel);
+
+    const vacatureCel = document.createElement("td");
+    vacatureCel.textContent = sollicitatie.vacatureTitel || "—";
+    rij.appendChild(vacatureCel);
+
+    const statusCel = document.createElement("td");
+    statusCel.textContent = FASE_LABELS[sollicitatie.status] || sollicitatie.status;
     rij.appendChild(statusCel);
 
-    const bijlagenCel = document.createElement("td");
-    const cvLink = document.createElement("a");
-    bijlagenCel.className = "bijlagen-links";
-    cvLink.href = "/api/sollicitatiebeheer/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=cv";
-    cvLink.textContent = "CV";
-    cvLink.className = "btn btn-klein btn-secundair";
-    bijlagenCel.appendChild(cvLink);
-    if (sollicitatie.motivatiebriefNaam) {
-      const briefLink = document.createElement("a");
-      briefLink.href = "/api/sollicitatiebeheer/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=motivatiebrief";
-      briefLink.textContent = "Motivatiebrief";
-      briefLink.className = "btn btn-klein btn-secundair";
-      bijlagenCel.appendChild(briefLink);
-    }
-    rij.appendChild(bijlagenCel);
+    const datumCel = document.createElement("td");
+    datumCel.textContent = formatteerDatum(laatsteWijzigingTijdstip(sollicitatie));
+    rij.appendChild(datumCel);
 
     const actiesCel = document.createElement("td");
-    actiesCel.className = "acties";
     const verwijderKnop = document.createElement("button");
     verwijderKnop.className = "btn btn-klein btn-gevaar";
     verwijderKnop.textContent = "Verwijderen";
-    verwijderKnop.addEventListener("click", () => verwijderSollicitatie(sollicitatie.id, naamCel.textContent));
+    verwijderKnop.addEventListener("click", event => {
+      event.stopPropagation();
+      verwijderSollicitatie(sollicitatie.id, naamCel.textContent);
+    });
     actiesCel.appendChild(verwijderKnop);
     rij.appendChild(actiesCel);
 
     return rij;
   }
 
+  // ===== Acties =====
   function wijzigStatus(id, status) {
     fetch("/api/sollicitatiebeheer/" + encodeURIComponent(id), {
       method: "PUT",
@@ -217,7 +541,13 @@
     })
       .then(response => {
         if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(bijgewerkt => {
+        const index = alleSollicitaties.findIndex(s => s.id === id);
+        if (index !== -1) alleSollicitaties[index] = bijgewerkt;
         toonMelding("Status bijgewerkt.", "ok");
+        renderAlles();
       })
       .catch(error => {
         toonMelding("Status bijwerken is mislukt.", "fout");
@@ -240,6 +570,8 @@
       });
   }
 
+  // Standaard-weergave activeren en starten.
+  document.querySelector('.weergave-knop[data-weergave="bord"]').classList.add("weergave-knop-actief");
   laadSollicitaties();
 </script>
 
