@@ -730,16 +730,21 @@ ongewijzigd.
 
 ## Afgerond: hero-secties — eyebrow weg, titel dichter bij body, intro ingekort
 
-Op verzoek, gebaseerd op de opzet van de corporate website:
+Op verzoek, gebaseerd op de opzet van de corporate website, in 2 rondes:
 
 - Eyebrow/tag-labeltje boven de H1 verwijderd op alle 5 marketing-hero's.
-- Hero-padding omgedraaid (110px/130px → 170px/70px): de H1 zit nu
-  dichter bij de content eronder dan bij het menu erboven.
-- Introtekst op "Working at OG" was met 3-4 zinnen te lang; ingekort naar
-  2 zinnen in alle 6 talen, kernboodschap behouden. De overige
-  hero-intro's waren al maximaal 2 zinnen, dus ongewijzigd.
+- Hero-padding omgedraaid (110px/130px → 170px/36px, na een tweede
+  verzoek de bodem-padding nog verder verkleind van 70px): de H1/
+  subtitel/knoppen zitten nu duidelijk dichter bij de content eronder
+  dan bij het menu erboven.
+- Introtekst onder de H1: eerst "max 2 zinnen" toegepast, bleek bij
+  "Working at OG" (49 woorden) nog te letterlijk/lang. Op verzoek
+  vervolgens expliciet op woordaantal ingekort (~15-20 woorden) in alle
+  6 talen: home 23→19, werkenBijOg 49→18, contact 27→15 woorden.
+  overOns (18) en vacaturesPagina.heroIntro (11) waren al kort genoeg.
 
-Lokaal getest op alle 5 marketingpagina's, desktop en mobiel.
+Lokaal getest op alle 5 marketingpagina's, desktop en mobiel, na beide
+rondes.
 
 ## Afgerond: footer uitgebouwd, oranje huisstijlkleur
 
