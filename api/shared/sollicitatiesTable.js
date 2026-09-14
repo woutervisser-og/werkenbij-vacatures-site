@@ -7,13 +7,18 @@ const TABLE_NAME = "Sollicitaties";
 // sollicitaties is klein genoeg om in 1 partitie te passen.
 const PARTITION_KEY = "sollicitatie";
 
+// Fases in vaste volgorde (het sollicitatieproces zoals dat in het
+// beheerportaal doorlopen wordt), plus 2 exit-statussen die vanuit elke
+// fase bereikbaar zijn (geen vaste "volgende stap" in de lijn).
 const ALLOWED_STATUSSEN = [
   "nieuw",
-  "in_behandeling",
-  "afgewezen",
+  "screening",
+  "eerste_gesprek",
+  "tweede_gesprek",
+  "aanbod",
   "aangenomen",
-  "bewaard",
-  "gearchiveerd"
+  "afgewezen",
+  "ingetrokken"
 ];
 
 let tableClientPromise;
@@ -43,7 +48,14 @@ function getSollicitatiesTableClient() {
 // solliciteren), zodat het beheeroverzicht die kan tonen zonder voor elke
 // rij de bijbehorende vacature te moeten opzoeken (die kan intussen ook
 // verwijderd zijn).
+//
+// statusHistory is de audit trail achter het losse "status"-veld: elke
+// wijziging (ook de allereerste, bij het indienen) is 1 entry met
+// from/to/timestamp/user. Table Storage kent geen geneste arrays, dus
+// net als bij vacatures' "translationsJson" wordt dit als JSON-string
+// opgeslagen ("statusHistoryJson").
 function toEntity(id, sollicitatie, { ingediendOp }) {
+  const status = sollicitatie.status || "nieuw";
   return {
     partitionKey: PARTITION_KEY,
     rowKey: id,
@@ -58,9 +70,25 @@ function toEntity(id, sollicitatie, { ingediendOp }) {
     cvOorspronkelijkeNaam: sollicitatie.cvOorspronkelijkeNaam || "",
     motivatiebriefNaam: sollicitatie.motivatiebriefNaam || "",
     motivatiebriefOorspronkelijkeNaam: sollicitatie.motivatiebriefOorspronkelijkeNaam || "",
-    status: sollicitatie.status || "nieuw",
+    status,
+    statusHistoryJson: JSON.stringify([
+      { from: null, to: status, timestamp: ingediendOp, user: "kandidaat" }
+    ]),
     ingediendOp
   };
+}
+
+// Voegt 1 entry toe aan de bestaande statusHistory van een entity, en
+// geeft de nieuwe "statusHistoryJson"-waarde terug (nog niet opgeslagen).
+// Een entity van vóór deze wijziging heeft nog geen statusHistoryJson —
+// valt dan terug op een lege lijst, geen migratiescript nodig.
+function metNieuweStatusHistory(entity, { van, naar, gebruiker }) {
+  const bestaandeHistory = JSON.parse(entity.statusHistoryJson || "[]");
+  const nieuweHistory = [
+    ...bestaandeHistory,
+    { from: van, to: naar, timestamp: new Date().toISOString(), user: gebruiker }
+  ];
+  return JSON.stringify(nieuweHistory);
 }
 
 function toSollicitatieDto(entity) {
@@ -78,6 +106,7 @@ function toSollicitatieDto(entity) {
     motivatiebriefNaam: entity.motivatiebriefNaam,
     motivatiebriefOorspronkelijkeNaam: entity.motivatiebriefOorspronkelijkeNaam,
     status: entity.status,
+    statusHistory: JSON.parse(entity.statusHistoryJson || "[]"),
     ingediendOp: entity.ingediendOp
   };
 }
@@ -87,5 +116,6 @@ module.exports = {
   ALLOWED_STATUSSEN,
   getSollicitatiesTableClient,
   toEntity,
-  toSollicitatieDto
+  toSollicitatieDto,
+  metNieuweStatusHistory
 };
