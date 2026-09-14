@@ -52,7 +52,10 @@
 </main>
 
 <script>
-  const STATUSSEN = ["nieuw", "in_behandeling", "afgewezen", "aangenomen", "bewaard", "gearchiveerd"];
+  // Zelfde 8 statussen als ALLOWED_STATUSSEN in api/shared/sollicitatiesTable.js
+  // (6 fases op volgorde + 2 exit-statussen). Dit dropdown-overzicht is een
+  // tijdelijke tussenoplossing tot het kanban-bord er is.
+  const STATUSSEN = ["nieuw", "screening", "eerste_gesprek", "tweede_gesprek", "aanbod", "aangenomen", "afgewezen", "ingetrokken"];
 
   // Vanuit het vacature-overzicht kan hierheen doorgeklikt worden met
   // ?vacatureId=..., zodat alleen de sollicitaties voor die ene vacature
