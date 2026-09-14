@@ -25,13 +25,13 @@ module.exports = async function (context, req) {
     tableClient,
     "ingepland",
     "gepubliceerd",
-    vacature => vacature.publicatiedatum && new Date(vacature.publicatiedatum) <= nu
+    vacature => vacature.publicationDate && new Date(vacature.publicationDate) <= nu
   );
   const aantalGesloten = await zetStatusOm(
     tableClient,
     "gepubliceerd",
     "gesloten",
-    vacature => vacature.sluitingsdatum && new Date(vacature.sluitingsdatum) <= nu
+    vacature => vacature.closingDate && new Date(vacature.closingDate) <= nu
   );
 
   // Elke overgang hier raakt de grens met "gepubliceerd" (erin of eruit),

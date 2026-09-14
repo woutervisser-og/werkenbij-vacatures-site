@@ -1,15 +1,22 @@
 const { randomUUID } = require("crypto");
-const { getVacaturesTableClient, toEntity, toVacatureDto, ALLOWED_STATUSSEN } = require("../shared/vacaturesTable");
+const {
+  getVacaturesTableClient,
+  normalizeVacatureInput,
+  toEntity,
+  toVacatureDto,
+  ALLOWED_STATUSSEN
+} = require("../shared/vacaturesTable");
 const { triggerRebuild, raaktPubliekeSite } = require("../shared/rebuildTrigger");
 
 module.exports = async function (context, req) {
   const input = req.body || {};
+  const genormaliseerd = normalizeVacatureInput(input);
 
-  if (!input.titel) {
-    context.res = { status: 400, body: { error: "Titel is verplicht" } };
+  if (!genormaliseerd.translations || !genormaliseerd.translations.en || !genormaliseerd.translations.en.title) {
+    context.res = { status: 400, body: { error: "Titel (EN) is verplicht" } };
     return;
   }
-  if (input.status && !ALLOWED_STATUSSEN.includes(input.status)) {
+  if (genormaliseerd.status && !ALLOWED_STATUSSEN.includes(genormaliseerd.status)) {
     context.res = {
       status: 400,
       body: { error: `Ongeldige status, kies uit: ${ALLOWED_STATUSSEN.join(", ")}` }
@@ -19,7 +26,7 @@ module.exports = async function (context, req) {
 
   const nu = new Date().toISOString();
   const id = randomUUID();
-  const entity = toEntity(id, input, { createdAt: nu, updatedAt: nu });
+  const entity = toEntity(id, genormaliseerd, { createdAt: nu, updatedAt: nu });
 
   try {
     const tableClient = await getVacaturesTableClient();
