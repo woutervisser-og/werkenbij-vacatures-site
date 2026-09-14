@@ -132,16 +132,16 @@
       <p class="taal-tabbladen-uitleg">EN is de basistaal en altijd verplicht. Overige talen zijn optioneel; het groene bolletje geeft aan welke al gevuld zijn.</p>
       <div class="taal-tabbladen" id="taal-tabbladen"></div>
 
+      <div class="kopieer-en-rij">
+        <button type="button" class="btn btn-klein btn-secundair" id="kopieer-alle-talen-knop">Kopieer blokken naar alle talen</button>
+        <span class="kopieer-en-uitleg">Neemt de opzet van EN (bloktype, volgorde, afbeeldingen) over in NL/FR/DE/IT/SE; tekstvelden blijven leeg om te vertalen.</span>
+      </div>
+
       <div class="form-rij">
         <div class="form-veld volle-breedte">
           <label for="veld-titel">Titel</label>
           <input type="text" id="veld-titel">
         </div>
-      </div>
-
-      <div class="kopieer-en-rij" id="kopieer-en-rij" hidden>
-        <button type="button" class="btn btn-klein btn-secundair" id="kopieer-en-opzet-knop">Kopieer opzet van EN</button>
-        <span class="kopieer-en-uitleg">Neemt bloktype, volgorde en afbeeldingen over; tekstvelden blijven leeg om te vertalen.</span>
       </div>
 
       <div class="blok-toevoegen-rij">
@@ -450,7 +450,6 @@
     actieveTaal = taal;
     document.getElementById("veld-titel").value = vertalingen[taal].title || "";
     bodyBlokken = vertalingen[taal].bodyBlocks;
-    document.getElementById("kopieer-en-rij").hidden = taal === "en";
     renderBlokken();
     renderTaalTabbladen();
   }
@@ -513,22 +512,27 @@
     return nieuw;
   }
 
-  document.getElementById("kopieer-en-opzet-knop").addEventListener("click", () => {
+  document.getElementById("kopieer-alle-talen-knop").addEventListener("click", () => {
     const enBlokken = vertalingen.en.bodyBlocks;
     if (!enBlokken.length) {
       toonMelding("EN heeft nog geen blokken om te kopiëren.", "fout");
       return;
     }
-    if (bodyBlokken.length > 0 && !confirm(
-      `Dit vervangt de huidige blokken van ${TAAL_LABELS[actieveTaal]} door de opzet van EN (lege tekstvelden). Doorgaan?`
+    const doelTalen = TALEN.filter(taal => taal !== "en");
+    const heeftAlBlokken = doelTalen.some(taal => vertalingen[taal].bodyBlocks.length > 0);
+    if (heeftAlBlokken && !confirm(
+      "Dit vervangt de bestaande blokken van NL/FR/DE/IT/SE door de opzet van EN (lege tekstvelden). Doorgaan?"
     )) {
       return;
     }
-    const nieuweBlokken = enBlokken.map(kopieerBlokStructuur);
-    vertalingen[actieveTaal].bodyBlocks = nieuweBlokken;
-    bodyBlokken = nieuweBlokken;
-    renderBlokken();
-    toonMelding(`Opzet van EN gekopieerd naar ${TAAL_LABELS[actieveTaal]}.`, "ok");
+    doelTalen.forEach(taal => {
+      vertalingen[taal].bodyBlocks = enBlokken.map(kopieerBlokStructuur);
+    });
+    if (actieveTaal !== "en") {
+      bodyBlokken = vertalingen[actieveTaal].bodyBlocks;
+      renderBlokken();
+    }
+    toonMelding("Opzet van EN gekopieerd naar alle andere talen.", "ok");
   });
 
   // Herbruikbare foto-kiezer: eigen upload + "bestaande kiezen" per
