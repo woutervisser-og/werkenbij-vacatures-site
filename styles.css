@@ -234,6 +234,9 @@ body.pagina-met-hero header:not(.header-solide) .taal-nav-knop {
 }
 .taal-nav-selector.open .taal-nav-lijst { display: flex; }
 .taal-nav-lijst a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 8px 12px;
   border-radius: 6px;
   color: var(--og-dark);
@@ -243,6 +246,7 @@ body.pagina-met-hero header:not(.header-solide) .taal-nav-knop {
 }
 .taal-nav-lijst a:hover { background: var(--og-cream); }
 .taal-nav-lijst a.taal-nav-actief { background: var(--og-orange); color: var(--og-white); }
+.taal-nav-vlag { font-size: 16px; line-height: 1; }
 
 /* ===== Hamburger-knop: alleen zichtbaar op mobiel (zie media query
    hieronder), opent/sluit het uitklapbare menu. Wordt een kruisje zodra
@@ -649,20 +653,22 @@ footer .logo-footer {
 }
 
 /* ===== Uitklapbaar hamburgermenu op mobiel =====
-   Onder 640px verdwijnen nav en taal-selector uit hun normale plek en
-   wordt de hamburger-knop getoond; een klik (animations.js zet
-   ".mobiel-menu-open" op <header>) laat de header naar een flex-layout
-   omschakelen zodat nav en taal-selector als volle-breedte rijen onder
-   de logo/hamburger-regel uitklappen — geen aparte overlay/positionering
-   nodig, gewoon flex-wrap. ".header-rechts" (de grid-wrapper voor
-   desktop) wordt hier "display:contents": zijn eigen doos verdwijnt, en
-   taal-selector + hamburger-knop worden zo rechtstreekse flex-items van
-   <header> zelf, met eigen "order" voor de gewenste volgorde. */
+   Onder 640px verdwijnt alleen de nav uit zijn normale plek en wordt de
+   hamburger-knop getoond; een klik (animations.js zet
+   ".mobiel-menu-open" op <header>) laat de nav als volle-breedte rij
+   onder de logo/taal-selector/hamburger-regel uitklappen. De
+   taal-selector blijft, op verzoek, altijd zichtbaar naast de
+   hamburger-knop (niet in het uitklapmenu verstopt) — met zijn normale
+   dropdown-gedrag, identiek aan desktop. ".header-rechts" (de
+   grid-wrapper voor desktop) wordt hier "display:contents": zijn eigen
+   doos verdwijnt, en taal-selector + hamburger-knop worden zo
+   rechtstreekse flex-items van <header> zelf. Een "margin-left:auto" op
+   de taal-selector groepeert taal-selector + hamburger samen rechts,
+   los van de nav (die pas verschijnt zodra het menu openstaat). */
 @media (max-width: 640px) {
   header {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
   }
   .header-rechts { display: contents; }
 
@@ -671,12 +677,8 @@ footer .logo-footer {
     order: 2;
     width: 100%;
   }
-  .taal-nav-selector {
-    display: none;
-    order: 3;
-    width: 100%;
-  }
-  .hamburger-knop { display: flex; order: 1; }
+  .taal-nav-selector { margin-left: auto; }
+  .hamburger-knop { display: flex; }
 
   header.mobiel-menu-open nav {
     display: flex;
@@ -689,16 +691,6 @@ footer .logo-footer {
     padding: 12px 0;
     border-bottom: 1px solid #eee;
   }
-  header.mobiel-menu-open .taal-nav-selector {
-    display: block;
-    margin: 10px 0 4px;
-  }
-  header.mobiel-menu-open .taal-nav-lijst {
-    position: static;
-    box-shadow: none;
-    margin-top: 8px;
-    padding: 0;
-  }
 
   /* Menu moet leesbaar zijn ongeacht of de (transparante) hero-header nog
      actief is — altijd effen wit zodra het uitklapt. */
@@ -706,9 +698,18 @@ footer .logo-footer {
     background: var(--og-white) !important;
     border-bottom-color: #eee;
   }
-  header.mobiel-menu-open nav a,
+  header.mobiel-menu-open nav a {
+    color: var(--og-dark) !important;
+  }
+  /* De taal-selector en de hamburger-knop zelf zitten ook in de header-
+     doos die hierboven effen wit wordt zodra het menu openstaat — zonder
+     deze override zouden ze (op een hero-pagina, boven aan de pagina)
+     wit-op-wit en dus onzichtbaar blijven. */
   header.mobiel-menu-open .taal-nav-knop {
     color: var(--og-dark) !important;
+  }
+  header.mobiel-menu-open .hamburger-knop span {
+    background: var(--og-dark) !important;
   }
 }
 
