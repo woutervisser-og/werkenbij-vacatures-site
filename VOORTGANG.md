@@ -505,6 +505,25 @@ van Wouter:
   `width:100%`. Dezelfde onderliggende fout zat ook in `.broodkruimel`,
   ook gefixt.
 
+## Afgerond: kop-formaten (H1/H2) 1-op-1 overgenomen van de corporate site
+
+Wouter merkte op dat H1/H2 qua formaat niet overeenkwamen met de corporate
+site. Exacte computed-waarden opgezocht via devtools op ogcleanfuels.com
+(font-size, line-height, letter-spacing, font-weight):
+
+- H1: 72px, line-height 0.9, weight 700, letter-spacing normal.
+- H2: 40px, line-height 1, weight 700, letter-spacing normal.
+- Beide identiek op mobiel: de corporate site verkleint koppen niet apart
+  voor kleine schermen.
+
+Toegepast op `.hero h1`, `.vacature-hero-content h1` (was 52px/44px) en
+`.section-head h2` (was 34px, sitebreed via 1 regel). De mobiele
+font-size-overrides (36px/30px) zijn verwijderd i.p.v. aangepast, want
+corporate schaalt zelf ook niet af. Lokaal visueel gecontroleerd op
+desktop en mobiel: blijft leesbaar bij de langere Nederlandse titels
+(i.t.t. de korte Engelse corporate-teksten), valt gewoon terug op meer
+regels.
+
 ## Nog open
 
 - Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
