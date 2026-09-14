@@ -405,6 +405,37 @@ van Wouter over de tabel-indeling:
 - Kolomkoppen (Titel/Afdeling/Sluitingsdatum/Sollicitaties) zijn
   klikbaar en sorteren de hele lijst; standaard alfabetisch op titel.
 
+## Afgerond: nieuwe pagina's Werken bij OG + Contact, nav-uitbreiding, 2 kleine fixes
+
+- **Nieuwe pagina `werken-bij-og.html`**: cultuur, wat je kunt
+  verwachten, arbeidsvoorwaarden. Content is een eerste creatieve
+  invulling van Claude, gebaseerd op de bestaande huisstijl en de
+  Bold/Eager/Human-waarden. Arbeidsvoorwaarden bewust generiek (geen
+  concrete cijfers als vakantiedagen), want het echte HR-beleid is niet
+  bekend.
+- **Nieuwe pagina `contact.html`**: HR-contact (hergebruikt dezelfde
+  gegevens als op de vacature-detailpagina's, telefoonnummer is nog
+  hetzelfde voorbeeld-achtige nummer) plus een verwijzing naar de
+  corporate website voor zakelijke vragen. Geen bedrijfsadres/KvK-
+  nummer toegevoegd: niet betrouwbaar bekend, dus weggelaten i.p.v.
+  verzonnen.
+- Navigatie op alle pagina's uitgebreid met "Werken bij OG", "Contact"
+  en een externe link naar de corporate site (ogcleanfuels.com, nieuw
+  tabblad). "Home" is later weer verwijderd uit de navigatie (het logo
+  linkt al naar de homepage).
+- Bugfix: bijlagen-knoppen (CV/motivatiebrief) in het
+  sollicitatie-overzicht stonden scheef door een inline
+  `marginLeft`-hack; nu een echte flex-kolom.
+- Bugfix: de oranje "highlight"-blokjes (titel-highlight, label-tag,
+  eyebrow, section-head .tag) oogden scheef, met duidelijk meer ruimte
+  onder de tekst dan erboven. Root cause (bevestigd via pixelmeting):
+  Komu reserveert van nature veel meer onzichtbare ruimte onder de
+  basislijn dan boven hoofdletters. Padding gecompenseerd (groter
+  boven, kleiner onder, in em) op alle 4 varianten.
+- `.recruiter-blok`-stijl verplaatst van de per-pagina `<style>` in
+  `generate.js` naar de gedeelde `styles.css`, zodat ook `contact.html`
+  'm kan gebruiken.
+
 ## Nog open
 
 - Automatische e-mailnotificatie bij een nieuwe sollicitatie (bewust
