@@ -579,9 +579,14 @@ en opgeslagen, API bevestigt correcte data (DE/IT/SE blijven leeg),
 generate.js genereert daarna precies 3 pagina's met een correcte
 taalswitcher op elke pagina.
 
-- **Hele site vertaalbaar** (`/i18n/`): `en.json` + `nl.json` volledig
-  gevuld (EN zelf geschreven), `fr/de/it/se` als lege stubs (buiten het
-  CMS om later te vullen: export, vertalen, checken, terugzetten).
+- **Hele site vertaalbaar** (`/i18n/`): alle 6 talen (`en`/`nl`/`fr`/`de`/
+  `it`/`se`) volledig gevuld, 165 sleutels per taal, 1-op-1 gecontroleerd
+  op ontbrekende sleutels en `{{variabele}}`-placeholders t.o.v. `en.json`.
+  `fr`/`de`/`it`/`se` zijn buiten het CMS om vertaald (export, vertalen,
+  checken, terugzetten in het bestand). Vaste merk-taglines ("We don't
+  wait for change. We fuel it.", "Work hard. Laugh hard. Fuel good.") en
+  de labels Bold/Eager/Human blijven bewust in het Engels in elke taal:
+  dat zijn taal-onafhankelijke merkuitingen, geen te vertalen tekst.
   `i18n.js` is de vanilla-JS runtime voor de 5 marketingpagina's (die 1
   fysiek bestand per taal delen via routing, zie hieronder): leest de
   taal uit het URL-pad, vult `[data-i18n]`-elementen, valt terug op EN,
@@ -612,9 +617,6 @@ ondersteunt geen wildcard-redirects die de slug behouden.
 
 ## Nog open
 
-- `fr.json`/`de.json`/`it.json`/`se.json` zijn nog lege stubs: alle
-  tekst valt daar terug op EN. Vullen gebeurt bewust buiten het CMS om
-  (export, vertalen, laten checken, terugzetten in het bestand).
 - Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
   namen/foto's/citaten. Te vervangen zodra er echte collega-input is.
 - Contactpagina gebruikt nog het voorbeeld-achtige telefoonnummer van
