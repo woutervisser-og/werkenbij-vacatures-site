@@ -668,24 +668,25 @@ regressie).
   verdwijnen onder 640px zonder vervanging (bestaand gedrag van vóór deze
   sessie, tijdens het header-werk hierboven bevestigd maar niet
   aangepakt — apart te plannen).
-- Voorstel (nog niet gebouwd, wacht op prioriteit van Wouter): een losse
+- Voorstel (nog niet gebouwd, wacht op een Anthropic API-key): een losse
   functie om de inhoud automatisch te laten voorvertalen via een LLM
   (concept, altijd met verplichte controle vóór opslaan/live zetten) —
   de structuur-kopieerknop hiervoor staat er inmiddels (zie hieronder).
 
-## Afgerond: knop "Kopieer opzet van EN" in het beheerformulier
+## Afgerond: knop kopieert blokopzet naar alle talen in het beheerformulier
 
-Eerste van de 2 voorgestelde vertaal-workflow-verbeteringen gebouwd. Op
-elke niet-EN taaltab in `beheer/vacature.html` staat nu een knop die de
-blokstructuur van de EN-tab overneemt: bloktype, volgorde, aantal
-lijst-items (bullet-punten, FAQ-vragen, teamleden) en afbeeldingen (vaak
-taal-onafhankelijk). Tekst-/tekstblok-velden blijven bewust leeg, want de
-inhoud moet toch handmatig vertaald worden. Confirm-stap voorkomt per
-ongeluk overschrijven als de doeltaal al blokken heeft.
+Eerste van de 2 voorgestelde vertaal-workflow-verbeteringen gebouwd, in 2
+iteraties. Eerst een knop per niet-EN taaltab ("Kopieer opzet van EN"),
+op verzoek van Wouter daarna vereenvoudigd naar **1 knop** op de
+Vertalingen-sectie (altijd zichtbaar, niet aan een tabblad gebonden) die
+de blokstructuur van EN in 1 keer naar alle 5 andere talen kopieert:
+bloktype, volgorde, aantal lijst-items (bullet-punten, FAQ-vragen,
+teamleden) en afbeeldingen (vaak taal-onafhankelijk). Tekst-/
+tekstblok-velden blijven bewust leeg, want de inhoud moet toch handmatig
+vertaald worden. Confirm-stap voorkomt per ongeluk overschrijven, alleen
+als minstens 1 doeltaal al blokken heeft.
 
-Bugfix onderweg: de knop bleef eerst zichtbaar op de EN-tab zelf, doordat
-de eigen `.kopieer-en-rij { display:flex }`-regel het `hidden`-attribuut
-overschreef (gelijke CSS-specificiteit, bronvolgorde wint). Opgelost met
-een expliciete `.kopieer-en-rij[hidden] { display:none }`-regel. Lokaal
-getest tegen Azurite met een testvacature (3 bloktypes inclusief een
-lijst-veld en een afbeelding).
+Lokaal getest tegen Azurite met een testvacature (2-3 bloktypes,
+inclusief een lijst-veld en een afbeelding): structuur en lege
+tekstvelden kloppen in alle 5 doeltalen, EN blijft ongewijzigd, confirm
+verschijnt pas bij een herhaalde overschrijf-poging.
