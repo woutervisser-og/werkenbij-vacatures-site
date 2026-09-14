@@ -524,12 +524,13 @@ desktop en mobiel: blijft leesbaar bij de langere Nederlandse titels
 (i.t.t. de korte Engelse corporate-teksten), valt gewoon terug op meer
 regels.
 
-## Bezig: meertaligheid vacatures (EN basistaal, NL/FR/DE/IT/SE optioneel)
+## Afgerond: meertaligheid (EN basistaal, NL/FR/DE/IT/SE optioneel) — hele site
 
-Stap 1 t/m 6 van de meertaligheid-bouwspecificatie afgerond (datamodel,
-backend, generate.js, taalswitcher op de website, taal-tabs in het
-beheerformulier). Alleen het algemene vertaalbestand voor de site-chrome
-(menu/footer/formulierlabels, stap 7) staat nog open.
+Alle 7 stappen van de meertaligheid-bouwspecificatie afgerond. Wat begon
+als "vertaal de vacatures" is op verzoek van Wouter uitgebreid naar de
+hele site: ook de 5 marketingpagina's (index, vacatures, werken-bij-og,
+over-ons, contact) zijn nu volledig vertaalbaar, niet alleen de chrome
+maar ook de marketingcopy zelf.
 
 - **Datamodel**: vacature-entity uitgebreid met een genest
   `translations`-object per taal (`en`/`nl`/`fr`/`de`/`it`/`se` — `se`
@@ -552,12 +553,8 @@ beheerformulier). Alleen het algemene vertaalbestand voor de site-chrome
   bij het lezen automatisch terug op de oude kolommen.
 - **`generate.js`**: genereert nu per vacature 1 pagina per taal die
   daadwerkelijk gevuld is in `translations`, i.p.v. altijd precies 1
-  pagina. EN blijft in de root (`vacature/<slug>.html`, ongewijzigde
-  locatie i.v.m. bestaande links vanuit `vacatures.html`), overige talen
-  in een submap (`nl/vacature/...`, `fr/vacature/...`). hreflang-tags
-  toegevoegd (inclusief `x-default` naar EN). De site-chrome
-  (menu/footer/formulierlabels) is nog niet vertaald, blijft Nederlands
-  op elke taalpagina tot het losse vertaalbestand er is (latere stap).
+  pagina, in een submap per taal (`en/vacature/...`, `nl/vacature/...`,
+  ...). hreflang-tags toegevoegd (inclusief `x-default` naar EN).
 
 Lokaal getest tegen Azurite: testvacature met EN+NL aangemaakt, 2
 bestanden gegenereerd op de juiste plek met correcte `<html lang>` en
@@ -582,8 +579,42 @@ en opgeslagen, API bevestigt correcte data (DE/IT/SE blijven leeg),
 generate.js genereert daarna precies 3 pagina's met een correcte
 taalswitcher op elke pagina.
 
+- **Hele site vertaalbaar** (`/i18n/`): `en.json` + `nl.json` volledig
+  gevuld (EN zelf geschreven), `fr/de/it/se` als lege stubs (buiten het
+  CMS om later te vullen: export, vertalen, checken, terugzetten).
+  `i18n.js` is de vanilla-JS runtime voor de 5 marketingpagina's (die 1
+  fysiek bestand per taal delen via routing, zie hieronder): leest de
+  taal uit het URL-pad, vult `[data-i18n]`-elementen, valt terug op EN,
+  maakt interne links taalbewust. `generate.js` heeft zijn eigen
+  build-time vertaler (leest dezelfde JSON-bestanden rechtstreeks) voor
+  de vacature-detailpagina's, die al 1 bestand per taal hebben.
+- **URL-schema volledig symmetrisch**: ook EN kreeg alsnog een echt
+  `/en/`-prefix (was eerst de kale root, zoals de spec voorstelde) voor
+  volledige consistentie. Vacature-detailpagina's verhuisd van
+  `/vacature/<slug>.html` naar `/en/vacature/<slug>.html` (en zo voor
+  elke taal). `staticwebapp.config.json` regelt de rewrite/redirect-
+  routing voor de 5 marketingpagina's; de kale root/paginanamen
+  redirecten naar de `/en/`-versie.
+- `vacatures.html` linkt per vacature naar de taal die daadwerkelijk
+  bestaat (EN-fallback per vacature). Alle relatieve asset-paden
+  (styles.css, animations.js, logo's) op de marketingpagina's omgezet
+  naar absolute paden — braken anders zodra dezelfde pagina via een
+  taalprefix wordt geserveerd. `solliciteer.js` gebruikt nu
+  `window.OG_FORM_TEKSTEN` i.p.v. hardcoded Nederlandse teksten.
+
+Lokaal getest: EN + NL op alle 5 marketingpagina's, en een
+vacature-detailpagina met EN-only/EN+NL/EN+NL+FR, inclusief de complete
+sollicitatieflow in het Nederlands op een taalpagina.
+
+**Bekende beperking**: oude `/vacature/<slug>.html`-links (zonder
+taalprefix) werken niet meer — Azure Static Web Apps' routing
+ondersteunt geen wildcard-redirects die de slug behouden.
+
 ## Nog open
 
+- `fr.json`/`de.json`/`it.json`/`se.json` zijn nog lege stubs: alle
+  tekst valt daar terug op EN. Vullen gebeurt bewust buiten het CMS om
+  (export, vertalen, laten checken, terugzetten in het bestand).
 - Collega-quotes op werken-bij-og.html zijn illustratief, geen echte
   namen/foto's/citaten. Te vervangen zodra er echte collega-input is.
 - Contactpagina gebruikt nog het voorbeeld-achtige telefoonnummer van
