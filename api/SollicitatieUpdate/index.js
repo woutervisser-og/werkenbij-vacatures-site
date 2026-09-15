@@ -1,3 +1,4 @@
+const sanitizeHtml = require("sanitize-html");
 const {
   getSollicitatiesTableClient,
   toSollicitatieDto,
@@ -6,6 +7,19 @@ const {
   metNieuweStatusHistory
 } = require("../shared/sollicitatiesTable");
 const { huidigeGebruiker } = require("../shared/huidigeGebruiker");
+
+// Notities komen binnen als HTML (rich-text editor in het beheerformulier,
+// zie beheer/sollicitatie-dossier.html). Alleen de opmaak die de editor
+// daadwerkelijk kan produceren is toegestaan, verder niks (geen attributen,
+// geen script/style/etc.) — dit is opgeslagen HTML die later met
+// innerHTML wordt getoond, dus zonder whitelist zou dit een opslagplek
+// voor XSS worden.
+function sanitizeerNotities(html) {
+  return sanitizeHtml(html, {
+    allowedTags: ["b", "strong", "i", "em", "u", "ul", "ol", "li", "br", "div", "p"],
+    allowedAttributes: {}
+  });
+}
 
 // Vanuit /beheer zijn de status en de notities te wijzigen (zie
 // Sollicitatie-statussen in ARCHITECTUUR-HR-PORTAAL.md); de
@@ -49,7 +63,7 @@ module.exports = async function (context, req) {
       }
     }
     if (heeftNotities) {
-      bijgewerkt.notities = input.notities;
+      bijgewerkt.notities = sanitizeerNotities(input.notities);
     }
 
     await tableClient.updateEntity(bijgewerkt, "Replace");

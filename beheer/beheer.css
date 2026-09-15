@@ -543,6 +543,38 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 }
 .dossier-motivatie { font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
 
+/* Rich-text-werkbalk voor het notitieveld (contenteditable + execCommand,
+   geen externe editor-library nodig voor vet/cursief/lijsten). */
+.rte-werkbalk { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.rte-werkbalk button {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border: 1px solid #d8d8d4;
+  border-radius: 6px;
+  background: var(--og-white);
+  color: var(--og-dark);
+  cursor: pointer;
+}
+.rte-werkbalk button:hover { background: var(--og-grey); }
+.rte-veld {
+  min-height: 220px;
+  max-height: 480px;
+  overflow-y: auto;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.6;
+  padding: 12px 14px;
+  border: 1px solid #d8d8d4;
+  border-radius: 8px;
+  background: var(--og-white);
+  margin-bottom: 12px;
+}
+.rte-veld:focus { outline: 2px solid var(--og-orange-light); outline-offset: -1px; }
+.rte-veld:empty::before { content: attr(data-placeholder); color: #999; }
+.rte-veld ul, .rte-veld ol { margin-left: 22px; }
+
 .tijdlijn-item { display: flex; gap: 12px; padding-bottom: 18px; position: relative; }
 .tijdlijn-item:not(:last-child)::before {
   content: "";
