@@ -123,8 +123,10 @@ function renderHreflangTags(beschikbareTalen, slug) {
   return tags.join("\n");
 }
 
-const TAAL_LABELS = { en: "EN", nl: "NL", fr: "FR", de: "DE", it: "IT", se: "SE" };
-const TAAL_VLAGGEN = { en: "🇬🇧", nl: "🇳🇱", fr: "🇫🇷", de: "🇩🇪", it: "🇮🇹", se: "🇸🇪" };
+const TAAL_LABELS = { en: "GB", nl: "NL", fr: "FR", de: "DE", it: "IT", se: "SE" };
+// Waarde = suffix van de .vlag-<code> CSS-klasse (zelf-gehoste SVG-vlaggen
+// in styles.css), i.p.v. emoji: die renderen niet overal als vlag.
+const TAAL_VLAGGEN = { en: "gb", nl: "nl", fr: "fr", de: "de", it: "it", se: "se" };
 
 const GLOBE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
 const CHEVRON_SVG = `<svg class="taal-nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
@@ -141,7 +143,7 @@ function renderTaalNavSelector(huidigeTaal, beschikbareTalen, slug) {
     const label = TAAL_LABELS[taal] || taal.toUpperCase();
     const vlag = TAAL_VLAGGEN[taal] || "";
     const actiefClass = taal === huidigeTaal ? " taal-nav-actief" : "";
-    return `<a href="${padVoorTaal(taal, slug)}" class="${actiefClass.trim()}" role="menuitem"><span class="taal-nav-vlag">${vlag}</span> ${label}</a>`;
+    return `<a href="${padVoorTaal(taal, slug)}" class="${actiefClass.trim()}" role="menuitem"><span class="taal-nav-vlag vlag-${vlag}" aria-hidden="true"></span> ${label}</a>`;
   });
   return `
     <div class="taal-nav-selector">
