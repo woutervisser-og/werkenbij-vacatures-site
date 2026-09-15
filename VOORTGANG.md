@@ -1084,3 +1084,49 @@ niets meer (idempotent). Beheerformulier getest: dropdown toont de
 gemigreerde waarde correct, en staat leeg (i.p.v. een foutieve waarde)
 bij een niet-gematchte vacature. Gemerged via
 [PR #50](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/50).
+
+## Afgerond: werkgebied als los, optioneel veld naast locatie
+
+Wouter vond 1 generieke "Nederland (reizend)"-locatie voor regiogebonden
+functies (bv. servicemonteur) niet specifiek genoeg, maar wilde ook geen
+uitbreiding van de kantorenlijst zelf.
+
+- Nieuw, optioneel veld **Werkgebied** (Noord/Oost/Zuid/West/Midden)
+  naast Locatie i.p.v. erin verwerkt: een vacature kan zo zowel aan een
+  kantoor (bv. Heerenveen) als aan een werkgebied (bv. Zuid) hangen.
+- `ALLOWED_WERKGEBIEDEN` in `api/shared/vacaturesTable.js`, zelfde
+  patroon als de bestaande vaste lijsten.
+- Beheerformulier: dropdown "Werkgebied (optioneel)" met lege
+  "Geen"-optie.
+- Vacature-detailpagina's tonen het werkgebied als extra pil ("Regio
+  {werkgebied}"), vertaald in alle 6 talen.
+
+Lokaal getest: veld gaat correct rond (formulier → API → Table Storage
+→ terug naar formulier), blijft leeg wanneer niet ingevuld. Gemerged via
+[PR #51](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/51).
+
+## Bugfix: onderhoudsworkflows deden stilletjes niets
+
+Bij het klaarzetten van de afdeling/locatie-migratie (PR #50) bleek de
+migratie-workflow te "slagen" zonder een zichtbaar resultaat. Onderzoek
+van de job-logs wees uit dat de curl-aanroep naar de onderhouds-API's
+(`vacaturesTick` én de nieuwe migratie) geen `https://` in de URL had.
+
+- Zonder schema stuurt curl een kale HTTP-request. Azure Static Web
+  Apps redirect dat vermoedelijk naar HTTPS (3xx), en `--fail` faalt
+  alleen op 4xx/5xx: de workflow-stap meldde dus altijd "success"
+  zonder de echte endpoint ooit te bereiken.
+- Dit zat al in de **bestaande uurlijkse VacaturesTick-workflow**, dus
+  vermoedelijk heeft automatisch publiceren/sluiten van vacatures op
+  basis van publicatie-/sluitingsdatum nooit gewerkt via deze workflow.
+- Fix: `https://` toegevoegd + `-L` om een eventuele redirect alsnog te
+  volgen i.p.v. als succes te tellen.
+- Na deze fix bleek er een 2e, apart probleem: de GitHub-secret
+  `VACATURES_TICK_SECRET` bestaat niet als repository secret, dus komt
+  er telkens een lege waarde binnen (401 Unauthorized). Moet nog door
+  Wouter aangemaakt worden onder Settings → Secrets and variables →
+  Actions (repository secret, dezelfde waarde als in de Azure Static
+  Web App-configuratie). Zodra dat staat: migratie-workflow opnieuw
+  draaien.
+
+Gemerged via [PR #52](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/52).
