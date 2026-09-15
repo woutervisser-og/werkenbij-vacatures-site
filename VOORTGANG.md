@@ -945,3 +945,25 @@ hero-pagina in gesloten staat (knop toont "GB" in wit), mobiel
 uitklapmenu, en `generate.js` gedraaid met een test-vacature in 3 talen
 om de gegenereerde variant te bevestigen. Testdata en gegenereerde
 bestanden na afloop opgeruimd. Gemerged via [PR #45](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/45).
+
+## Afgerond: video-embed op werken-bij-og.html onderzocht
+
+Wouter meldde dat de video-embed nog niet werkt. Iframe-markup, CSS
+(`.blok-video`) en de scroll-reveal-animatie lokaal gecontroleerd: alles
+klopt (element wordt zichtbaar, juiste afmetingen, geen CSP die iframes
+blokkeert). Wel een ontbrekend `allow`-attribuut gevonden en toegevoegd
+op alle 3 plekken met een YouTube-iframe (het vaste video-blok hier, het
+`video_embed`-blok en de video-header op vacature-detailpagina's, beide
+in `generate.js`) — dit is standaard in YouTube's eigen embed-code en
+ontbrak overal.
+
+**Kon niet volledig getest worden**: deze sandbox heeft geen
+netwerktoegang tot youtube.com (bevestigd via zowel curl als de
+web-fetch tool, beide expliciet geblokkeerd door het egress-beleid). Het
+is dus niet uit te sluiten dat de eigenlijke oorzaak bij de video zelf
+ligt (verkeerde video-ID, embedding uitgeschakeld door de eigenaar, of
+de video is privé/verwijderd) — dat kan alleen Wouter zelf checken op
+youtube.com. Aan Wouter gevraagd wat hij precies ziet en of "insluiten
+toestaan" aanstaat voor deze video. Gemerged via [PR #46](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/46)
+(de allow-attribuut-fix); de eigenlijke video-beschikbaarheid blijft een
+open vraag.
