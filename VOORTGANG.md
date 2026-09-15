@@ -967,3 +967,24 @@ youtube.com. Aan Wouter gevraagd wat hij precies ziet en of "insluiten
 toestaan" aanstaat voor deze video. Gemerged via [PR #46](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/46)
 (de allow-attribuut-fix); de eigenlijke video-beschikbaarheid blijft een
 open vraag.
+
+## Afgerond: video-embed error 153 opgelost (referrerpolicy)
+
+Vervolg op het video-embed-onderzoek hierboven. Wouter bevestigde: video
+is publiek, "insluiten toestaan" staat aan, en de fout ("Video player
+configuration error, Error 153") trad consistent op in meerdere
+browsers én in incognito/Safari — dus geen ad-blocker- of
+extensie-oorzaak.
+
+Uitgezocht via webonderzoek (geen directe toegang tot youtube.com vanuit
+deze sandbox): YouTube is sinds eind 2025 strenger geworden over de
+Referer-informatie die een embed moet meesturen; embeds zonder
+expliciete `referrerpolicy` lopen hier tegenaan, precies met deze
+foutmelding. `referrerpolicy="strict-origin-when-cross-origin"`
+toegevoegd op alle 3 YouTube-iframes (het vaste video-blok op
+werken-bij-og.html, het `video_embed`-blok en de video-header op
+vacature-detailpagina's, beide in `generate.js`).
+
+**Niet zelf te verifiëren** dat de video nu daadwerkelijk laadt (geen
+netwerktoegang tot youtube.com in deze sandbox) — nog te bevestigen door
+Wouter op de live site. Gemerged via [PR #47](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/47).
