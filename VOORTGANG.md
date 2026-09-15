@@ -988,3 +988,35 @@ vacature-detailpagina's, beide in `generate.js`).
 **Niet zelf te verifiëren** dat de video nu daadwerkelijk laadt (geen
 netwerktoegang tot youtube.com in deze sandbox) — nog te bevestigen door
 Wouter op de live site. Gemerged via [PR #47](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/47).
+
+## Afgerond: achtergrondvideo in de hero van de 4 marketingpagina's
+
+Wouter wilde de site "meer tot leven" laten komen voor een demo aan HR.
+Eerst kort verkend om marketingpagina's zelf bewerkbaar te maken in
+/beheer (een flinke architectuurwijziging), maar dat bewust geparkeerd
+om nu snel iets zichtbaars te bouwen.
+
+- Video vervangt de bewegende gradient-achtergrond in de hero van
+  home, werken-bij-og, over-ons en contact (`vacatures.html`
+  ongewijzigd).
+- Zelf gehost als vast site-asset onder `/videos/` (net als de logo's),
+  bewust niet via YouTube: geen branding/controls-overlay, geen
+  autoplay-beperkingen zoals bij een iframe, en geen cross-origin gedoe
+  zoals bij de net opgeloste YouTube-embed.
+- Aangeleverde video (29MB, 1080p, 20 Mbit/s, met een overbodig
+  geluidsspoor) gecomprimeerd naar een webm (VP9, ~2.1MB) + mp4
+  (H.264, ~2.6MB) zonder geluid, plus een los posterbeeld (134KB).
+  Beide formaten aangeboden (webm eerst, mp4 als fallback): H.264/mp4
+  werkt overal inclusief Safari/iOS, VP9/webm is kleiner voor
+  Chrome/Firefox/Edge.
+- `muted autoplay loop playsinline`, puur decoratief. Bij
+  `prefers-reduced-motion` valt de video weg, blijft een effen oranje
+  achtergrond staan.
+- Nieuwe oranje kleurwaas (`.hero-met-video::before`) overheen houdt de
+  tekst leesbaar en de look consistent met hero's zonder video.
+
+Lokaal getest op alle 4 pagina's en op mobiel (390px): video speelt af,
+tekst blijft leesbaar. Terzijde ook het lokale testscript zelf verbeterd
+(ontbrekende video-MIME-type en HTTP Range-support toegevoegd, nodig om
+`<video>` lokaal te kunnen testen — Azure Static Web Apps ondersteunt dit
+al standaard). Gemerged via [PR #48](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/48).
