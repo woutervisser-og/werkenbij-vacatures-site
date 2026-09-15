@@ -396,17 +396,47 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
   background: var(--og-white);
   opacity: 0.08;
   animation: floatSlow 8s ease-in-out infinite;
+  z-index: 1;
 }
 @keyframes floatSlow {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-18px); }
 }
 
+/* ===== Hero met achtergrondvideo =====
+   Video vervangt de bewegende gradient-achtergrond; een oranje kleurwaas
+   eroverheen houdt de tekst leesbaar en de look consistent met de
+   hero's zonder video. Muted/loop/autoplay/playsinline: puur decoratief,
+   geen bediening nodig. Bij prefers-reduced-motion valt de video weg en
+   blijft de effen achtergrondkleur (poster-achtig, geen beweging). */
+.hero-met-video {
+  background: var(--og-orange-dark);
+  animation: none;
+}
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.hero-met-video::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(201, 97, 0, 0.82), rgba(241, 135, 0, 0.72), rgba(249, 182, 98, 0.55));
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-video { display: none; }
+}
+
 /* Zelfde breedte/marge-logica als section.content hieronder, zodat de
    hero-tekst links uitlijnt met de content-blokken eronder i.p.v. met
    de kale 6%-viewportrand (die op brede schermen duidelijk verder naar
    links staat dan de gecentreerde max-width:1100px content). */
-.hero-content { max-width: 1100px; margin: 0 auto; padding: 0 6%; position: relative; z-index: 1; }
+.hero-content { max-width: 1100px; margin: 0 auto; padding: 0 6%; position: relative; z-index: 2; }
 
 .eyebrow {
   display: inline-block;
