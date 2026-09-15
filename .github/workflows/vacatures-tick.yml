@@ -11,6 +11,6 @@ jobs:
     steps:
       - name: Roep vacatures-tick endpoint aan
         run: |
-          curl -sS -X POST "${{ vars.SITE_URL }}/api/onderhoud/vacaturesTick" \
+          curl -sS -X POST "https://${{ vars.SITE_URL }}/api/onderhoud/vacaturesTick" \
             -H "x-tick-secret: ${{ secrets.VACATURES_TICK_SECRET }}" \
-            --fail
+            -L --fail
