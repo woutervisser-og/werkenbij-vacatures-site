@@ -150,8 +150,19 @@
     "sectie2Tag": "Contatti commerciali",
     "sectie2TitelVoor": "Domande sulle nostre ",
     "sectie2Highlight": "soluzioni di carburante",
-    "sectie2Intro": "Cerchi informazioni sulle nostre stazioni di rifornimento, sui carburanti o un contatto commerciale? Questo viene gestito tramite il nostro sito aziendale, non tramite questo portale carriere.",
-    "naarCorporateSite": "Vai su ogcleanfuels.com ↗"
+    "sectie2Intro": "Vai su ogcleanfuels.com.",
+    "naarCorporateSite": "ogcleanfuels.com ↗",
+    "faqTitel": "Domande frequenti",
+    "faq1Vraag": "Quanto tempo ci vuole per ricevere una risposta alla mia candidatura?",
+    "faq1Antwoord": "[Ti contatteremo entro X giorni lavorativi.]",
+    "faq2Vraag": "Posso candidarmi se non soddisfo tutti i requisiti?",
+    "faq2Antwoord": "Non soddisfi tutti i requisiti, ma il ruolo e la nostra missione ti attraggono? Contattaci comunque. Ci piace guardare oltre il semplice CV.",
+    "faq3Vraag": "Come funziona il processo di selezione?",
+    "faq3Antwoord": "[Il nostro processo di selezione prevede X colloqui: fase 1, fase 2, fase 3. Inserisci qui i passaggi esatti.]",
+    "faq4Vraag": "Posso anche inviare una candidatura spontanea?",
+    "faq4Antwoord": "[Sì, è possibile. Inserisci qui come funziona esattamente una candidatura spontanea.]",
+    "faq5Vraag": "Cosa succede ai miei dati dopo la candidatura?",
+    "faq5Antwoord": "[Conserviamo i tuoi dati per X. Leggi la nostra informativa sulla privacy: inserisci il link all'informativa.]"
   },
   "vacaturesPagina": {
     "tag": "Posizioni aperte",

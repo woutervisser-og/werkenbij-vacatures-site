@@ -150,8 +150,19 @@
     "sectie2Tag": "Affärskontakt",
     "sectie2TitelVoor": "Frågor om våra ",
     "sectie2Highlight": "bränslelösningar",
-    "sectie2Intro": "Letar du efter information om våra tankstationer, bränslen eller affärskontakt? Det hanteras via vår företagswebbplats, inte via denna karriärportal.",
-    "naarCorporateSite": "Till ogcleanfuels.com ↗"
+    "sectie2Intro": "Gå till ogcleanfuels.com.",
+    "naarCorporateSite": "ogcleanfuels.com ↗",
+    "faqTitel": "Vanliga frågor",
+    "faq1Vraag": "Hur lång tid tar det innan jag får svar på min ansökan?",
+    "faq1Antwoord": "[Vi hör av oss inom X arbetsdagar.]",
+    "faq2Vraag": "Kan jag söka om jag inte uppfyller alla krav?",
+    "faq2Antwoord": "Uppfyller du inte alla krav, men rollen och vårt uppdrag tilltalar dig? Hör av dig ändå. Vi tittar gärna bortom bara ett CV.",
+    "faq3Vraag": "Hur ser rekryteringsprocessen ut?",
+    "faq3Antwoord": "[Vår rekryteringsprocess består av X samtal: steg 1, steg 2, steg 3. Fyll i de exakta stegen här.]",
+    "faq4Vraag": "Kan jag också skicka en spontanansökan?",
+    "faq4Antwoord": "[Ja, det går bra. Fyll i här exakt hur en spontanansökan går till.]",
+    "faq5Vraag": "Vad händer med mina uppgifter efter min ansökan?",
+    "faq5Antwoord": "[Vi sparar dina uppgifter i X. Läs vår integritetspolicy: infoga länk till integritetspolicyn.]"
   },
   "vacaturesPagina": {
     "tag": "Lediga tjänster",

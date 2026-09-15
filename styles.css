@@ -664,6 +664,53 @@ section.content {
 .teaser-card h3 { font-size: 19px; margin-bottom: 12px; color: var(--og-orange-dark); }
 .teaser-card p { font-size: 14.5px; color: #4a4a4a; margin-bottom: 16px; }
 
+/* ===== Contactkaart + FAQ als 1 visuele sectie ===== */
+.faq-blok { margin-top: 40px; }
+.faq-kop { font-size: 26px; margin-bottom: 20px; color: var(--og-orange-dark); }
+
+/* ===== FAQ-accordion: vanilla-JS toggle (button + verborgen div), geen
+   library en bewust geen native <details>/<summary> (voor volledige
+   controle over de open/dicht-animatie en styling). ===== */
+.faq-lijst { display: flex; flex-direction: column; gap: 12px; max-width: 780px; }
+.faq-item {
+  border: 1px solid #e5e5e2;
+  border-radius: 12px;
+  padding: 18px 24px;
+  background: var(--og-white);
+}
+.faq-vraag {
+  width: 100%;
+  cursor: pointer;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--og-dark);
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+.faq-icoon {
+  font-family: 'Komu', sans-serif;
+  font-size: 22px;
+  color: var(--og-orange-dark);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.faq-item-open .faq-icoon { transform: rotate(45deg); }
+.faq-antwoord p { font-size: 14.5px; color: #4a4a4a; margin-top: 14px; line-height: 1.6; }
+.faq-antwoord .faq-placeholder {
+  font-style: italic;
+  color: #8a6a3d;
+  background: var(--og-cream);
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
 .vacature-card {
   border: 1px solid #e5e5e2;
   border-radius: 12px;

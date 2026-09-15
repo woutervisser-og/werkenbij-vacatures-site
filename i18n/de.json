@@ -150,8 +150,19 @@
     "sectie2Tag": "Geschäftlicher Kontakt",
     "sectie2TitelVoor": "Fragen zu unseren ",
     "sectie2Highlight": "Kraftstofflösungen",
-    "sectie2Intro": "Suchst du Informationen zu unseren Tankstellen, Kraftstoffen oder geschäftlichem Kundenkontakt? Das läuft über unsere Unternehmenswebsite, nicht über dieses Karriereportal.",
-    "naarCorporateSite": "Zu ogcleanfuels.com ↗"
+    "sectie2Intro": "Geh zu ogcleanfuels.com.",
+    "naarCorporateSite": "ogcleanfuels.com ↗",
+    "faqTitel": "Häufig gestellte Fragen",
+    "faq1Vraag": "Wie lange dauert es, bis ich eine Rückmeldung zu meiner Bewerbung bekomme?",
+    "faq1Antwoord": "[Wir melden uns innerhalb von X Werktagen bei dir.]",
+    "faq2Vraag": "Kann ich mich bewerben, wenn ich nicht alle Anforderungen erfülle?",
+    "faq2Antwoord": "Erfüllst du nicht alle Anforderungen, aber die Stelle und unsere Mission sprechen dich an? Melde dich trotzdem. Wir schauen gerne über einen reinen Lebenslauf hinaus.",
+    "faq3Vraag": "Wie läuft der Bewerbungsprozess ab?",
+    "faq3Antwoord": "[Unser Bewerbungsprozess besteht aus X Gesprächen: Schritt 1, Schritt 2, Schritt 3. Hier die genauen Schritte eintragen.]",
+    "faq4Vraag": "Kann ich mich auch initiativ bewerben?",
+    "faq4Antwoord": "[Ja, das geht. Hier eintragen, wie eine Initiativbewerbung genau abläuft.]",
+    "faq5Vraag": "Was passiert mit meinen Daten nach meiner Bewerbung?",
+    "faq5Antwoord": "[Wir bewahren deine Daten für X auf. Lies unsere Datenschutzerklärung: Link zur Datenschutzerklärung einfügen.]"
   },
   "vacaturesPagina": {
     "tag": "Offene Stellen",

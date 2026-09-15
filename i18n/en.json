@@ -150,8 +150,19 @@
     "sectie2Tag": "Business contact",
     "sectie2TitelVoor": "Questions about our ",
     "sectie2Highlight": "fuel solutions",
-    "sectie2Intro": "Looking for information about our fuel stations, fuels, or business customer contact? That's handled through our corporate website, not through this careers portal.",
-    "naarCorporateSite": "Go to ogcleanfuels.com ↗"
+    "sectie2Intro": "Go to ogcleanfuels.com.",
+    "naarCorporateSite": "ogcleanfuels.com ↗",
+    "faqTitel": "Frequently asked questions",
+    "faq1Vraag": "How long until I hear back about my application?",
+    "faq1Antwoord": "[We'll get in touch within X working days.]",
+    "faq2Vraag": "Can I apply if I don't meet every requirement?",
+    "faq2Antwoord": "Don't tick every box, but the role and our mission speak to you? Get in touch anyway. We're happy to look beyond just a CV.",
+    "faq3Vraag": "What does the application process look like?",
+    "faq3Antwoord": "[Our application process consists of X interviews: step 1, step 2, step 3. Fill in the exact steps here.]",
+    "faq4Vraag": "Can I also send an open application?",
+    "faq4Antwoord": "[Yes, you can. Fill in exactly how an open application works here.]",
+    "faq5Vraag": "What happens to my data after I apply?",
+    "faq5Antwoord": "[We keep your data for X. Read our privacy policy: insert link to privacy statement.]"
   },
   "vacaturesPagina": {
     "tag": "Open positions",
