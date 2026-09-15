@@ -354,7 +354,7 @@ function renderBlok(blok, vacature) {
 
     case "video_embed":
       return blok.url ? `<div class="blok blok-video">
-        <iframe src="${escapeHtml(blok.url)}" allowfullscreen loading="lazy"></iframe>
+        <iframe src="${escapeHtml(blok.url)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
       </div>` : "";
 
     case "team_voorstelling":
@@ -404,7 +404,7 @@ function renderBlokken(vacature) {
 // titel-sectie (zie renderTitelSectie hieronder).
 function renderVacatureHero(vacature, salaris, t) {
   const media = vacature.header.type === "video"
-    ? `<div class="vacature-hero-media vacature-hero-video"><iframe src="${escapeHtml(vacature.header.bron)}" allowfullscreen loading="lazy"></iframe></div>`
+    ? `<div class="vacature-hero-media vacature-hero-video"><iframe src="${escapeHtml(vacature.header.bron)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`
     : `<img class="vacature-hero-media" src="${escapeHtml(vacature.header.bron)}" alt="${escapeHtml(vacature.titel)}">`;
 
   return `<div class="vacature-hero">
