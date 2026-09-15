@@ -1020,3 +1020,23 @@ tekst blijft leesbaar. Terzijde ook het lokale testscript zelf verbeterd
 (ontbrekende video-MIME-type en HTTP Range-support toegevoegd, nodig om
 `<video>` lokaal te kunnen testen — Azure Static Web Apps ondersteunt dit
 al standaard). Gemerged via [PR #48](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/48).
+
+## Afgerond: achtergrondfoto in de hero van de vacatures-overzichtspagina
+
+Wouter leverde een foto aan (kon niet als inline-plaktekst verwerkt
+worden — deze sandbox krijgt zulke afbeeldingen niet als bestand op
+schijf; wél gelukt via een upload direct naar de repo op github.com).
+
+- Nieuwe `.hero-met-afbeelding` klasse voor `vacatures.html`: zelfde
+  oranje kleurwaas-behandeling als de video-hero's (`.hero-met-video`)
+  voor leesbare tekst, maar met een `background-image` i.p.v. een
+  `<video>`-element.
+- Foto komt binnen via een CSS custom property
+  (`--hero-achtergrond-foto`) op het `.hero`-element zelf, zodat de
+  klasse herbruikbaar blijft voor een andere pagina/foto later.
+- Gebruikt `images/dsc00361.webp`, al gecomprimeerd aangeleverd, geen
+  verdere bewerking nodig.
+
+Lokaal getest: foto rendert met kleurwaas, tekst blijft leesbaar,
+consistent met de video-hero's op de andere pagina's. Gemerged via
+[PR #49](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/49).
