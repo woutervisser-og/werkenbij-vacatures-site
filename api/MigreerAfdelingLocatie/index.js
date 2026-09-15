@@ -31,7 +31,8 @@ module.exports = async function (context, req) {
     afdelingBijgewerkt: [],
     afdelingOnduidelijk: [],
     locatieBijgewerkt: [],
-    locatieOnduidelijk: []
+    locatieOnduidelijk: [],
+    werkgebiedBijgewerkt: []
   };
   let aantalGewijzigd = 0;
 
@@ -39,23 +40,42 @@ module.exports = async function (context, req) {
     const vacature = toVacatureDto(entity);
     let wijziging = false;
     const bijgewerkteVacature = { ...vacature };
+    const correctie = HANDMATIGE_CORRECTIES[vacature.id] || {};
 
-    const afdelingMatch = vindMatch(vacature.department, ALLOWED_AFDELINGEN, ALIAS_AFDELING);
-    if (afdelingMatch.status === "gewijzigd") {
-      rapport.afdelingBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.department, naar: afdelingMatch.waarde });
-      bijgewerkteVacature.department = afdelingMatch.waarde;
+    if (correctie.department && vacature.department !== correctie.department) {
+      rapport.afdelingBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.department, naar: correctie.department, handmatig: true });
+      bijgewerkteVacature.department = correctie.department;
       wijziging = true;
-    } else if (afdelingMatch.status === "onduidelijk") {
-      rapport.afdelingOnduidelijk.push({ id: vacature.id, titel: vacature.title, huidigeWaarde: vacature.department });
+    } else if (!correctie.department) {
+      const afdelingMatch = vindMatch(vacature.department, ALLOWED_AFDELINGEN, ALIAS_AFDELING);
+      if (afdelingMatch.status === "gewijzigd") {
+        rapport.afdelingBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.department, naar: afdelingMatch.waarde });
+        bijgewerkteVacature.department = afdelingMatch.waarde;
+        wijziging = true;
+      } else if (afdelingMatch.status === "onduidelijk") {
+        rapport.afdelingOnduidelijk.push({ id: vacature.id, titel: vacature.title, huidigeWaarde: vacature.department });
+      }
     }
 
-    const locatieMatch = vindMatch(vacature.location, ALLOWED_LOCATIES, ALIAS_LOCATIE);
-    if (locatieMatch.status === "gewijzigd") {
-      rapport.locatieBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.location, naar: locatieMatch.waarde });
-      bijgewerkteVacature.location = locatieMatch.waarde;
+    if (correctie.location && vacature.location !== correctie.location) {
+      rapport.locatieBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.location, naar: correctie.location, handmatig: true });
+      bijgewerkteVacature.location = correctie.location;
       wijziging = true;
-    } else if (locatieMatch.status === "onduidelijk") {
-      rapport.locatieOnduidelijk.push({ id: vacature.id, titel: vacature.title, huidigeWaarde: vacature.location });
+    } else if (!correctie.location) {
+      const locatieMatch = vindMatch(vacature.location, ALLOWED_LOCATIES, ALIAS_LOCATIE);
+      if (locatieMatch.status === "gewijzigd") {
+        rapport.locatieBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.location, naar: locatieMatch.waarde });
+        bijgewerkteVacature.location = locatieMatch.waarde;
+        wijziging = true;
+      } else if (locatieMatch.status === "onduidelijk") {
+        rapport.locatieOnduidelijk.push({ id: vacature.id, titel: vacature.title, huidigeWaarde: vacature.location });
+      }
+    }
+
+    if (correctie.workArea && vacature.workArea !== correctie.workArea) {
+      rapport.werkgebiedBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.workArea, naar: correctie.workArea });
+      bijgewerkteVacature.workArea = correctie.workArea;
+      wijziging = true;
     }
 
     if (wijziging) {
@@ -88,6 +108,15 @@ const ALIAS_AFDELING = {
 };
 const ALIAS_LOCATIE = {
   utrecht: "Nederland (reizend)"
+};
+
+// Eenmalige, expliciete correcties per vacature-ID voor gevallen die niet
+// via de generieke alias-logica op te lossen zijn (bv. een plaats buiten
+// alle kantoren/regio's). Alleen toegepast als de huidige waarde nog
+// afwijkt, dus veilig om herhaald te draaien. Door Wouter aangeleverd,
+// zie VOORTGANG.md.
+const HANDMATIGE_CORRECTIES = {
+  "bb02ff7e-22d1-4885-9e21-34ca5aca1b1c": { location: "Nederland (reizend)", workArea: "Noord" }
 };
 
 function normaliseer(tekst) {
