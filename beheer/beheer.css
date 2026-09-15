@@ -217,6 +217,9 @@ table.beheer-tabel th.sorteer-actief { color: var(--og-orange-dark); }
 }
 .form-veld textarea { resize: vertical; min-height: 90px; }
 .form-veld-checkbox { flex-direction: row; align-items: center; gap: 10px; }
+.form-veld > span { font-size: 13.5px; font-weight: 700; color: #4a4a4a; }
+.werkgebied-keuzes { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 10px 12px; border: 1px solid #d8d8d4; border-radius: 8px; background: var(--og-white); }
+.werkgebied-keuzes label { font-size: 14.5px; font-weight: 400; display: flex; align-items: center; gap: 6px; }
 
 /* Oranje focus-ring op formuliervelden i.p.v. de standaard blauwe
    browser-outline: herkenbare huisstijl-styling bij interactie. */

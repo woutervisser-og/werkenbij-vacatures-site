@@ -40,7 +40,7 @@ module.exports = async function (context, req) {
     let wijziging = false;
     const bijgewerkteVacature = { ...vacature };
 
-    const afdelingMatch = vindMatch(vacature.department, ALLOWED_AFDELINGEN);
+    const afdelingMatch = vindMatch(vacature.department, ALLOWED_AFDELINGEN, ALIAS_AFDELING);
     if (afdelingMatch.status === "gewijzigd") {
       rapport.afdelingBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.department, naar: afdelingMatch.waarde });
       bijgewerkteVacature.department = afdelingMatch.waarde;
@@ -49,7 +49,7 @@ module.exports = async function (context, req) {
       rapport.afdelingOnduidelijk.push({ id: vacature.id, titel: vacature.title, huidigeWaarde: vacature.department });
     }
 
-    const locatieMatch = vindMatch(vacature.location, ALLOWED_LOCATIES);
+    const locatieMatch = vindMatch(vacature.location, ALLOWED_LOCATIES, ALIAS_LOCATIE);
     if (locatieMatch.status === "gewijzigd") {
       rapport.locatieBijgewerkt.push({ id: vacature.id, titel: vacature.title, van: vacature.location, naar: locatieMatch.waarde });
       bijgewerkteVacature.location = locatieMatch.waarde;
@@ -80,6 +80,16 @@ module.exports = async function (context, req) {
   };
 };
 
+// Bekende oude waarden die niet automatisch (via exacte of substring-
+// match) naar de nieuwe lijst te herleiden zijn, maar wel een duidelijke
+// betekenis hebben. Sleutel is de genormaliseerde oude waarde.
+const ALIAS_AFDELING = {
+  techniek: "Operations"
+};
+const ALIAS_LOCATIE = {
+  utrecht: "Nederland (reizend)"
+};
+
 function normaliseer(tekst) {
   return (tekst || "")
     .normalize("NFD").replace(/[̀-ͯ]/g, "")
@@ -92,7 +102,7 @@ function normaliseer(tekst) {
 // "geen" (leeg veld, niets in te vullen), "exact" (staat al goed, geen
 // wijziging nodig), "gewijzigd" (zeker genoeg gemapt), "onduidelijk"
 // (geen confident match, blijft ongewijzigd staan voor handmatige check).
-function vindMatch(huidigeWaarde, toegestaneWaarden) {
+function vindMatch(huidigeWaarde, toegestaneWaarden, aliassen = {}) {
   if (!huidigeWaarde) return { status: "geen" };
   if (toegestaneWaarden.includes(huidigeWaarde)) return { status: "exact" };
 
@@ -106,6 +116,10 @@ function vindMatch(huidigeWaarde, toegestaneWaarden) {
     return genormaliseerd.includes(genormaliseerdeOptie) || genormaliseerdeOptie.includes(genormaliseerd);
   });
   if (substringMatches.length === 1) return { status: "gewijzigd", waarde: substringMatches[0] };
+
+  if (aliassen[genormaliseerd] && toegestaneWaarden.includes(aliassen[genormaliseerd])) {
+    return { status: "gewijzigd", waarde: aliassen[genormaliseerd] };
+  }
 
   return { status: "onduidelijk" };
 }

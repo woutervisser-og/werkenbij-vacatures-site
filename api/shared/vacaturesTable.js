@@ -43,14 +43,28 @@ const ALLOWED_AFDELINGEN = [
 // (bv. servicemonteur) zijn regiogebonden i.p.v. aan 1 kantoor. Daarom
 // staan de 5 echte kantoren en 1 generieke "reizend"-optie naast elkaar
 // in dezelfde lijst, i.p.v. een los "regio"-veld erbij te verzinnen.
+// Stad + land gecombineerd (i.p.v. alleen de stad), zodat in 1 oogopslag
+// duidelijk is om welk land het gaat.
 const ALLOWED_LOCATIES = [
-  "Heerenveen",
-  "Rousset",
-  "Emstek",
-  "Parma",
-  "Göteborg",
+  "Heerenveen, Netherlands",
+  "Rousset, France",
+  "Emstek, Germany",
+  "Parma, Italy",
+  "Göteborg, Sweden",
   "Nederland (reizend)"
 ];
+
+// Voor de JobPosting-structured-data (generate.js): landcode per locatie,
+// zodat addressCountry klopt ongeacht welk kantoor het is (voorheen
+// stond dit altijd hardcoded op "NL").
+const LOCATIE_LANDCODE = {
+  "Heerenveen, Netherlands": "NL",
+  "Rousset, France": "FR",
+  "Emstek, Germany": "DE",
+  "Parma, Italy": "IT",
+  "Göteborg, Sweden": "SE",
+  "Nederland (reizend)": "NL"
+};
 
 // Los, optioneel veld naast locatie: voor regiogebonden functies (bv.
 // servicemonteur) is "Nederland (reizend)" als locatie niet specifiek
@@ -63,6 +77,23 @@ const ALLOWED_WERKGEBIEDEN = [
   "West",
   "Midden"
 ];
+
+// Werkgebied komt vaak in combinatie voor (bv. "Zuid/West"), dus is dit
+// geen vaste lijst van losse waarden maar een combinatie van 1 of meer
+// windrichtingen uit ALLOWED_WERKGEBIEDEN, met "/" gescheiden. Altijd in
+// de vaste volgorde hierboven opgeslagen (canoniseerWerkgebied), zodat
+// "Zuid/West" en "West/Zuid" niet als 2 verschillende waarden gaan
+// filteren.
+function canoniseerWerkgebied(waarden) {
+  const unieke = [...new Set(waarden)];
+  return ALLOWED_WERKGEBIEDEN.filter(optie => unieke.includes(optie)).join("/");
+}
+
+function isGeldigWerkgebied(waarde) {
+  if (!waarde) return true;
+  const delen = waarde.split("/");
+  return delen.length === new Set(delen).size && delen.every(deel => ALLOWED_WERKGEBIEDEN.includes(deel));
+}
 
 // Meertaligheid: EN is de verplichte basistaal, de rest is optioneel per
 // vacature. "se" (niet de ISO-code "sv") is bewust gekozen voor
@@ -142,6 +173,13 @@ function normalizeVacatureInput(input) {
   }
   if (input.status !== undefined) genormaliseerd.status = input.status;
   if (input.header !== undefined) genormaliseerd.header = input.header;
+
+  // Werkgebied mag als array van losse windrichtingen binnenkomen (bv.
+  // vanuit checkboxes in het beheerformulier): dan hier samenvoegen tot
+  // de canonieke "/"-gescheiden string i.p.v. bij elke aanroeper apart.
+  if (Array.isArray(genormaliseerd.workArea)) {
+    genormaliseerd.workArea = canoniseerWerkgebied(genormaliseerd.workArea);
+  }
 
   if (input.translations !== undefined) {
     genormaliseerd.translations = input.translations;
@@ -258,7 +296,9 @@ module.exports = {
   ALLOWED_AFDELINGEN,
   ALLOWED_LOCATIES,
   ALLOWED_WERKGEBIEDEN,
+  LOCATIE_LANDCODE,
   ONDERSTEUNDE_TALEN,
+  isGeldigWerkgebied,
   getVacaturesTableClient,
   normalizeVacatureInput,
   toEntity,
