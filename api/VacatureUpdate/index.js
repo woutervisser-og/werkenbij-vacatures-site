@@ -7,7 +7,8 @@ const {
   ALLOWED_STATUSSEN,
   ALLOWED_AFDELINGEN,
   ALLOWED_LOCATIES,
-  ALLOWED_WERKGEBIEDEN
+  ALLOWED_WERKGEBIEDEN,
+  isGeldigWerkgebied
 } = require("../shared/vacaturesTable");
 const { triggerRebuild, raaktPubliekeSite } = require("../shared/rebuildTrigger");
 
@@ -37,10 +38,10 @@ module.exports = async function (context, req) {
     };
     return;
   }
-  if (genormaliseerd.workArea && !ALLOWED_WERKGEBIEDEN.includes(genormaliseerd.workArea)) {
+  if (genormaliseerd.workArea && !isGeldigWerkgebied(genormaliseerd.workArea)) {
     context.res = {
       status: 400,
-      body: { error: `Ongeldig werkgebied, kies uit: ${ALLOWED_WERKGEBIEDEN.join(", ")}` }
+      body: { error: `Ongeldig werkgebied, combineer 1 of meer van: ${ALLOWED_WERKGEBIEDEN.join(", ")}` }
     };
     return;
   }

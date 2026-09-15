@@ -58,24 +58,23 @@
         <label for="veld-locatie">Locatie</label>
         <select id="veld-locatie">
           <option value="">Kies...</option>
-          <option value="Heerenveen">Heerenveen</option>
-          <option value="Rousset">Rousset</option>
-          <option value="Emstek">Emstek</option>
-          <option value="Parma">Parma</option>
-          <option value="Göteborg">Göteborg</option>
+          <option value="Heerenveen, Netherlands">Heerenveen, Netherlands</option>
+          <option value="Rousset, France">Rousset, France</option>
+          <option value="Emstek, Germany">Emstek, Germany</option>
+          <option value="Parma, Italy">Parma, Italy</option>
+          <option value="Göteborg, Sweden">Göteborg, Sweden</option>
           <option value="Nederland (reizend)">Nederland (reizend)</option>
         </select>
       </div>
       <div class="form-veld">
-        <label for="veld-werkgebied">Werkgebied (optioneel)</label>
-        <select id="veld-werkgebied">
-          <option value="">Geen</option>
-          <option value="Noord">Noord</option>
-          <option value="Oost">Oost</option>
-          <option value="Zuid">Zuid</option>
-          <option value="West">West</option>
-          <option value="Midden">Midden</option>
-        </select>
+        <span>Werkgebied (optioneel)</span>
+        <div class="werkgebied-keuzes" id="veld-werkgebied">
+          <label><input type="checkbox" value="Noord"> Noord</label>
+          <label><input type="checkbox" value="Oost"> Oost</label>
+          <label><input type="checkbox" value="Zuid"> Zuid</label>
+          <label><input type="checkbox" value="West"> West</label>
+          <label><input type="checkbox" value="Midden"> Midden</label>
+        </div>
       </div>
       <div class="form-veld">
         <label for="veld-dienstverband">Uren/dienstverband</label>
@@ -861,7 +860,10 @@
       .then(vacature => {
         document.getElementById("veld-afdeling").value = vacature.afdeling || "";
         document.getElementById("veld-locatie").value = vacature.locatie || "";
-        document.getElementById("veld-werkgebied").value = vacature.werkgebied || "";
+        const gekozenWerkgebieden = (vacature.werkgebied || "").split("/").filter(Boolean);
+        document.querySelectorAll("#veld-werkgebied input[type=checkbox]").forEach(checkbox => {
+          checkbox.checked = gekozenWerkgebieden.includes(checkbox.value);
+        });
         document.getElementById("veld-dienstverband").value = vacature.dienstverband || "";
         document.getElementById("veld-opleidingsniveau").value = vacature.opleidingsniveau || "";
         document.getElementById("veld-salaris-overleg").checked = Boolean(vacature.salarisInOverleg);
@@ -939,7 +941,7 @@
       translations: vertalingen,
       afdeling: document.getElementById("veld-afdeling").value,
       locatie: document.getElementById("veld-locatie").value,
-      werkgebied: document.getElementById("veld-werkgebied").value,
+      werkgebied: Array.from(document.querySelectorAll("#veld-werkgebied input[type=checkbox]:checked")).map(checkbox => checkbox.value),
       dienstverband: document.getElementById("veld-dienstverband").value,
       opleidingsniveau: document.getElementById("veld-opleidingsniveau").value,
       salarisInOverleg,

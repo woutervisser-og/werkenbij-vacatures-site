@@ -18,6 +18,19 @@ const VACATURES_API_URL = metSchema(
   process.env.VACATURES_API_URL || "victorious-sea-0b50b4303.7.azurestaticapps.net/api/GetVacatures"
 );
 
+// Landcode per vaste locatie-waarde (zie ALLOWED_LOCATIES in
+// api/shared/vacaturesTable.js), voor de JobPosting-structured-data
+// verderop. Bewust hier gedupliceerd i.p.v. cross-directory geïmporteerd
+// uit api/shared: dit script draait los van de Functions-runtime.
+const LOCATIE_LANDCODE = {
+  "Heerenveen, Netherlands": "NL",
+  "Rousset, France": "FR",
+  "Emstek, Germany": "DE",
+  "Parma, Italy": "IT",
+  "Göteborg, Sweden": "SE",
+  "Nederland (reizend)": "NL"
+};
+
 // Publieke basis-URL van de site zelf (voor hreflang-tags), afgeleid van
 // VACATURES_API_URL i.p.v. een aparte omgevingsvariabele, zodat er geen
 // extra workflow-wijziging nodig is.
@@ -242,9 +255,18 @@ function bouwJsonLd(vacature) {
   // officiële manier om aan te geven dat een functie niet aan 1 vaste
   // locatie hangt.
   if (vacature.locatie) {
+    // Locatie is "Stad, Land" (bv. "Rousset, France"), of "Nederland
+    // (reizend)" zonder komma. Alleen de stad in addressLocality, en de
+    // echte landcode i.p.v. altijd "NL" (dat klopte niet voor de
+    // kantoren buiten Nederland).
+    const [stad] = vacature.locatie.split(",");
     jobPosting.jobLocation = {
       "@type": "Place",
-      address: { "@type": "PostalAddress", addressLocality: vacature.locatie, addressCountry: "NL" }
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: stad.trim(),
+        addressCountry: LOCATIE_LANDCODE[vacature.locatie] || "NL"
+      }
     };
   } else {
     jobPosting.jobLocationType = "TELECOMMUTE";
