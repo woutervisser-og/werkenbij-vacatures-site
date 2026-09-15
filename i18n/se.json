@@ -164,6 +164,7 @@
   },
   "vacature": {
     "tagFallback": "Ledigt jobb",
+    "werkgebiedPrefix": "Region",
     "solliciteerDirect": "Ansök nu!",
     "salarisInOverleg": "Lön enligt överenskommelse",
     "salarisVanaf": "Från € {{bedrag}}",

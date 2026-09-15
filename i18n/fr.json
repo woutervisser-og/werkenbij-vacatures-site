@@ -164,6 +164,7 @@
   },
   "vacature": {
     "tagFallback": "Offre d'emploi",
+    "werkgebiedPrefix": "Région",
     "solliciteerDirect": "Postuler maintenant !",
     "salarisInOverleg": "Salaire à négocier",
     "salarisVanaf": "À partir de € {{bedrag}}",

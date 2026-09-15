@@ -416,6 +416,7 @@ function renderVacatureHero(vacature, salaris, t) {
       <div class="detail-meta">
         <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
         <span class="meta-pill">${escapeHtml(vacature.locatie || "")}</span>
+        ${vacature.werkgebied ? `<span class="meta-pill">${escapeHtml(t("vacature.werkgebiedPrefix"))} ${escapeHtml(vacature.werkgebied)}</span>` : ""}
         ${salaris}
       </div>
       <a href="#solliciteer-blok" class="btn">${t("vacature.solliciteerDirect")}</a>
@@ -433,6 +434,7 @@ function renderTitelSectie(vacature, salaris, t) {
   <div class="detail-meta reveal">
     <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
     <span class="meta-pill">${escapeHtml(vacature.locatie || "")}</span>
+    ${vacature.werkgebied ? `<span class="meta-pill">${escapeHtml(t("vacature.werkgebiedPrefix"))} ${escapeHtml(vacature.werkgebied)}</span>` : ""}
     ${salaris}
   </div>`;
 }

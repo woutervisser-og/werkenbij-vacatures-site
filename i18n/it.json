@@ -164,6 +164,7 @@
   },
   "vacature": {
     "tagFallback": "Posizione aperta",
+    "werkgebiedPrefix": "Regione",
     "solliciteerDirect": "Candidati subito!",
     "salarisInOverleg": "Stipendio da concordare",
     "salarisVanaf": "A partire da € {{bedrag}}",

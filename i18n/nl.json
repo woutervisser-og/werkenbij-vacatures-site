@@ -164,6 +164,7 @@
   },
   "vacature": {
     "tagFallback": "Vacature",
+    "werkgebiedPrefix": "Regio",
     "solliciteerDirect": "Solliciteer direct!",
     "salarisInOverleg": "Salaris in overleg",
     "salarisVanaf": "Vanaf € {{bedrag}}",

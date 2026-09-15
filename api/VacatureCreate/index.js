@@ -6,7 +6,8 @@ const {
   toVacatureDto,
   ALLOWED_STATUSSEN,
   ALLOWED_AFDELINGEN,
-  ALLOWED_LOCATIES
+  ALLOWED_LOCATIES,
+  ALLOWED_WERKGEBIEDEN
 } = require("../shared/vacaturesTable");
 const { triggerRebuild, raaktPubliekeSite } = require("../shared/rebuildTrigger");
 
@@ -36,6 +37,13 @@ module.exports = async function (context, req) {
     context.res = {
       status: 400,
       body: { error: `Ongeldige locatie, kies uit: ${ALLOWED_LOCATIES.join(", ")}` }
+    };
+    return;
+  }
+  if (genormaliseerd.workArea && !ALLOWED_WERKGEBIEDEN.includes(genormaliseerd.workArea)) {
+    context.res = {
+      status: 400,
+      body: { error: `Ongeldig werkgebied, kies uit: ${ALLOWED_WERKGEBIEDEN.join(", ")}` }
     };
     return;
   }

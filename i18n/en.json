@@ -164,6 +164,7 @@
   },
   "vacature": {
     "tagFallback": "Vacancy",
+    "werkgebiedPrefix": "Region",
     "solliciteerDirect": "Apply now!",
     "salarisInOverleg": "Salary negotiable",
     "salarisVanaf": "From € {{bedrag}}",
