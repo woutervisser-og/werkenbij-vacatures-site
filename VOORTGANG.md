@@ -921,3 +921,27 @@ in de oorspronkelijke volgorde, actieve-paginamarkering op contact.html
 werkt nog. `generate.js` lokaal gedraaid tegen de dev-server om de
 gegenereerde vacature-detailpagina te controleren; testdata en
 gegenereerde bestanden na afloop opgeruimd. Gemerged via [PR #44](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/44).
+
+## Afgerond: taal-selector visueel dichter bij de corporate site
+
+Wouter deelde een screenshot van de taal-dropdown op de corporate site:
+de uitwerking op werkenbij week daar nog te sterk vanaf.
+
+- Emoji-vlaggen vervangen door zelf-gehoste SVG-vlagiconen (data-URI's
+  in `styles.css`, geen externe dependency): emoji-vlaggen renderen niet
+  overal consistent als vlag (Windows toont ze soms als platte
+  2-letter-code), een SVG-achtergrond oogt overal identiek.
+- Dropdown-lijst luchtiger en groter gemaakt: bredere kaart, grotere
+  ronde hoeken, grotere flags, meer padding, grotere/vettere tekst —
+  dichter bij de referentiescreenshot.
+- Label voor Engels aangepast van "EN" naar "GB" (landcode i.p.v.
+  taalcode, zoals op de corporate site). De onderliggende taalcode/
+  URL-prefix (`en`) blijft ongewijzigd, alleen de zichtbare tekst.
+- Toegepast op alle 5 marketingpagina's, `i18n.js` (weergavecode op de
+  knop) en het `generate.js`-sjabloon voor vacature-detailpagina's.
+
+Lokaal getest: dropdown op alle 6 talen gecontroleerd (scherpe vlaggen),
+hero-pagina in gesloten staat (knop toont "GB" in wit), mobiel
+uitklapmenu, en `generate.js` gedraaid met een test-vacature in 3 talen
+om de gegenereerde variant te bevestigen. Testdata en gegenereerde
+bestanden na afloop opgeruimd. Gemerged via [PR #45](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/45).
