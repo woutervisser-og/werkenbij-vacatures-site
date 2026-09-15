@@ -4,7 +4,9 @@ const {
   toEntity,
   toVacatureDto,
   PARTITION_KEY,
-  ALLOWED_STATUSSEN
+  ALLOWED_STATUSSEN,
+  ALLOWED_AFDELINGEN,
+  ALLOWED_LOCATIES
 } = require("../shared/vacaturesTable");
 const { triggerRebuild, raaktPubliekeSite } = require("../shared/rebuildTrigger");
 
@@ -17,6 +19,20 @@ module.exports = async function (context, req) {
     context.res = {
       status: 400,
       body: { error: `Ongeldige status, kies uit: ${ALLOWED_STATUSSEN.join(", ")}` }
+    };
+    return;
+  }
+  if (genormaliseerd.department && !ALLOWED_AFDELINGEN.includes(genormaliseerd.department)) {
+    context.res = {
+      status: 400,
+      body: { error: `Ongeldige afdeling, kies uit: ${ALLOWED_AFDELINGEN.join(", ")}` }
+    };
+    return;
+  }
+  if (genormaliseerd.location && !ALLOWED_LOCATIES.includes(genormaliseerd.location)) {
+    context.res = {
+      status: 400,
+      body: { error: `Ongeldige locatie, kies uit: ${ALLOWED_LOCATIES.join(", ")}` }
     };
     return;
   }

@@ -1,0 +1,14 @@
+name: Eenmalige migratie afdeling/locatie naar vaste lijst
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migreer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Roep migratie-endpoint aan
+        run: |
+          curl -sS -X POST "${{ vars.SITE_URL }}/api/onderhoud/migreerAfdelingLocatie" \
+            -H "x-tick-secret: ${{ secrets.VACATURES_TICK_SECRET }}" \
+            --fail

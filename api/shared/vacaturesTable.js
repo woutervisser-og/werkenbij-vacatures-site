@@ -16,6 +16,42 @@ const ALLOWED_STATUSSEN = [
   "gearchiveerd"
 ];
 
+// Vaste lijst i.p.v. vrije tekst, om te voorkomen dat dezelfde afdeling
+// op meerdere manieren getypt wordt (nodig om straks betrouwbaar op te
+// kunnen filteren). Aangeleverd door Wouter.
+const ALLOWED_AFDELINGEN = [
+  "Business Development",
+  "Cybersecurity",
+  "Directory",
+  "Energy & Wholesale",
+  "Facility",
+  "Finance",
+  "HR",
+  "Legal",
+  "Management",
+  "Marketing",
+  "Office Management",
+  "Operations",
+  "Project Management",
+  "Public Affairs",
+  "QHSE",
+  "Sales",
+  "Sustainability Advisory"
+];
+
+// Locatie is bewust niet alleen een vaste kantorenlijst: sommige functies
+// (bv. servicemonteur) zijn regiogebonden i.p.v. aan 1 kantoor. Daarom
+// staan de 5 echte kantoren en 1 generieke "reizend"-optie naast elkaar
+// in dezelfde lijst, i.p.v. een los "regio"-veld erbij te verzinnen.
+const ALLOWED_LOCATIES = [
+  "Heerenveen",
+  "Rousset",
+  "Emstek",
+  "Parma",
+  "Göteborg",
+  "Nederland (reizend)"
+];
+
 // Meertaligheid: EN is de verplichte basistaal, de rest is optioneel per
 // vacature. "se" (niet de ISO-code "sv") is bewust gekozen voor
 // consistentie met de corporate website.
@@ -203,6 +239,8 @@ function toVacatureDto(entity) {
 module.exports = {
   PARTITION_KEY,
   ALLOWED_STATUSSEN,
+  ALLOWED_AFDELINGEN,
+  ALLOWED_LOCATIES,
   ONDERSTEUNDE_TALEN,
   getVacaturesTableClient,
   normalizeVacatureInput,
