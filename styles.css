@@ -664,6 +664,38 @@ section.content {
 .teaser-card h3 { font-size: 19px; margin-bottom: 12px; color: var(--og-orange-dark); }
 .teaser-card p { font-size: 14.5px; color: #4a4a4a; margin-bottom: 16px; }
 
+/* ===== FAQ-accordion (native <details>/<summary>, geen JS nodig) ===== */
+.faq-lijst { display: flex; flex-direction: column; gap: 12px; max-width: 780px; }
+.faq-item {
+  border: 1px solid #e5e5e2;
+  border-radius: 12px;
+  padding: 18px 24px;
+  background: var(--og-white);
+}
+.faq-item summary {
+  cursor: pointer;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--og-dark);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "+";
+  font-family: 'Komu', sans-serif;
+  font-size: 22px;
+  color: var(--og-orange-dark);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item p { font-size: 14.5px; color: #4a4a4a; margin-top: 14px; line-height: 1.6; }
+
 .vacature-card {
   border: 1px solid #e5e5e2;
   border-radius: 12px;
