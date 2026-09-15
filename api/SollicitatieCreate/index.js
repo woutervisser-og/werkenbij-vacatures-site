@@ -2,7 +2,10 @@ const { randomUUID } = require("crypto");
 const { getVacaturesTableClient, PARTITION_KEY: VACATURE_PARTITION_KEY } = require("../shared/vacaturesTable");
 const { getSollicitatiesTableClient, toEntity, toSollicitatieDto } = require("../shared/sollicitatiesTable");
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Sluit ook <>"' uit (niet alleen whitespace/@): dit veld wordt later in
+// /beheer getoond, dus e-mailadressen met HTML-opmaaktekens horen sowieso
+// niet geldig te zijn, los van hoe de weergavecode ermee omgaat.
+const EMAIL_REGEX = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/;
 
 // Publiek endpoint: een kandidaat is niet ingelogd. Het CV zelf is al apart
 // geupload via CvUpload (net als een headerfoto eerst apart via
