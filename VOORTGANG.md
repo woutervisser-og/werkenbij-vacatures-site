@@ -1040,3 +1040,47 @@ schijf; wél gelukt via een upload direct naar de repo op github.com).
 Lokaal getest: foto rendert met kleurwaas, tekst blijft leesbaar,
 consistent met de video-hero's op de andere pagina's. Gemerged via
 [PR #49](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/49).
+
+## Afgerond: afdeling en locatie als vaste dropdown i.p.v. vrije tekst
+
+Wouter wilde bij het aanmaken van een vacature Locatie en Afdeling als
+dropdown i.p.v. vrij tekstveld, om te voorkomen dat bv. "Business
+Development" op 5 manieren getypt wordt, en om er straks betrouwbaar op
+te kunnen filteren.
+
+- Vaste lijst `ALLOWED_AFDELINGEN` (17 afdelingen) en `ALLOWED_LOCATIES`
+  in `api/shared/vacaturesTable.js`, aangeleverd door Wouter.
+- Locatie is bewust niet alleen een kantorenlijst: sommige functies
+  (bv. servicemonteur) zijn regiogebonden i.p.v. aan 1 kantoor vast.
+  Daarom staan de 5 echte kantoren (Heerenveen, Rousset, Emstek, Parma,
+  Göteborg) en 1 generieke "Nederland (reizend)"-optie naast elkaar in
+  dezelfde lijst, i.p.v. een los "regio"-veld erbij te verzinnen. Nog
+  te bevestigen door Wouter of "Nederland (reizend)" specifiek genoeg is
+  of dat er meer regio's (bv. Noord/Zuid) bij moeten.
+- Beheerformulier (`beheer/vacature.html`) gebruikt nu 2
+  `<select>`-dropdowns i.p.v. tekstvelden.
+- `VacatureCreate` en `VacatureUpdate` valideren tegen dezelfde lijsten
+  (zelfde patroon als de bestaande `ALLOWED_STATUSSEN`-validatie).
+- Eenmalige migratie voor bestaande vacatures: nieuwe
+  `MigreerAfdelingLocatie`-Function (zelfde secret-beveiligde patroon
+  als `VacaturesTick`) mapt bestaande vrije-tekstwaarden automatisch
+  naar de nieuwe lijst waar dat zeker genoeg kan (ongeacht
+  hoofdletters/spaties/accenten, of een duidelijke substring-match), en
+  rapporteert per veld welke waarden niet zeker genoeg gemapt konden
+  worden zodat die handmatig gecontroleerd kunnen worden. Aan te roepen
+  via de nieuwe workflow `migreer-afdeling-locatie.yml`
+  (workflow_dispatch, eenmalig).
+
+  **Nog niet uitgevoerd tegen productie** — deze migratie-workflow moet
+  nog 1x handmatig gestart worden (via workflow_dispatch) om de
+  bestaande vacatures daadwerkelijk om te zetten naar de nieuwe vaste
+  lijst.
+
+Lokaal getest tegen Azurite met bewust rommelige testdata (kleine
+letters, extra spaties, ontbrekend accent, "and" i.p.v. "&", een
+onherkenbare waarde): correct gemapt waar mogelijk, onduidelijke
+gevallen blijven ongewijzigd staan, en een herhaalde aanroep wijzigt
+niets meer (idempotent). Beheerformulier getest: dropdown toont de
+gemigreerde waarde correct, en staat leeg (i.p.v. een foutieve waarde)
+bij een niet-gematchte vacature. Gemerged via
+[PR #50](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/50).
