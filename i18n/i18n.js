@@ -14,6 +14,10 @@
 
   const ONDERSTEUNDE_TALEN = ["en", "nl", "fr", "de", "it", "se"];
   const BASISTAAL = "en";
+  // Weergavecode in de taal-selector: meestal gelijk aan de taalcode,
+  // behalve "en" (taalcode) dat als "GB" getoond wordt (vlag + landcode,
+  // zoals op de corporate website).
+  const TAAL_WEERGAVECODES = { en: "GB" };
 
   function huidigeTaal() {
     const eersteSegment = location.pathname.split("/").filter(Boolean)[0];
@@ -66,7 +70,7 @@
     const bestand = huidigePaginaBestand();
     document.querySelectorAll(".taal-nav-selector").forEach(selector => {
       const code = selector.querySelector(".taal-nav-code");
-      if (code) code.textContent = taal.toUpperCase();
+      if (code) code.textContent = TAAL_WEERGAVECODES[taal] || taal.toUpperCase();
       selector.querySelectorAll(".taal-nav-lijst a[data-taal]").forEach(link => {
         const linkTaal = link.getAttribute("data-taal");
         link.setAttribute("href", "/" + linkTaal + "/" + bestand);
