@@ -896,3 +896,28 @@ Lokaal getest tegen Azurite: op 1920px geen scroll meer nodig, knoppen
 wijzigen de status correct en de kandidaat verdwijnt uit bord/lijst, de
 Afgewezen- en Archief-tab tonen elk de juiste, gescheiden set kandidaten.
 Testdata na afloop opgeruimd. Gemerged via [PR #43](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/43).
+
+## Afgerond: menu écht gecentreerd, Contact + corporate site naar rechts
+
+De hoofdnav toonde 5 items (Vacatures/Werken bij OG/Over ons/Contact/
+corporate site); Contact en de corporate-sitelink moesten eruit, zodat de
+resterende 3 menu-items écht gecentreerd staan. Nieuwe indeling rechts:
+taalkeuze → Contact → corporate site (helemaal rechts uitgelijnd).
+
+- Nieuwe `.header-rechts-link` klasse (zelfde typografie, hover-
+  onderstreping en actieve-paginakleur als de gewone nav-links, alleen
+  zonder hun `margin-left` — `header-rechts` regelt de tussenruimte al
+  via `gap`).
+- Op mobiel blijven Contact en corporate site gewoon onderdeel van het
+  uitklapbare hamburgermenu, in dezelfde volgorde als voorheen: een
+  CSS-only truc (dezelfde flex-`order` als `<nav>`) laat ze in de mobiele
+  flex-wrap-lijst erachteraan verschijnen, zonder de HTML te dupliceren.
+- Toegepast op alle 5 marketingpagina's én het `generate.js`-sjabloon
+  voor vacature-detailpagina's.
+
+Lokaal geverifieerd: nav-midden = header-midden (0px verschil) op 1920px,
+rechts-volgorde klopt, mobiel uitklapmenu toont nog steeds alle 5 items
+in de oorspronkelijke volgorde, actieve-paginamarkering op contact.html
+werkt nog. `generate.js` lokaal gedraaid tegen de dev-server om de
+gegenereerde vacature-detailpagina te controleren; testdata en
+gegenereerde bestanden na afloop opgeruimd. Gemerged via [PR #44](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/44).
