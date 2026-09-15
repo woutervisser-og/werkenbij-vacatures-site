@@ -159,6 +159,9 @@
     "highlight": "lediga jobb",
     "laden": "Laddar lediga jobb...",
     "geenVacatures": "Det finns för närvarande inga lediga jobb.",
+    "geenVacaturesGefilterd": "Inga lediga jobb hittades med dessa filter.",
+    "filterLand": "Land",
+    "filterAfdeling": "Avdelning",
     "foutmelding": "Något gick fel när de lediga jobben skulle laddas. Försök igen senare.",
     "heroIntro": "Bläddra bland våra lediga tjänster och hitta rollen som passar dig."
   },

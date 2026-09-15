@@ -159,6 +159,9 @@
     "highlight": "offres d'emploi",
     "laden": "Chargement des offres d'emploi...",
     "geenVacatures": "Il n'y a actuellement aucune offre d'emploi ouverte.",
+    "geenVacaturesGefilterd": "Aucune offre d'emploi trouvée avec ces filtres.",
+    "filterLand": "Pays",
+    "filterAfdeling": "Département",
     "foutmelding": "Une erreur s'est produite lors du chargement des offres d'emploi. Veuillez réessayer plus tard.",
     "heroIntro": "Parcourez nos offres d'emploi et trouvez le poste qui vous correspond."
   },
