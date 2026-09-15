@@ -52,6 +52,16 @@
 </section>
 
 <section class="content">
+  <div class="filter-balk" id="filter-balk" hidden>
+    <div class="filter-groep">
+      <span class="filter-groep-label" data-i18n="vacaturesPagina.filterLand">Land</span>
+      <div class="filter-chips" id="filter-land"></div>
+    </div>
+    <div class="filter-groep">
+      <span class="filter-groep-label" data-i18n="vacaturesPagina.filterAfdeling">Afdeling</span>
+      <div class="filter-chips" id="filter-afdeling"></div>
+    </div>
+  </div>
   <div class="card-grid reveal" id="vacature-lijst">
     <p id="laad-status" data-i18n="vacaturesPagina.laden">Vacatures laden...</p>
   </div>
@@ -127,8 +137,122 @@
     return (vacature.translations && vacature.translations.en && vacature.translations.en.title) || vacature.titel;
   }
 
-  function laadVacatures() {
+  // Zelfde vaste lijst als ALLOWED_AFDELINGEN in api/shared/vacaturesTable.js.
+  // Hier gedupliceerd omdat dit een losse statische pagina is (geen
+  // server-side require mogelijk), net als LOCATIE_LANDCODE in generate.js.
+  const AFDELINGEN = [
+    "Business Development", "Cybersecurity", "Directory", "Energy & Wholesale",
+    "Facility", "Finance", "HR", "Legal", "Management", "Marketing",
+    "Office Management", "Operations", "Project Management", "Public Affairs",
+    "QHSE", "Sales", "Sustainability Advisory"
+  ];
+  // Land per locatie afgeleid i.p.v. een apart veld: elk kantoor staat op
+  // dit moment voor precies 1 land, dus "Stad, Land" -> Land is genoeg.
+  // "Nederland (reizend)" hoort qua land bij Netherlands.
+  const LANDEN = ["Netherlands", "France", "Germany", "Italy", "Sweden"];
+  function landVoorVacature(vacature) {
+    const locatie = vacature.locatie || "";
+    if (locatie === "Nederland (reizend)") return "Netherlands";
+    const delen = locatie.split(",");
+    return delen.length > 1 ? delen[1].trim() : "";
+  }
+
+  // Bij een taalversie die bij 1 specifiek kantoor hoort, dat land vooraf
+  // aanvinken (aanpasbaar, niks wordt echt verborgen). NL en EN blijven
+  // ongefilterd: NL is de hoofdmarkt, EN is de internationale/standaardtaal.
+  const TAAL_LAND_VOORSELECTIE = { fr: "France", de: "Germany", it: "Italy", se: "Sweden" };
+
+  const filterState = { land: new Set(), afdeling: new Set() };
+  let alleVacatures = [];
+
+  function leesFilterUitUrl() {
+    const params = new URLSearchParams(location.search);
+    if (params.has("land") || params.has("afdeling")) {
+      (params.get("land") || "").split(",").filter(Boolean).forEach(w => filterState.land.add(w));
+      (params.get("afdeling") || "").split(",").filter(Boolean).forEach(w => filterState.afdeling.add(w));
+      return;
+    }
+    const voorselectie = TAAL_LAND_VOORSELECTIE[window.OG_HUIDIGE_TAAL];
+    if (voorselectie) filterState.land.add(voorselectie);
+  }
+
+  function schrijfFilterNaarUrl() {
+    const params = new URLSearchParams();
+    if (filterState.land.size) params.set("land", [...filterState.land].join(","));
+    if (filterState.afdeling.size) params.set("afdeling", [...filterState.afdeling].join(","));
+    const query = params.toString();
+    history.replaceState(null, "", location.pathname + (query ? `?${query}` : ""));
+  }
+
+  function maakChip(container, waarde, groep) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.textContent = waarde;
+    chip.setAttribute("aria-pressed", filterState[groep].has(waarde) ? "true" : "false");
+    chip.classList.toggle("actief", filterState[groep].has(waarde));
+    chip.addEventListener("click", () => {
+      if (filterState[groep].has(waarde)) filterState[groep].delete(waarde);
+      else filterState[groep].add(waarde);
+      chip.classList.toggle("actief");
+      chip.setAttribute("aria-pressed", filterState[groep].has(waarde) ? "true" : "false");
+      schrijfFilterNaarUrl();
+      renderVacatures();
+    });
+    container.appendChild(chip);
+  }
+
+  function bouwFilterChips() {
+    const landContainer = document.getElementById("filter-land");
+    const afdelingContainer = document.getElementById("filter-afdeling");
+    LANDEN.forEach(land => maakChip(landContainer, land, "land"));
+    AFDELINGEN.forEach(afdeling => maakChip(afdelingContainer, afdeling, "afdeling"));
+    document.getElementById("filter-balk").hidden = false;
+  }
+
+  function renderVacatures() {
     const huidigeTaal = window.OG_HUIDIGE_TAAL || "en";
+    const container = document.getElementById("vacature-lijst");
+    container.innerHTML = "";
+
+    const gefilterd = alleVacatures.filter(vacature => {
+      const landOk = filterState.land.size === 0 || filterState.land.has(landVoorVacature(vacature));
+      const afdelingOk = filterState.afdeling.size === 0 || filterState.afdeling.has(vacature.afdeling);
+      return landOk && afdelingOk;
+    });
+
+    if (gefilterd.length === 0) {
+      const key = alleVacatures.length === 0 ? "vacaturesPagina.geenVacatures" : "vacaturesPagina.geenVacaturesGefilterd";
+      container.innerHTML = `<p>${window.t(key)}</p>`;
+      return;
+    }
+
+    gefilterd.forEach(vacature => {
+      const { taal: gekozenTaal, vertaling } = kiesVertaling(vacature, huidigeTaal);
+      const slug = maakSlug(enTitelVoorSlug(vacature));
+
+      const kaart = document.createElement("a");
+      kaart.className = "vacature-card";
+      kaart.href = `/${gekozenTaal}/vacature/${slug}.html`;
+      kaart.style.textDecoration = "none";
+      kaart.style.color = "inherit";
+      kaart.innerHTML = `
+        <div class="afdeling">${vacature.afdeling || ""}</div>
+        <h3>${vertaling.title || ""}</h3>
+        <div class="meta-row">
+          <span class="meta-pill">${vacature.dienstverband || ""}</span>
+          <span class="meta-pill">${vacature.locatie || ""}</span>
+        </div>
+        <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
+        <span class="btn">${window.t("common.leesMeerSolliciteer")}</span>
+      `;
+      container.appendChild(kaart);
+    });
+  }
+
+  function laadVacatures() {
+    leesFilterUitUrl();
+    bouwFilterChips();
 
     fetch(VACATURE_BRON)
       .then(response => {
@@ -136,35 +260,8 @@
         return response.json();
       })
       .then(vacatures => {
-        const container = document.getElementById("vacature-lijst");
-        container.innerHTML = "";
-
-        if (vacatures.length === 0) {
-          container.innerHTML = `<p>${window.t("vacaturesPagina.geenVacatures")}</p>`;
-          return;
-        }
-
-        vacatures.forEach(vacature => {
-          const { taal: gekozenTaal, vertaling } = kiesVertaling(vacature, huidigeTaal);
-          const slug = maakSlug(enTitelVoorSlug(vacature));
-
-          const kaart = document.createElement("a");
-          kaart.className = "vacature-card";
-          kaart.href = `/${gekozenTaal}/vacature/${slug}.html`;
-          kaart.style.textDecoration = "none";
-          kaart.style.color = "inherit";
-          kaart.innerHTML = `
-            <div class="afdeling">${vacature.afdeling || ""}</div>
-            <h3>${vertaling.title || ""}</h3>
-            <div class="meta-row">
-              <span class="meta-pill">${vacature.dienstverband || ""}</span>
-              <span class="meta-pill">${vacature.locatie || ""}</span>
-            </div>
-            <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
-            <span class="btn">${window.t("common.leesMeerSolliciteer")}</span>
-          `;
-          container.appendChild(kaart);
-        });
+        alleVacatures = vacatures;
+        renderVacatures();
       })
       .catch(error => {
         document.getElementById("vacature-lijst").innerHTML =

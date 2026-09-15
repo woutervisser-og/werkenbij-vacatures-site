@@ -159,6 +159,9 @@
     "highlight": "Stellenangebote",
     "laden": "Stellenangebote werden geladen...",
     "geenVacatures": "Derzeit sind keine Stellen offen.",
+    "geenVacaturesGefilterd": "Keine Stellenangebote mit diesen Filtern gefunden.",
+    "filterLand": "Land",
+    "filterAfdeling": "Abteilung",
     "foutmelding": "Beim Laden der Stellenangebote ist etwas schiefgelaufen. Bitte versuche es später erneut.",
     "heroIntro": "Durchstöbere unsere offenen Stellen und finde die Rolle, die zu dir passt."
   },

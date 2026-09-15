@@ -159,6 +159,9 @@
     "highlight": "posizioni aperte",
     "laden": "Caricamento delle posizioni aperte...",
     "geenVacatures": "Al momento non ci sono posizioni aperte.",
+    "geenVacaturesGefilterd": "Nessuna posizione trovata con questi filtri.",
+    "filterLand": "Paese",
+    "filterAfdeling": "Reparto",
     "foutmelding": "Si è verificato un errore durante il caricamento delle posizioni aperte. Riprova più tardi.",
     "heroIntro": "Scopri le nostre posizioni aperte e trova il ruolo giusto per te."
   },

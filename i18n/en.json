@@ -159,6 +159,9 @@
     "highlight": "vacancies",
     "laden": "Loading vacancies...",
     "geenVacatures": "There are currently no open vacancies.",
+    "geenVacaturesGefilterd": "No vacancies found with these filters.",
+    "filterLand": "Country",
+    "filterAfdeling": "Department",
     "foutmelding": "Something went wrong loading the vacancies. Please try again later.",
     "heroIntro": "Browse our open vacancies and find the role that fits you."
   },
