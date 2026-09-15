@@ -1130,3 +1130,56 @@ van de job-logs wees uit dat de curl-aanroep naar de onderhouds-API's
   draaien.
 
 Gemerged via [PR #52](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/52).
+
+## Afgerond: werkgebied-combinaties, locatie met land, en de laatste migratie-fixes
+
+Wouter gaf aan dat werkgebied vaak gecombineerd voorkomt (bv. "Zuid/West"),
+en wilde bij locatie ook het land erbij zodat direct duidelijk is om
+welk kantoor het gaat.
+
+- Werkgebied: beheerformulier gebruikt nu checkboxes i.p.v. 1 dropdown,
+  opgeslagen als "/"-gescheiden canonieke string (altijd in vaste
+  volgorde, dus "Zuid/West" i.p.v. soms "West/Zuid"). `isGeldigWerkgebied()`
+  in `api/shared/vacaturesTable.js` valideert elke combinatie.
+- Locatie toont nu stad + land (bv. "Rousset, France") i.p.v. alleen de
+  stad. Nam meteen een bestaande bug mee in de JobPosting-structured-data:
+  `addressCountry` stond altijd hardcoded op "NL", ook voor de kantoren
+  in Frankrijk, Duitsland, Italië en Zweden.
+- `MigreerAfdelingLocatie` kreeg alias-mappings voor bekende onduidelijke
+  legacy-waarden ("Techniek" → Operations, "Utrecht" → Nederland
+  (reizend)), en een expliciete, op ID gebaseerde `HANDMATIGE_CORRECTIES`
+  voor de allerlaatste vacature die nergens automatisch op te lossen was
+  (locatie "Manchester", geen kantoor en geen NL-regio): op verzoek van
+  Wouter naar Nederland (reizend) + werkgebied Noord gezet.
+- Migratie-workflow 2x opnieuw gedraaid na deze wijzigingen: alle
+  bestaande vacatures hebben nu een geldige afdeling, locatie én
+  werkgebied, niets staat meer op "onduidelijk".
+
+Gemerged via [PR #53](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/53) en
+[PR #54](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/54).
+
+## Afgerond: land- en afdelingfilters op de vacature-overzichtspagina
+
+Aanleiding: Wouter merkte op dat de SE-taalversie van de site gewoon
+alle vacatures toont, ook vacatures die niets met Zweden te maken
+hebben.
+
+- Klikbare, multi-select filterchips voor Land (5 landen) en Afdeling
+  (17 vaste afdelingen) boven de vacaturelijst op `vacatures.html`.
+- Filterkeuze staat in de URL (`?land=...&afdeling=...`), dus een
+  gefilterde link is deelbaar.
+- Land wordt afgeleid uit de bestaande Locatie-waarde (alles na de
+  komma; "Nederland (reizend)" telt als Netherlands) — geen nieuw
+  databronveld nodig, en de portal-dropdown blijft ongewijzigd (toont
+  bewust de precieze stad, dat is voor intern gebruik net zo belangrijk).
+- Land-chip staat vooraf aangevinkt op basis van de taal van de pagina:
+  fr → France, de → Germany, it → Italy, se → Sweden. nl en en blijven
+  ongefilterd. De chip is altijd uit te vinken, dus niets wordt
+  structureel verborgen — dit voorkomt ook een misleidend lege lijst
+  als een land toevallig geen vacatures heeft.
+
+Lokaal getest met Playwright tegen een minimale mock-server (puur
+front-end, geen Azurite nodig voor dit stuk): voorselectie per taal,
+combinatie van filtergroepen als AND, URL-synchronisatie, en het "geen
+resultaten"-bericht in de juiste taal. Gemerged via
+[PR #55](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/55).
