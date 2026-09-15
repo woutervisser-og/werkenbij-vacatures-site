@@ -181,6 +181,39 @@ body.pagina-met-hero header:not(.header-solide) nav a.active {
   color: var(--og-white);
 }
 
+/* Contact + corporate site: bewust buiten de gecentreerde nav, aan de
+   rechterkant bij de taal-selector (corporate site helemaal rechts,
+   taal-selector links daarvan, contact ertussenin) i.p.v. mee te doen
+   met de 3 gecentreerde hoofdmenu-items. Zelfde typografie en
+   hover-onderstreping als de gewone nav-links, alleen zonder hun
+   margin-left (header-rechts regelt de tussenruimte al via gap). */
+.header-rechts-link {
+  position: relative;
+  color: var(--og-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding-bottom: 4px;
+  transition: color 0.3s ease;
+}
+.header-rechts-link::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--og-orange);
+  transition: width 0.25s ease;
+}
+.header-rechts-link:hover::after,
+.header-rechts-link.active::after { width: 100%; }
+.header-rechts-link.active { color: var(--og-orange-dark); }
+
+body.pagina-met-hero header:not(.header-solide) .header-rechts-link,
+body.pagina-met-hero header:not(.header-solide) .header-rechts-link.active {
+  color: var(--og-white);
+}
+
 /* Bevat de taal-selector en (op mobiel) de hamburger-knop samen aan de
    rechterkant van de header, als 1 grid-item. */
 .header-rechts {
@@ -734,6 +767,18 @@ footer .logo-footer {
     margin-left: 0;
     padding: 12px 0;
     border-bottom: 1px solid #eee;
+  }
+
+  /* Contact + corporate site staan in de HTML buiten <nav> (voor hun
+     eigen plek rechts op desktop), maar horen op mobiel gewoon nog bij
+     het uitklapmenu: zelfde order als nav zodat ze er in de flex-wrap
+     direct achteraan komen, verborgen tot het menu openstaat. */
+  .header-rechts-link { display: none; order: 2; width: 100%; }
+  header.mobiel-menu-open .header-rechts-link {
+    display: block;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    color: var(--og-dark) !important;
   }
 
   /* Menu moet leesbaar zijn ongeacht of de (transparante) hero-header nog

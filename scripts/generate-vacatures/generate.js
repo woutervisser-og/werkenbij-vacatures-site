@@ -501,10 +501,10 @@ ${bouwJsonLd(vacature)}
     <a href="${padVoorAlgemenePagina(taalcode, "vacatures.html")}" class="active">${t("nav.vacatures")}</a>
     <a href="${padVoorAlgemenePagina(taalcode, "werken-bij-og.html")}">${t("nav.werkenBijOg")}</a>
     <a href="${padVoorAlgemenePagina(taalcode, "over-ons.html")}">${t("nav.overOns")}</a>
-    <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}">${t("nav.contact")}</a>
-    <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener">${t("nav.corporateSite")}</a>
   </nav>
   <div class="header-rechts">${renderTaalNavSelector(taalcode, beschikbareTalen, slug)}
+    <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}" class="header-rechts-link">${t("nav.contact")}</a>
+    <a href="https://www.ogcleanfuels.com" target="_blank" rel="noopener" class="header-rechts-link">${t("nav.corporateSite")}</a>
     <button type="button" class="hamburger-knop" id="hamburger-knop" aria-label="Menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
