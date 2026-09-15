@@ -52,6 +52,18 @@ const ALLOWED_LOCATIES = [
   "Nederland (reizend)"
 ];
 
+// Los, optioneel veld naast locatie: voor regiogebonden functies (bv.
+// servicemonteur) is "Nederland (reizend)" als locatie niet specifiek
+// genoeg. Werkgebied laat zien in welk deel van het land iemand vooral
+// werkt, ongeacht welke locatie (kantoor of "reizend") is gekozen.
+const ALLOWED_WERKGEBIEDEN = [
+  "Noord",
+  "Oost",
+  "Zuid",
+  "West",
+  "Midden"
+];
+
 // Meertaligheid: EN is de verplichte basistaal, de rest is optioneel per
 // vacature. "se" (niet de ISO-code "sv") is bewust gekozen voor
 // consistentie met de corporate website.
@@ -69,6 +81,7 @@ const ONDERSTEUNDE_TALEN = ["en", "nl", "fr", "de", "it", "se"];
 const VELD_ALIASSEN = {
   department: "afdeling",
   location: "locatie",
+  workArea: "werkgebied",
   employmentType: "dienstverband",
   salaryMin: "salarisMin",
   salaryMax: "salarisMax",
@@ -163,6 +176,7 @@ function toEntity(id, vacature, { createdAt, updatedAt }) {
     title: enVertaling.title || "",
     department: vacature.department || "",
     location: vacature.location || "",
+    workArea: vacature.workArea || "",
     employmentType: vacature.employmentType || "",
     salaryMin: vacature.salaryMin ?? null,
     salaryMax: vacature.salaryMax ?? null,
@@ -204,6 +218,7 @@ function toVacatureDto(entity) {
     title: enVertaling.title || entity.title || entity.titel || "",
     department: leesEntityVeld(entity, "department") || "",
     location: leesEntityVeld(entity, "location") || "",
+    workArea: leesEntityVeld(entity, "workArea") || "",
     employmentType: leesEntityVeld(entity, "employmentType") || "",
     salaryMin: leesEntityVeld(entity, "salaryMin") ?? null,
     salaryMax: leesEntityVeld(entity, "salaryMax") ?? null,
@@ -224,6 +239,7 @@ function toVacatureDto(entity) {
   dto.titel = dto.title;
   dto.afdeling = dto.department;
   dto.locatie = dto.location;
+  dto.werkgebied = dto.workArea;
   dto.dienstverband = dto.employmentType;
   dto.salarisMin = dto.salaryMin;
   dto.salarisMax = dto.salaryMax;
@@ -241,6 +257,7 @@ module.exports = {
   ALLOWED_STATUSSEN,
   ALLOWED_AFDELINGEN,
   ALLOWED_LOCATIES,
+  ALLOWED_WERKGEBIEDEN,
   ONDERSTEUNDE_TALEN,
   getVacaturesTableClient,
   normalizeVacatureInput,

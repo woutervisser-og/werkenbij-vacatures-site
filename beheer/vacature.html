@@ -67,6 +67,17 @@
         </select>
       </div>
       <div class="form-veld">
+        <label for="veld-werkgebied">Werkgebied (optioneel)</label>
+        <select id="veld-werkgebied">
+          <option value="">Geen</option>
+          <option value="Noord">Noord</option>
+          <option value="Oost">Oost</option>
+          <option value="Zuid">Zuid</option>
+          <option value="West">West</option>
+          <option value="Midden">Midden</option>
+        </select>
+      </div>
+      <div class="form-veld">
         <label for="veld-dienstverband">Uren/dienstverband</label>
         <select id="veld-dienstverband">
           <option value="">Kies...</option>
@@ -850,6 +861,7 @@
       .then(vacature => {
         document.getElementById("veld-afdeling").value = vacature.afdeling || "";
         document.getElementById("veld-locatie").value = vacature.locatie || "";
+        document.getElementById("veld-werkgebied").value = vacature.werkgebied || "";
         document.getElementById("veld-dienstverband").value = vacature.dienstverband || "";
         document.getElementById("veld-opleidingsniveau").value = vacature.opleidingsniveau || "";
         document.getElementById("veld-salaris-overleg").checked = Boolean(vacature.salarisInOverleg);
@@ -927,6 +939,7 @@
       translations: vertalingen,
       afdeling: document.getElementById("veld-afdeling").value,
       locatie: document.getElementById("veld-locatie").value,
+      werkgebied: document.getElementById("veld-werkgebied").value,
       dienstverband: document.getElementById("veld-dienstverband").value,
       opleidingsniveau: document.getElementById("veld-opleidingsniveau").value,
       salarisInOverleg,
