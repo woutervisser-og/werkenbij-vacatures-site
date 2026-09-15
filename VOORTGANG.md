@@ -1183,3 +1183,43 @@ front-end, geen Azurite nodig voor dit stuk): voorselectie per taal,
 combinatie van filtergroepen als AND, URL-synchronisatie, en het "geen
 resultaten"-bericht in de juiste taal. Gemerged via
 [PR #55](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/55).
+
+## Afgerond: contactpagina met FAQ-accordion, en notitieveld als rich text
+
+Wouter wilde de contactpagina meer vullen en het notitieveld in het
+kandidaatdossier gebruiksvriendelijker maken.
+
+**Contactpagina** (na een gedetailleerde spec van Wouter, die een
+eerdere, uitgebreidere versie met sollicitatieproces- en
+kantoren-secties verving):
+- FAQ als vanilla-JS accordion (button + verborgen div, geen library,
+  bewust geen native `<details>/<summary>`), direct onder de
+  contactkaart van Iska, vóór het "zakelijk contact"-blok — vult de
+  eerder lege ruimte tussen die 2 blokken.
+- 5 vragen: reactietermijn, niet aan alle functie-eisen voldoen,
+  sollicitatieproces, open solliciteren, gegevens na sollicitatie. 3
+  antwoorden zijn bewust duidelijk gemarkeerde placeholders (cursief,
+  cream achtergrond, tussen `[haken]`) voor onderwerpen die Wouter nog
+  moet invullen (reactietermijn, het concrete proces, bewaartermijn +
+  link naar de privacyverklaring).
+- Telefoonnummer bijgewerkt naar +31 6 12 18 55 70.
+- "Zakelijk contact"-tekst vereenvoudigd naar "Ga naar ogcleanfuels.com."
+  met bijpassende korte knoptekst.
+- Alle teksten vertaald naar alle 6 talen.
+
+**Notitieveld kandidaatdossier**:
+- Textarea vervangen door een contenteditable rich-text-veld met een
+  kleine werkbalk (vet/cursief/onderstreept/opsomming/genummerde
+  lijst) via `execCommand`.
+- Groter: 220-480px (was ~130px), groeit mee met de inhoud.
+- Notities worden nu als HTML opgeslagen. Server-side sanitization met
+  de nieuwe `sanitize-html`-dependency (strikte allowlist, geen
+  attributen) — dit is opgeslagen HTML die later met `innerHTML` wordt
+  getoond, dus zonder whitelist zou dit een opslagplek voor XSS worden.
+
+Lokaal getest met Playwright: FAQ-accordion opent/sluit onafhankelijk
+per item, placeholder-styling is duidelijk onderscheidend, en een
+geteste XSS-payload wordt door de sanitizer volledig weggefilterd
+terwijl normale opmaak intact blijft. Gemerged via
+[PR #56](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/56) en
+[PR #57](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/57).
