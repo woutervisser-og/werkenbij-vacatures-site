@@ -50,7 +50,14 @@
 
         <section class="dossier-sectie">
           <h2 class="dossier-sectie-kop">Notities</h2>
-          <textarea id="notities-veld" rows="6" placeholder="Interne aantekeningen over deze kandidaat..."></textarea>
+          <div class="rte-werkbalk" id="notities-werkbalk">
+            <button type="button" data-cmd="bold" title="Vet"><b>V</b></button>
+            <button type="button" data-cmd="italic" title="Cursief"><i>C</i></button>
+            <button type="button" data-cmd="underline" title="Onderstreept"><u>O</u></button>
+            <button type="button" data-cmd="insertUnorderedList" title="Opsomming">&bull; Lijst</button>
+            <button type="button" data-cmd="insertOrderedList" title="Genummerde lijst">1. Lijst</button>
+          </div>
+          <div id="notities-veld" class="rte-veld" contenteditable="true" data-placeholder="Interne aantekeningen over deze kandidaat..."></div>
           <button type="button" class="btn btn-klein" id="notities-opslaan-knop">Notities opslaan</button>
         </section>
 
@@ -152,6 +159,16 @@
     return `${dagen} dagen geleden gewijzigd`;
   }
 
+  // Eenvoudige rich-text-werkbalk op basis van execCommand: geen externe
+  // editor-library nodig voor iets simpels als vet/cursief/lijsten in een
+  // intern notitieveld.
+  document.querySelectorAll("#notities-werkbalk button[data-cmd]").forEach(knop => {
+    knop.addEventListener("click", () => {
+      document.execCommand(knop.dataset.cmd, false, null);
+      document.getElementById("notities-veld").focus();
+    });
+  });
+
   if (!sollicitatieId) {
     document.getElementById("leeg-status").textContent = "Geen kandidaat opgegeven.";
   } else {
@@ -234,7 +251,7 @@
     agingEl.className = "aging";
     agingEl.innerHTML = `<span class="aging-dot ${agingKlasse(dagen)}"></span> ${agingTekst(dagen)}`;
 
-    document.getElementById("notities-veld").value = sollicitatie.notities || "";
+    document.getElementById("notities-veld").innerHTML = sollicitatie.notities || "";
     document.getElementById("notities-opslaan-knop").onclick = () => opslaanNotities(sollicitatie.id);
 
     renderTijdlijn(history, sollicitatie.ingediendOp);
@@ -289,7 +306,7 @@
   }
 
   function opslaanNotities(id) {
-    const notities = document.getElementById("notities-veld").value;
+    const notities = document.getElementById("notities-veld").innerHTML;
     fetch("/api/sollicitatiebeheer/" + encodeURIComponent(id), {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
