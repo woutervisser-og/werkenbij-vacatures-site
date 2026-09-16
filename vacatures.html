@@ -54,11 +54,11 @@
 <section class="content">
   <div class="filter-balk" id="filter-balk" hidden>
     <div class="filter-groep">
-      <span class="filter-groep-label" data-i18n="vacaturesPagina.filterLand">Land</span>
+      <h3 class="filter-groep-label" data-i18n="vacaturesPagina.filterLand">Land</h3>
       <div class="filter-chips" id="filter-land"></div>
     </div>
     <div class="filter-groep">
-      <span class="filter-groep-label" data-i18n="vacaturesPagina.filterAfdeling">Afdeling</span>
+      <h3 class="filter-groep-label" data-i18n="vacaturesPagina.filterAfdeling">Afdeling</h3>
       <div class="filter-chips" id="filter-afdeling"></div>
     </div>
   </div>
@@ -202,11 +202,21 @@
     container.appendChild(chip);
   }
 
+  // Land altijd volledig tonen (ook zonder vacatures in dat land — dat is
+  // juist relevant om te laten zien welke landen er zijn). Afdeling alleen
+  // tonen als er ook echt een vacature in die afdeling openstaat: anders
+  // levert een lege afdeling-chip toch niks op.
   function bouwFilterChips() {
     const landContainer = document.getElementById("filter-land");
     const afdelingContainer = document.getElementById("filter-afdeling");
+    landContainer.innerHTML = "";
+    afdelingContainer.innerHTML = "";
+
+    const aanwezigeAfdelingen = new Set(alleVacatures.map(v => v.afdeling).filter(Boolean));
+
     LANDEN.forEach(land => maakChip(landContainer, land, "land"));
-    AFDELINGEN.forEach(afdeling => maakChip(afdelingContainer, afdeling, "afdeling"));
+    AFDELINGEN.filter(afdeling => aanwezigeAfdelingen.has(afdeling))
+      .forEach(afdeling => maakChip(afdelingContainer, afdeling, "afdeling"));
     document.getElementById("filter-balk").hidden = false;
   }
 
@@ -244,7 +254,7 @@
           <span class="meta-pill">${vacature.locatie || ""}</span>
         </div>
         <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
-        <span class="btn">${window.t("common.leesMeerSolliciteer")}</span>
+        <span class="btn btn-subtiel">${window.t("common.leesMeerSolliciteer")}</span>
       `;
       container.appendChild(kaart);
     });
@@ -252,7 +262,6 @@
 
   function laadVacatures() {
     leesFilterUitUrl();
-    bouwFilterChips();
 
     fetch(VACATURE_BRON)
       .then(response => {
@@ -261,6 +270,7 @@
       })
       .then(vacatures => {
         alleVacatures = vacatures;
+        bouwFilterChips();
         renderVacatures();
       })
       .catch(error => {

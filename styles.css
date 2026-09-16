@@ -507,6 +507,21 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
 }
 .btn-outline:hover { background: rgba(255,255,255,0.15); }
 
+/* Subtielere variant voor kleinere, minder prominente knoppen (bv.
+   "Lees meer" op een vacature-kaart): geen zwaar zwart blok, past beter
+   bij een kaart tussen andere kaarten i.p.v. 1 primaire call-to-action. */
+.btn-subtiel {
+  background: var(--og-grey);
+  color: var(--og-dark);
+  font-weight: 600;
+}
+.btn-subtiel:hover {
+  background: var(--og-orange-light);
+  color: var(--og-dark);
+  transform: none;
+  box-shadow: none;
+}
+
 /* ===== Vacature-hero (headerfoto/video van een vacature) =====
    Titel, meta-info en CTA overlayen rechtstreeks op de headerafbeelding,
    met een donkere schaduw-gradient voor leesbaarheid. Werkt samen met de
