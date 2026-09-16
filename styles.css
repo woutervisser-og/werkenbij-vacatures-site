@@ -33,6 +33,7 @@
   --og-dark: #1A1A1A;
   --og-white: #FFFFFF;
   --og-cream: #FDF3E7;
+  --og-cream-2: #FBE9D4; /* iets dieper dan --og-cream: voor invoervelden op een crème vlak, anders vallen ze daar tegen weg */
   --og-grey: #F5F5F3;
 }
 
@@ -802,13 +803,30 @@ section.content {
   border-radius: 8px;
 }
 
+/* Kaartvorm en linker accentstreep uit de huisstijl (og-job-card):
+   ronder (18px i.p.v. 12px) en een rustende schaduw i.p.v. alleen een
+   rand, plus een oranje streep aan de linkerkant. position/overflow
+   nodig zodat die streep netjes binnen de afgeronde hoek blijft. */
 .vacature-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--og-white);
   border: 1px solid #e5e5e2;
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 28px;
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.05);
   display: flex;
   flex-direction: column;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.vacature-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: var(--og-orange);
 }
 .vacature-card:hover {
   box-shadow: 0 14px 30px rgba(241, 135, 0, 0.15);
@@ -823,7 +841,18 @@ section.content {
   letter-spacing: 0.04em;
   margin-bottom: 10px;
 }
-.vacature-card h3 { font-size: 20px; margin-bottom: 14px; color: var(--og-dark); }
+/* Functietitel bewust in het lopende-tekst-lettertype i.p.v. de
+   uppercase Komu-stijl van h1/h2/h3 elders: een lijst functietitels moet
+   snel te scannen zijn, geen koppen die allemaal "schreeuwen". */
+.vacature-card h3 {
+  font-family: 'Open Sans', sans-serif;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 19px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  color: var(--og-dark);
+}
 
 .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .meta-pill {

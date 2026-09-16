@@ -503,9 +503,9 @@ ${bouwJsonLd(vacature)}
   .detail-omschrijving p { margin-bottom: 16px; }
   .solliciteer-blok { background: var(--og-cream); border-radius: 12px; padding: 32px; max-width: 560px; margin-top: 40px; scroll-margin-top: 100px; }
   .form-veld { margin-bottom: 18px; }
-  .form-veld label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
-  .form-veld input, .form-veld textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; font-size: 14px; transition: border-color 0.2s ease; }
-  .form-veld input:focus, .form-veld textarea:focus { border-color: var(--og-orange); outline: none; }
+  .form-veld label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .form-veld input, .form-veld textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #e5e5e2; border-radius: 8px; font-family: inherit; font-size: 14.5px; background: var(--og-cream-2); color: var(--og-dark); transition: border-color 0.2s ease, background 0.2s ease; }
+  .form-veld input:focus, .form-veld textarea:focus { border-color: var(--og-orange); background: #fff; outline: none; }
   .form-veld textarea { min-height: 100px; resize: vertical; }
   #form-status { margin-top: 14px; font-size: 14px; font-weight: 600; }
   #form-status.form-status-ok { color: var(--og-green-dark); }
