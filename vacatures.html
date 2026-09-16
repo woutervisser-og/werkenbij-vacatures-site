@@ -260,14 +260,20 @@
     });
   }
 
+  // Vacatures-fetch start meteen, parallel aan de i18n-vertalingen i.p.v.
+  // pas erna: dit was 2 sequentiële round-trips (i18n-bestand ophalen,
+  // dan pas de vacatures-aanroep starten) terwijl ze niets van elkaar
+  // afhangen. Alleen het renderen zelf heeft window.t() nodig en wacht
+  // dus op allebei.
+  const vacaturesPromise = fetch(VACATURE_BRON).then(response => {
+    if (!response.ok) throw new Error("Status: " + response.status);
+    return response.json();
+  });
+
   function laadVacatures() {
     leesFilterUitUrl();
 
-    fetch(VACATURE_BRON)
-      .then(response => {
-        if (!response.ok) throw new Error("Status: " + response.status);
-        return response.json();
-      })
+    vacaturesPromise
       .then(vacatures => {
         alleVacatures = vacatures;
         bouwFilterChips();
@@ -281,7 +287,7 @@
   }
 
   // Wacht op de i18n-vertalingen (voor window.t() en de huidige taal),
-  // pas daarna de vacatures ophalen en renderen.
+  // pas daarna renderen — de vacatures-fetch zelf loopt hierboven al.
   window.OG_I18N_KLAAR.then(laadVacatures);
 </script>
 
