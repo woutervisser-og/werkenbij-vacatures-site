@@ -246,19 +246,6 @@ body.pagina-met-hero header:not(.header-solide) .header-rechts-link.active {
   transition: color 0.3s ease;
 }
 .taal-nav-knop svg { width: 17px; height: 17px; }
-/* Spark i.p.v. het generieke wereldbol-icoon: zelfde plek/formaat, kleur
-   volgt gewoon de tekstkleur van de knop (currentColor), net als de svg
-   hiervoor deed. De bronafbeelding telt alleen mee als silhouet (mask),
-   de pigmentkleur van dat PNG-bestand doet er dus niet toe. */
-.taal-nav-spark {
-  display: inline-block;
-  width: 17px;
-  height: 17px;
-  flex-shrink: 0;
-  background-color: currentColor;
-  -webkit-mask: url('/images/spark-orange.png') center / contain no-repeat;
-  mask: url('/images/spark-orange.png') center / contain no-repeat;
-}
 .taal-nav-chevron { transition: transform 0.2s ease; }
 .taal-nav-selector.open .taal-nav-chevron { transform: rotate(180deg); }
 
