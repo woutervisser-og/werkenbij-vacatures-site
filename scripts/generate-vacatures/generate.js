@@ -141,7 +141,7 @@ const TAAL_LABELS = { en: "GB", nl: "NL", fr: "FR", de: "DE", it: "IT", se: "SE"
 // in styles.css), i.p.v. emoji: die renderen niet overal als vlag.
 const TAAL_VLAGGEN = { en: "gb", nl: "nl", fr: "fr", de: "de", it: "it", se: "se" };
 
-const SPARK_ICOON_HTML = `<span class="taal-nav-spark" aria-hidden="true"></span>`;
+const GLOBE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
 const CHEVRON_SVG = `<svg class="taal-nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
 
 // Taal-selector in de header (zelfde component/CSS als de 5 marketing-
@@ -161,7 +161,7 @@ function renderTaalNavSelector(huidigeTaal, beschikbareTalen, slug) {
   return `
     <div class="taal-nav-selector">
       <button class="taal-nav-knop" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Taal">
-        ${SPARK_ICOON_HTML}
+        ${GLOBE_SVG}
         <span class="taal-nav-code">${TAAL_LABELS[huidigeTaal] || huidigeTaal.toUpperCase()}</span>
         ${CHEVRON_SVG}
       </button>
