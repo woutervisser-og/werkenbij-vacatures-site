@@ -441,7 +441,7 @@ function renderVacatureHero(vacature, salaris, t) {
         ${vacature.werkgebied ? `<span class="meta-pill">${escapeHtml(t("vacature.werkgebiedPrefix"))} ${escapeHtml(vacature.werkgebied)}</span>` : ""}
         ${salaris}
       </div>
-      <a href="#solliciteer-blok" class="btn">${t("vacature.solliciteerDirect")}</a>
+      <a href="#solliciteer-blok" class="btn btn-dark">${t("vacature.solliciteerDirect")}</a>
     </div>
   </div>`;
 }
@@ -591,7 +591,7 @@ ${renderBroodkruimel(vacature, taalcode, t)}
         <label for="motivation_letter">${t("form.motivatiebriefLabel")}</label>
         <input type="file" id="motivation_letter" name="motivation_letter" accept=".pdf,.doc,.docx">
       </div>
-      <button type="submit" class="btn" id="submit-btn">${t("form.versturen")}</button>
+      <button type="submit" class="btn btn-primary" id="submit-btn">${t("form.versturen")}</button>
       </fieldset>
       <div id="form-status" role="status" aria-live="polite"></div>
     </form>

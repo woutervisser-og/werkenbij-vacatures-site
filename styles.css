@@ -495,35 +495,79 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
   max-width: 500px;
 }
 
+/* ===== Knoppen, uit Wouters aangeleverde huisstijl (og-design-system.css)
+   overgenomen: regel daarin is max. 1 primaire (oranje) knop per scherm.
+   .btn is nu alleen de neutrale basis (vorm/gedrag), de kleur komt altijd
+   van een modifier:
+   - .btn-primary  — de hoofdactie op een wit/crème vlak (oranje).
+   - .btn-secondary — ondersteunende actie ernaast, of op een foto/video
+     (wit met donkere tekst — zelfde als "Direct bellen" op de corporate
+     site). Iconen hierin altijd oranje, ook al is de teskt donker.
+   - .btn-dark     — hoofdactie bovenop een foto/video (bv. de hero's):
+     oranje-op-oranje zou daar te weinig contrast geven.
+   - .btn-text     — laagste nadruk, gewoon een tekstlink. */
 .btn {
-  display: inline-block;
-  background: var(--og-dark);
-  color: var(--og-white);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
   font-size: 15px;
   padding: 15px 30px;
-  border-radius: 6px;
+  border-radius: 12px;
+  border: 2px solid transparent;
   text-decoration: none;
-  border: none;
   cursor: pointer;
   margin-right: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
-.btn:hover {
-  background: #000;
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+
+.btn-primary {
+  background: var(--og-orange);
+  color: var(--og-white);
+  box-shadow: 0 4px 14px rgba(241, 135, 0, 0.35);
+}
+.btn-primary:hover {
+  background: var(--og-orange-dark);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  box-shadow: 0 6px 18px rgba(201, 97, 0, 0.4);
 }
-.btn-outline {
-  background: transparent;
-  border: 2px solid var(--og-white);
+
+.btn-secondary {
+  background: var(--og-white);
+  color: var(--og-dark);
+  border-color: #e5e5e2;
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.06);
+}
+.btn-secondary:hover {
+  border-color: var(--og-orange);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(241, 135, 0, 0.2);
+}
+
+.btn-dark {
+  background: var(--og-dark);
   color: var(--og-white);
 }
-.btn-outline:hover { background: rgba(255,255,255,0.15); }
+.btn-dark:hover {
+  background: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--og-orange-dark);
+  padding: 8px 4px;
+  border-radius: 0;
+  margin-right: 0;
+}
+.btn-text:hover { text-decoration: underline; }
 
 /* Subtielere variant voor kleinere, minder prominente knoppen (bv.
-   "Lees meer" op een vacature-kaart): geen zwaar zwart blok, past beter
-   bij een kaart tussen andere kaarten i.p.v. 1 primaire call-to-action. */
+   "Lees meer" op een vacature-kaart): geen zwaar blok, past beter bij een
+   kaart tussen andere kaarten i.p.v. 1 primaire call-to-action. */
 .btn-subtiel {
   background: var(--og-grey);
   color: var(--og-dark);
