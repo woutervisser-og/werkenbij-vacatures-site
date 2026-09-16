@@ -1341,3 +1341,28 @@ afwijkend was:
 Lokaal geverifieerd met Playwright-screenshots op elk onderdeel, en de
 knop-afmetingen definitief bevestigd via de computed style in de
 browser. Gemerged via [PR #62](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/62).
+
+## Afgerond: bijsturingen na de huisstijl-update
+
+Na PR #62 nog een paar directe bijsturingen van Wouter:
+
+- **Taal-selector terug naar het wereldbol-icoon**: de spark paste hem
+  daar niet, teruggedraaid naar de originele svg. De overige
+  spark-toepassingen (hero, stat-blok, kernwaarden-kaarten) blijven
+  staan. Gemerged via [PR #63](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/63).
+- **Vacaturekaart zonder accentstreep**: op basis van een referentiebeeld
+  van Wouter, die de linker oranje accentstreep expliciet "te Claude
+  achtig" vond (een herkenbaar generiek AI-designpatroon). Vervangen
+  door een rustige grijze "Locatie · Afdeling"-regel, pills in de
+  crème-tint, en de kaartknop van `.btn-subtiel` (grijs) naar
+  `.btn-secondary` (wit/dunne rand) — `.btn-subtiel` zelf is daarmee
+  verwijderd (geen andere gebruikers meer). Gemerged via [PR #64](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/64).
+  De deploy van deze merge faalde in eerste instantie op een
+  Azure-side "Deployment Canceled" (build zelf slaagde, botsing met de
+  bijna-gelijktijdige #63-deploy) — opgelost met een re-run, geen
+  code-probleem.
+- **Afdeling en opleidingsniveau als pill**: afdeling verplaatst van de
+  meta-regel naar een pill (samen met dienstverband), opleidingsniveau
+  toegevoegd als pill (alleen als gevuld — dit veld was al langer
+  invulbaar in `/beheer` maar nog nergens publiek zichtbaar). Locatie
+  blijft gewoon bovenaan de kaart staan. Gemerged via [PR #65](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/65).
