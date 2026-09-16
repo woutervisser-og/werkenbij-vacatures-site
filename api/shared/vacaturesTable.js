@@ -86,7 +86,12 @@ const ALLOWED_WERKGEBIEDEN = [
 // filteren.
 function canoniseerWerkgebied(waarden) {
   const unieke = [...new Set(waarden)];
-  return ALLOWED_WERKGEBIEDEN.filter(optie => unieke.includes(optie)).join("/");
+  // Onbekende waarden bewust niet stilzwijgend weglaten (anders zou bv.
+  // ["Foo"] gewoon "" worden en de validatie in Create/Update omzeilen) —
+  // die blijven staan zodat isGeldigWerkgebied() ze alsnog afwijst.
+  const bekend = ALLOWED_WERKGEBIEDEN.filter(optie => unieke.includes(optie));
+  const onbekend = unieke.filter(waarde => !ALLOWED_WERKGEBIEDEN.includes(waarde));
+  return [...bekend, ...onbekend].join("/");
 }
 
 function isGeldigWerkgebied(waarde) {
@@ -175,10 +180,16 @@ function normalizeVacatureInput(input) {
   if (input.header !== undefined) genormaliseerd.header = input.header;
 
   // Werkgebied mag als array van losse windrichtingen binnenkomen (bv.
-  // vanuit checkboxes in het beheerformulier): dan hier samenvoegen tot
-  // de canonieke "/"-gescheiden string i.p.v. bij elke aanroeper apart.
-  if (Array.isArray(genormaliseerd.workArea)) {
-    genormaliseerd.workArea = canoniseerWerkgebied(genormaliseerd.workArea);
+  // vanuit checkboxes in het beheerformulier) of als kant-en-klare
+  // "/"-gescheiden string: in beide gevallen hier naar de canonieke
+  // volgorde omzetten i.p.v. bij elke aanroeper apart (en dus ook een
+  // rechtstreeks aangeleverde string als "West/Noord" alsnog canoniek
+  // opslaan i.p.v. alleen array-input).
+  if (genormaliseerd.workArea !== undefined) {
+    const werkgebiedWaarden = Array.isArray(genormaliseerd.workArea)
+      ? genormaliseerd.workArea
+      : String(genormaliseerd.workArea).split("/").filter(Boolean);
+    genormaliseerd.workArea = canoniseerWerkgebied(werkgebiedWaarden);
   }
 
   if (input.translations !== undefined) {

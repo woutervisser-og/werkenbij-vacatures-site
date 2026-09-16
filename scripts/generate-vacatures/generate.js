@@ -93,8 +93,8 @@ const RECRUITER = {
   naam: "Iska van der Vlugt",
   functie: "HR",
   email: "vandervlugt@ogcleanfuels.com",
-  telefoon: "+31612345678",       // gebruikt voor de "Bellen met" knop (tel: link)
-  telefoonWeergave: "06 12 34 56 78",
+  telefoon: "+31612185570",       // gebruikt voor de "Bellen met" knop (tel: link)
+  telefoonWeergave: "+31 6 12 18 55 70",
   foto: "/images/iska-van-der-vlugt.webp"
 };
 

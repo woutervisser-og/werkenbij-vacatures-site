@@ -117,8 +117,12 @@
     .then(data => {
       const principal = data.clientPrincipal;
       if (principal) {
-        document.getElementById("gebruiker-info").innerHTML =
-          `Ingelogd als ${principal.userDetails} <a href="/.auth/logout?post_logout_redirect_uri=/">Uitloggen</a>`;
+        const gebruikerInfoEl = document.getElementById("gebruiker-info");
+        gebruikerInfoEl.textContent = `Ingelogd als ${principal.userDetails} `;
+        const uitlogLink = document.createElement("a");
+        uitlogLink.href = "/.auth/logout?post_logout_redirect_uri=/";
+        uitlogLink.textContent = "Uitloggen";
+        gebruikerInfoEl.appendChild(uitlogLink);
       }
     })
     .catch(() => {});
@@ -205,8 +209,16 @@
       ? `Sollicitatie voor: ${sollicitatie.vacatureTitel}`
       : "Vacature onbekend";
 
-    document.getElementById("dossier-email").innerHTML =
-      `✉ <a href="mailto:${sollicitatie.email || ""}">${sollicitatie.email || "—"}</a>`;
+    const dossierEmailEl = document.getElementById("dossier-email");
+    dossierEmailEl.textContent = "✉ ";
+    if (sollicitatie.email) {
+      const emailLink = document.createElement("a");
+      emailLink.href = "mailto:" + sollicitatie.email;
+      emailLink.textContent = sollicitatie.email;
+      dossierEmailEl.appendChild(emailLink);
+    } else {
+      dossierEmailEl.append("—");
+    }
     document.getElementById("dossier-telefoon").textContent = sollicitatie.telefoon
       ? `☎ ${sollicitatie.telefoon}`
       : "Geen telefoonnummer opgegeven";
@@ -280,8 +292,14 @@
       const omschrijving = entry.from
         ? `${FASE_LABELS[entry.from] || entry.from} → ${FASE_LABELS[entry.to] || entry.to}`
         : `Sollicitatie ingediend (${FASE_LABELS[entry.to] || entry.to})`;
-      inhoud.innerHTML = `<strong>${omschrijving}</strong><br>` +
-        `<span class="tijdlijn-meta">${formatteerDatum(entry.timestamp)} &middot; door ${entry.user || "onbekend"}</span>`;
+      const omschrijvingEl = document.createElement("strong");
+      omschrijvingEl.textContent = omschrijving;
+      inhoud.appendChild(omschrijvingEl);
+      inhoud.appendChild(document.createElement("br"));
+      const metaEl = document.createElement("span");
+      metaEl.className = "tijdlijn-meta";
+      metaEl.textContent = `${formatteerDatum(entry.timestamp)} · door ${entry.user || "onbekend"}`;
+      inhoud.appendChild(metaEl);
       item.appendChild(inhoud);
 
       container.appendChild(item);
