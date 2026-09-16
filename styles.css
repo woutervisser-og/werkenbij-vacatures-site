@@ -510,41 +510,35 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-weight: 700;
   font-size: 15px;
-  padding: 15px 30px;
-  border-radius: 12px;
+  padding: 13px 20px;
+  border-radius: 5px;
   border: 2px solid transparent;
   text-decoration: none;
   cursor: pointer;
   margin-right: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .btn:active { transform: translateY(1px); }
-.btn[disabled] { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+.btn[disabled] { opacity: 0.4; cursor: not-allowed; }
 
 .btn-primary {
   background: var(--og-orange);
   color: var(--og-white);
-  box-shadow: 0 4px 14px rgba(241, 135, 0, 0.35);
 }
 .btn-primary:hover {
   background: var(--og-orange-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(201, 97, 0, 0.4);
 }
 
 .btn-secondary {
   background: var(--og-white);
   color: var(--og-dark);
   border-color: #e5e5e2;
-  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.06);
 }
 .btn-secondary:hover {
   border-color: var(--og-orange);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(241, 135, 0, 0.2);
 }
 
 .btn-dark {
@@ -553,8 +547,6 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
 }
 .btn-dark:hover {
   background: #000;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 .btn-text {
@@ -577,8 +569,6 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
 .btn-subtiel:hover {
   background: var(--og-orange-light);
   color: var(--og-dark);
-  transform: none;
-  box-shadow: none;
 }
 
 /* ===== Vacature-hero (headerfoto/video van een vacature) =====
