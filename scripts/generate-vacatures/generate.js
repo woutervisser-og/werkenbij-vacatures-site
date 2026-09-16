@@ -601,7 +601,7 @@ ${renderBroodkruimel(vacature, taalcode, t)}
 <footer>
   <div class="footer-content">
     <div class="footer-kolom">
-      <span class="logo-footer">OG Clean Fuels</span>
+      <img class="logo-footer" src="/images/logo/og-logo-wit.png" alt="OG Clean Fuels">
       <p class="footer-tagline">${t("common.labelBold")}. ${t("common.labelEager")}. ${t("common.labelHuman")}.</p>
     </div>
     <div class="footer-kolom">
