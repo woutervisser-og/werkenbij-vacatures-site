@@ -141,7 +141,7 @@ const TAAL_LABELS = { en: "GB", nl: "NL", fr: "FR", de: "DE", it: "IT", se: "SE"
 // in styles.css), i.p.v. emoji: die renderen niet overal als vlag.
 const TAAL_VLAGGEN = { en: "gb", nl: "nl", fr: "fr", de: "de", it: "it", se: "se" };
 
-const GLOBE_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
+const SPARK_ICOON_HTML = `<span class="taal-nav-spark" aria-hidden="true"></span>`;
 const CHEVRON_SVG = `<svg class="taal-nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
 
 // Taal-selector in de header (zelfde component/CSS als de 5 marketing-
@@ -161,7 +161,7 @@ function renderTaalNavSelector(huidigeTaal, beschikbareTalen, slug) {
   return `
     <div class="taal-nav-selector">
       <button class="taal-nav-knop" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Taal">
-        ${GLOBE_SVG}
+        ${SPARK_ICOON_HTML}
         <span class="taal-nav-code">${TAAL_LABELS[huidigeTaal] || huidigeTaal.toUpperCase()}</span>
         ${CHEVRON_SVG}
       </button>
@@ -441,7 +441,7 @@ function renderVacatureHero(vacature, salaris, t) {
         ${vacature.werkgebied ? `<span class="meta-pill">${escapeHtml(t("vacature.werkgebiedPrefix"))} ${escapeHtml(vacature.werkgebied)}</span>` : ""}
         ${salaris}
       </div>
-      <a href="#solliciteer-blok" class="btn">${t("vacature.solliciteerDirect")}</a>
+      <a href="#solliciteer-blok" class="btn btn-dark">${t("vacature.solliciteerDirect")}</a>
     </div>
   </div>`;
 }
@@ -503,9 +503,9 @@ ${bouwJsonLd(vacature)}
   .detail-omschrijving p { margin-bottom: 16px; }
   .solliciteer-blok { background: var(--og-cream); border-radius: 12px; padding: 32px; max-width: 560px; margin-top: 40px; scroll-margin-top: 100px; }
   .form-veld { margin-bottom: 18px; }
-  .form-veld label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
-  .form-veld input, .form-veld textarea { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; font-size: 14px; transition: border-color 0.2s ease; }
-  .form-veld input:focus, .form-veld textarea:focus { border-color: var(--og-orange); outline: none; }
+  .form-veld label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .form-veld input, .form-veld textarea { width: 100%; padding: 12px 14px; border: 1.5px solid #e5e5e2; border-radius: 8px; font-family: inherit; font-size: 14.5px; background: var(--og-cream-2); color: var(--og-dark); transition: border-color 0.2s ease, background 0.2s ease; }
+  .form-veld input:focus, .form-veld textarea:focus { border-color: var(--og-orange); background: #fff; outline: none; }
   .form-veld textarea { min-height: 100px; resize: vertical; }
   #form-status { margin-top: 14px; font-size: 14px; font-weight: 600; }
   #form-status.form-status-ok { color: var(--og-green-dark); }
@@ -591,7 +591,7 @@ ${renderBroodkruimel(vacature, taalcode, t)}
         <label for="motivation_letter">${t("form.motivatiebriefLabel")}</label>
         <input type="file" id="motivation_letter" name="motivation_letter" accept=".pdf,.doc,.docx">
       </div>
-      <button type="submit" class="btn" id="submit-btn">${t("form.versturen")}</button>
+      <button type="submit" class="btn btn-primary" id="submit-btn">${t("form.versturen")}</button>
       </fieldset>
       <div id="form-status" role="status" aria-live="polite"></div>
     </form>

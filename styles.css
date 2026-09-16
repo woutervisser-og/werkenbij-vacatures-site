@@ -33,6 +33,7 @@
   --og-dark: #1A1A1A;
   --og-white: #FFFFFF;
   --og-cream: #FDF3E7;
+  --og-cream-2: #FBE9D4; /* iets dieper dan --og-cream: voor invoervelden op een crème vlak, anders vallen ze daar tegen weg */
   --og-grey: #F5F5F3;
 }
 
@@ -245,6 +246,19 @@ body.pagina-met-hero header:not(.header-solide) .header-rechts-link.active {
   transition: color 0.3s ease;
 }
 .taal-nav-knop svg { width: 17px; height: 17px; }
+/* Spark i.p.v. het generieke wereldbol-icoon: zelfde plek/formaat, kleur
+   volgt gewoon de tekstkleur van de knop (currentColor), net als de svg
+   hiervoor deed. De bronafbeelding telt alleen mee als silhouet (mask),
+   de pigmentkleur van dat PNG-bestand doet er dus niet toe. */
+.taal-nav-spark {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: url('/images/spark-orange.png') center / contain no-repeat;
+  mask: url('/images/spark-orange.png') center / contain no-repeat;
+}
 .taal-nav-chevron { transition: transform 0.2s ease; }
 .taal-nav-selector.open .taal-nav-chevron { transform: rotate(180deg); }
 
@@ -388,13 +402,14 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
 .hero::after {
   content: "";
   position: absolute;
-  right: -80px;
-  bottom: -120px;
-  width: 380px;
-  height: 380px;
-  border-radius: 50%;
-  background: var(--og-white);
-  opacity: 0.08;
+  right: -60px;
+  bottom: -90px;
+  width: 340px;
+  height: 340px;
+  background-color: var(--og-white);
+  -webkit-mask: url('/images/spark-orange.png') center / contain no-repeat;
+  mask: url('/images/spark-orange.png') center / contain no-repeat;
+  opacity: 0.14;
   animation: floatSlow 8s ease-in-out infinite;
   z-index: 1;
 }
@@ -481,35 +496,71 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
   max-width: 500px;
 }
 
+/* ===== Knoppen, uit Wouters aangeleverde huisstijl (og-design-system.css)
+   overgenomen: regel daarin is max. 1 primaire (oranje) knop per scherm.
+   .btn is nu alleen de neutrale basis (vorm/gedrag), de kleur komt altijd
+   van een modifier:
+   - .btn-primary  — de hoofdactie op een wit/crème vlak (oranje).
+   - .btn-secondary — ondersteunende actie ernaast, of op een foto/video
+     (wit met donkere tekst — zelfde als "Direct bellen" op de corporate
+     site). Iconen hierin altijd oranje, ook al is de teskt donker.
+   - .btn-dark     — hoofdactie bovenop een foto/video (bv. de hero's):
+     oranje-op-oranje zou daar te weinig contrast geven.
+   - .btn-text     — laagste nadruk, gewoon een tekstlink. */
 .btn {
-  display: inline-block;
-  background: var(--og-dark);
-  color: var(--og-white);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 700;
   font-size: 15px;
-  padding: 15px 30px;
-  border-radius: 6px;
+  padding: 13px 20px;
+  border-radius: 5px;
+  border: 2px solid transparent;
   text-decoration: none;
-  border: none;
   cursor: pointer;
   margin-right: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.btn:hover {
-  background: #000;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-}
-.btn-outline {
-  background: transparent;
-  border: 2px solid var(--og-white);
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--og-orange);
   color: var(--og-white);
 }
-.btn-outline:hover { background: rgba(255,255,255,0.15); }
+.btn-primary:hover {
+  background: var(--og-orange-dark);
+}
+
+.btn-secondary {
+  background: var(--og-white);
+  color: var(--og-dark);
+  border-color: #e5e5e2;
+}
+.btn-secondary:hover {
+  border-color: var(--og-orange);
+}
+
+.btn-dark {
+  background: var(--og-dark);
+  color: var(--og-white);
+}
+.btn-dark:hover {
+  background: #000;
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--og-orange-dark);
+  padding: 8px 4px;
+  border-radius: 0;
+  margin-right: 0;
+}
+.btn-text:hover { text-decoration: underline; }
 
 /* Subtielere variant voor kleinere, minder prominente knoppen (bv.
-   "Lees meer" op een vacature-kaart): geen zwaar zwart blok, past beter
-   bij een kaart tussen andere kaarten i.p.v. 1 primaire call-to-action. */
+   "Lees meer" op een vacature-kaart): geen zwaar blok, past beter bij een
+   kaart tussen andere kaarten i.p.v. 1 primaire call-to-action. */
 .btn-subtiel {
   background: var(--og-grey);
   color: var(--og-dark);
@@ -518,8 +569,6 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
 .btn-subtiel:hover {
   background: var(--og-orange-light);
   color: var(--og-dark);
-  transform: none;
-  box-shadow: none;
 }
 
 /* ===== Vacature-hero (headerfoto/video van een vacature) =====
@@ -666,6 +715,8 @@ section.content {
 }
 
 .teaser-card {
+  position: relative;
+  overflow: hidden;
   border: 1px solid #eee;
   background: var(--og-cream);
   border-radius: 12px;
@@ -677,6 +728,22 @@ section.content {
   box-shadow: 0 14px 30px rgba(241, 135, 0, 0.18);
 }
 .teaser-card h3 { font-size: 19px; margin-bottom: 12px; color: var(--og-orange-dark); }
+/* Spark-watermerk in de hoek; currentColor volgt automatisch de tekstkleur
+   die de .paneel-orange*-varianten hieronder op dit element zetten (wit op
+   de 2 donkere tinten, donker op de lichte tint). */
+.teaser-card::after {
+  content: "";
+  position: absolute;
+  right: -22px;
+  bottom: -22px;
+  width: 120px;
+  height: 120px;
+  background-color: currentColor;
+  -webkit-mask: url('/images/spark-orange.png') center / contain no-repeat;
+  mask: url('/images/spark-orange.png') center / contain no-repeat;
+  opacity: 0.14;
+  pointer-events: none;
+}
 .teaser-card p { font-size: 14.5px; color: #4a4a4a; margin-bottom: 16px; }
 
 /* ===== Contactkaart + FAQ als 1 visuele sectie ===== */
@@ -726,13 +793,30 @@ section.content {
   border-radius: 8px;
 }
 
+/* Kaartvorm en linker accentstreep uit de huisstijl (og-job-card):
+   ronder (18px i.p.v. 12px) en een rustende schaduw i.p.v. alleen een
+   rand, plus een oranje streep aan de linkerkant. position/overflow
+   nodig zodat die streep netjes binnen de afgeronde hoek blijft. */
 .vacature-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--og-white);
   border: 1px solid #e5e5e2;
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 28px;
+  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.05);
   display: flex;
   flex-direction: column;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.vacature-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: var(--og-orange);
 }
 .vacature-card:hover {
   box-shadow: 0 14px 30px rgba(241, 135, 0, 0.15);
@@ -747,7 +831,18 @@ section.content {
   letter-spacing: 0.04em;
   margin-bottom: 10px;
 }
-.vacature-card h3 { font-size: 20px; margin-bottom: 14px; color: var(--og-dark); }
+/* Functietitel bewust in het lopende-tekst-lettertype i.p.v. de
+   uppercase Komu-stijl van h1/h2/h3 elders: een lijst functietitels moet
+   snel te scannen zijn, geen koppen die allemaal "schreeuwen". */
+.vacature-card h3 {
+  font-family: 'Open Sans', sans-serif;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 19px;
+  font-weight: 800;
+  margin-bottom: 14px;
+  color: var(--og-dark);
+}
 
 .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .meta-pill {
@@ -1042,13 +1137,14 @@ footer .logo-footer {
 .stat-uitgelicht::after {
   content: "";
   position: absolute;
-  left: -100px;
-  top: -140px;
-  width: 340px;
-  height: 340px;
-  border-radius: 50%;
-  background: var(--og-orange);
-  opacity: 0.12;
+  left: -90px;
+  top: -110px;
+  width: 320px;
+  height: 320px;
+  background-color: var(--og-orange);
+  -webkit-mask: url('/images/spark-orange.png') center / contain no-repeat;
+  mask: url('/images/spark-orange.png') center / contain no-repeat;
+  opacity: 0.16;
 }
 .stat-uitgelicht-inner {
   position: relative;
