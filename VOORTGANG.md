@@ -1223,3 +1223,52 @@ geteste XSS-payload wordt door de sanitizer volledig weggefilterd
 terwijl normale opmaak intact blijft. Gemerged via
 [PR #56](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/56) en
 [PR #57](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/57).
+
+## Afgerond: volledige code-review + kleine UI-verfijningen
+
+Op verzoek van Wouter alles wat deze sessie gebouwd is nagelopen op
+correctheid, cleanheid en veiligheid.
+
+**Gevonden en opgelost:**
+- **Opgeslagen XSS in het kandidaatdossier**: het kandidaat-e-mailadres
+  werd via `innerHTML` getoond zonder escaping, en `EMAIL_REGEX` in
+  `SollicitatieCreate` liet `<>"'` toe — een kandidaat kon zo HTML/JS
+  laten uitvoeren in het dossier van HR. Fix: e-mail (en, met lager
+  risico maar zelfde patroon, de tijdlijn-gebruiker en de
+  ingelogde-gebruiker-weergave) nu via DOM-methodes (`textContent`/
+  `createElement`) i.p.v. `innerHTML`, en de regex uitgebreid om die
+  tekens sowieso te weigeren. Geverifieerd met een Playwright-test die
+  een `<img onerror>`- en `<script>`-payload probeerde: geen JS wordt
+  meer uitgevoerd.
+- **Werkgebied-validatie liet ongeldige waarden stilletjes door**:
+  `canoniseerWerkgebied()` filterde onbekende waarden weg vóórdat de
+  validatie ze kon afwijzen. Nu blijven onbekende waarden staan zodat
+  ze alsnog een 400 opleveren, en ook een rechtstreeks aangeleverde
+  string (i.p.v. array vanuit checkboxes) wordt canoniek geordend.
+- **Verouderd telefoonnummer** stond nog op de footer van
+  index/werken-bij-og/over-ons/vacatures.html en in
+  `scripts/generate-vacatures/generate.js` (raakt elke gegenereerde
+  vacaturepagina, alle 6 talen) — nu overal `+31612185570`.
+
+Verder gecheckt en in orde bevonden: sanitize-html op notities (enige
+schrijfpad), i18n-keys voor FAQ/filters (compleet, geen dode keys),
+`LOCATIE_LANDCODE`-duplicatie tussen `vacaturesTable.js` en
+`generate.js` (geen drift), `package.json`/lockfile, geen
+debug-restjes.
+
+**Kleine UI-verfijningen op de vacature-overzichtspagina**, ook op
+verzoek van Wouter:
+- "Lees meer & solliciteer" → "Lees meer" (alle 6 talen), met een
+  nieuwe subtiele lichtgrijze knop-variant (`.btn-subtiel`) i.p.v. de
+  zware zwarte standaardknop — alleen voor deze kaart-knop, de gedeelde
+  `.btn`-class zelf is ongewijzigd.
+- Filterkoppen ("Land", "Afdeling") zijn nu `<h3>` i.p.v. `<span>`.
+- Afdeling-filter toont alleen afdelingen waar ook echt een vacature
+  voor openstaat; land-filter toont bewust altijd alle 5 landen.
+
+Gemerged via [PR #58](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/58) en
+[PR #59](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/59).
+
+**Nog openstaand**: de eenmalige `MigreerAfdelingLocatie`-Function en
+bijbehorende workflow staan nog in de codebase (migratie is al
+succesvol gedraaid). Wouter moet nog beslissen of dit opgeruimd wordt.
