@@ -558,19 +558,6 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
 }
 .btn-text:hover { text-decoration: underline; }
 
-/* Subtielere variant voor kleinere, minder prominente knoppen (bv.
-   "Lees meer" op een vacature-kaart): geen zwaar blok, past beter bij een
-   kaart tussen andere kaarten i.p.v. 1 primaire call-to-action. */
-.btn-subtiel {
-  background: var(--og-grey);
-  color: var(--og-dark);
-  font-weight: 600;
-}
-.btn-subtiel:hover {
-  background: var(--og-orange-light);
-  color: var(--og-dark);
-}
-
 /* ===== Vacature-hero (headerfoto/video van een vacature) =====
    Titel, meta-info en CTA overlayen rechtstreeks op de headerafbeelding,
    met een donkere schaduw-gradient voor leesbaarheid. Werkt samen met de
@@ -793,13 +780,11 @@ section.content {
   border-radius: 8px;
 }
 
-/* Kaartvorm en linker accentstreep uit de huisstijl (og-job-card):
-   ronder (18px i.p.v. 12px) en een rustende schaduw i.p.v. alleen een
-   rand, plus een oranje streep aan de linkerkant. position/overflow
-   nodig zodat die streep netjes binnen de afgeronde hoek blijft. */
+/* Kaartvorm uit de huisstijl (og-job-card): ronder (18px i.p.v. 12px) en
+   een rustende schaduw i.p.v. alleen een rand. Bewust geen linker
+   accentstreep (eerdere versie): Wouter vond dat een te generiek
+   AI-gegenereerd designpatroon. */
 .vacature-card {
-  position: relative;
-  overflow: hidden;
   background: var(--og-white);
   border: 1px solid #e5e5e2;
   border-radius: 18px;
@@ -809,26 +794,16 @@ section.content {
   flex-direction: column;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
-.vacature-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 6px;
-  height: 100%;
-  background: var(--og-orange);
-}
 .vacature-card:hover {
   box-shadow: 0 14px 30px rgba(241, 135, 0, 0.15);
   transform: translateY(-6px);
   border-color: var(--og-orange-light);
 }
-.vacature-card .afdeling {
-  color: var(--og-orange-dark);
-  font-family: 'Komu', sans-serif;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+/* Rustige "locatie · afdeling"-regel i.p.v. een felle oranje uppercase
+   afdelings-tag: leesbaarder tussen veel kaarten, minder schreeuwerig. */
+.vacature-card .kaart-meta {
+  color: #767672;
+  font-size: 14px;
   margin-bottom: 10px;
 }
 /* Functietitel bewust in het lopende-tekst-lettertype i.p.v. de
@@ -846,7 +821,7 @@ section.content {
 
 .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .meta-pill {
-  background: var(--og-grey);
+  background: var(--og-cream-2);
   color: var(--og-dark);
   font-size: 13px;
   font-weight: 600;
