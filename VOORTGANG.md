@@ -1269,10 +1269,6 @@ verzoek van Wouter:
 Gemerged via [PR #58](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/58) en
 [PR #59](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/59).
 
-**Nog openstaand**: de eenmalige `MigreerAfdelingLocatie`-Function en
-bijbehorende workflow staan nog in de codebase (migratie is al
-succesvol gedraaid). Wouter moet nog beslissen of dit opgeruimd wordt.
-
 ## Afgerond: vacatures-overzicht laadt sneller
 
 Wouter gaf aan dat het laden van de vacature-overzichtspagina lang
@@ -1296,5 +1292,12 @@ i18n-bestanden starten nu op hetzelfde moment i.p.v. na elkaar.
 Gemerged via [PR #60](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/60).
 
 **Nog openstaand**: keuze cold-start-aanpak (niks doen / keep-warm
-ping / Premium-plan) staat nog open bij Wouter, naast de
-`MigreerAfdelingLocatie`-opruiming hierboven.
+ping / Premium-plan) staat nog open bij Wouter.
+
+## Afgerond: MigreerAfdelingLocatie opgeruimd
+
+De eenmalige migratie-Function `api/MigreerAfdelingLocatie` en de
+bijbehorende workflow `migreer-afdeling-locatie.yml` zijn verwijderd,
+nu Wouter akkoord gaf. De migratie zelf was al succesvol gedraaid; er
+stond verder nergens in de codebase nog een verwijzing naar deze
+Function.
