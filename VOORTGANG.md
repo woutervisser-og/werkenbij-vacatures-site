@@ -1301,3 +1301,43 @@ bijbehorende workflow `migreer-afdeling-locatie.yml` zijn verwijderd,
 nu Wouter akkoord gaf. De migratie zelf was al succesvol gedraaid; er
 stond verder nergens in de codebase nog een verwijzing naar deze
 Function.
+
+## Afgerond: huisstijl-update (spark-beeldmerk, knoppen, kaart, formulier)
+
+Wouter leverde een bijgewerkte `og-design-system.css` aan plus 3
+kleurvarianten van het echte Spark-beeldmerk. De kleurtokens en
+componenten in dat bestand kwamen al 1-op-1 overeen met wat
+`styles.css` implementeerde (alleen andere class-namen), dat is dus
+bewust niet blind overgenomen — wel alles wat daadwerkelijk nieuw of
+afwijkend was:
+
+- **Spark-beeldmerk**: het generieke wereldbol-icoon in de
+  taal-selector (alle 5 marketingpagina's + de `generate.js`-template
+  voor vacature-detailpagina's) vervangen door de spark, als CSS-mask
+  zodat de kleur de tekstkleur van de knop blijft volgen. Bestaande
+  decoratieve cirkels (`.hero::after`, `.stat-uitgelicht::after`) ook
+  omgezet naar de spark-vorm, plus een nieuw spark-watermerk op de 3
+  kernwaarden-kaarten (Bold/Eager/Human).
+- **Knoppen-systeem**: `.btn` is nu alleen nog de neutrale basis;
+  kleur komt van een modifier (`.btn-primary` oranje hoofdactie op wit/
+  crème, `.btn-secondary` wit/ondersteunend of op foto (verving
+  `.btn-outline`), `.btn-dark` hoofdactie bovenop een foto/video zoals
+  de hero's, `.btn-text` laagste nadruk). Toegepast op alle bestaande
+  knoppen op basis van context. Afmetingen zijn achteraf gecorrigeerd
+  op basis van een devtools-meting die Wouter zelf deed op een knop op
+  ogcleanfuels.com: padding 13px 20px (niet 15px 30px), radius 5px
+  (niet 12px, ondanks dat het aangeleverde bestand zelf 12px als
+  "exact de corporate site" beweerde), en geen box-shadow/hover-lift —
+  alleen een kleurovergang.
+- **Vacaturekaart**: ronder (18px), een rustende schaduw, en de oranje
+  accentstreep aan de linkerkant uit het og-job-card-patroon.
+  Functietitel nu in het lopende-tekst-lettertype i.p.v. de uppercase
+  Komu-stijl, voor een sneller te scannen lijst.
+- **Sollicitatieformulier**: velden groter/ruimer, zachtere rand, en
+  een crème-tint achtergrond (nieuwe token `--og-cream-2`, iets dieper
+  dan de pagina-achtergrond zodat de velden zichtbaar blijven i.p.v.
+  erin te verdwijnen).
+
+Lokaal geverifieerd met Playwright-screenshots op elk onderdeel, en de
+knop-afmetingen definitief bevestigd via de computed style in de
+browser. Gemerged via [PR #62](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/62).
