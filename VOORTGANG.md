@@ -1272,3 +1272,29 @@ Gemerged via [PR #58](https://github.com/woutervisser-og/werkenbij-vacatures-sit
 **Nog openstaand**: de eenmalige `MigreerAfdelingLocatie`-Function en
 bijbehorende workflow staan nog in de codebase (migratie is al
 succesvol gedraaid). Wouter moet nog beslissen of dit opgeruimd wordt.
+
+## Afgerond: vacatures-overzicht laadt sneller
+
+Wouter gaf aan dat het laden van de vacature-overzichtspagina lang
+duurt. Onderzoek wees op 2 oorzaken:
+
+- **Azure Functions cold start** (Consumption-plan): de dominante
+  oorzaak, geen codeprobleem maar een eigenschap van dit hostingmodel.
+  Oplossing hiervoor kost geld (Premium-plan) of is een gedeeltelijke
+  gratis lapmiddel (keep-warm ping-workflow) — Wouter moet hier nog
+  over beslissen.
+- **Serieel ophalen i.p.v. parallel**: `vacatures.html` wachtte tot de
+  i18n-vertalingen volledig opgehaald waren vóórdat de
+  vacatures-aanroep (`/api/GetVacatures`) zelfs maar begon, terwijl die
+  twee niets van elkaar afhangen. Gratis te fixen, dus meteen gedaan:
+  de vacatures-fetch start nu bij het laden van het script, parallel
+  aan de i18n-fetch. Alleen het renderen zelf wacht nog op de
+  i18n-vertalingen.
+
+Lokaal geverifieerd met request-timing: `/api/GetVacatures` en de
+i18n-bestanden starten nu op hetzelfde moment i.p.v. na elkaar.
+Gemerged via [PR #60](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/60).
+
+**Nog openstaand**: keuze cold-start-aanpak (niks doen / keep-warm
+ping / Premium-plan) staat nog open bij Wouter, naast de
+`MigreerAfdelingLocatie`-opruiming hierboven.
