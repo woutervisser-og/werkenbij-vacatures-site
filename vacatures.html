@@ -246,12 +246,13 @@
       kaart.href = `/${gekozenTaal}/vacature/${slug}.html`;
       kaart.style.textDecoration = "none";
       kaart.style.color = "inherit";
-      const kaartMeta = [vacature.locatie, vacature.afdeling].filter(Boolean).join(" · ");
       kaart.innerHTML = `
-        <div class="kaart-meta">${kaartMeta}</div>
+        <div class="kaart-meta">${vacature.locatie || ""}</div>
         <h3>${vertaling.title || ""}</h3>
         <div class="meta-row">
           <span class="meta-pill">${vacature.dienstverband || ""}</span>
+          <span class="meta-pill">${vacature.afdeling || ""}</span>
+          ${vacature.opleidingsniveau ? `<span class="meta-pill">${vacature.opleidingsniveau}</span>` : ""}
         </div>
         <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
         <span class="btn btn-secondary">${window.t("common.leesMeerSolliciteer")}</span>
