@@ -1241,8 +1241,14 @@ footer .logo-footer {
 .betrokkenheid-kaart {
   border: 1px solid #e5e5e2;
   border-radius: 12px;
-  padding: 26px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+.betrokkenheid-kaart:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(36, 28, 20, 0.12); }
+.betrokkenheid-kaart-foto { width: 100%; height: 170px; object-fit: cover; display: block; }
+.betrokkenheid-kaart-inhoud { padding: 26px; }
 .betrokkenheid-kaart .label-tag { margin-bottom: 14px; }
 .betrokkenheid-kaart h3 { font-size: 17px; margin-bottom: 8px; color: var(--og-dark); }
 .betrokkenheid-kaart p { font-size: 14px; color: #4a4a4a; }
