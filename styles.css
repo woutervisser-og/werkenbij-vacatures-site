@@ -1473,11 +1473,12 @@ footer .logo-footer {
 .tijdlijn-slider-achtergrond.instapt-rechts { transform: translateX(100%); }
 .tijdlijn-slider-achtergrond.instapt-links { transform: translateX(-100%); }
 .tijdlijn-slider-achtergrond.is-actief { transform: translateX(0); }
-/* Placeholder voor jaren zonder foto (2012/2015/2022): een groen
-   verloop met de spark als watermerk i.p.v. een lege of kapoate plek,
-   duidelijk herkenbaar als "hier komt nog beeld" en makkelijk te
-   vervangen door gewoon de achtergrond-stijl te vervangen. */
-.tijdlijn-slider-placeholder { background-image: linear-gradient(135deg, var(--og-green-dark), var(--og-green)); }
+/* Placeholder voor jaren zonder foto (2012/2015/2022): een oranje
+   verloop (huisstijlkleur, i.p.v. het eerder gebruikte groen) met de
+   spark als watermerk i.p.v. een lege of kapotte plek, duidelijk
+   herkenbaar als "hier komt nog beeld" en makkelijk te vervangen door
+   gewoon de achtergrond-stijl te vervangen. */
+.tijdlijn-slider-placeholder { background-image: linear-gradient(135deg, var(--og-orange-dark), var(--og-orange)); }
 .tijdlijn-slider-placeholder::after {
   content: "";
   position: absolute;
