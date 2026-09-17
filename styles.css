@@ -1286,6 +1286,7 @@ footer .logo-footer {
 .betrokkenheid-kaart .label-tag { margin-bottom: 14px; }
 .betrokkenheid-kaart h3 { font-size: 17px; margin-bottom: 8px; color: var(--og-dark); }
 .betrokkenheid-kaart p { font-size: 14px; color: #4a4a4a; }
+.betrokkenheid-kaart p + p { margin-top: 10px; }
 
 .blok-afbeelding-tekst { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
 .blok-afbeelding-tekst img { width: 100%; border-radius: 12px; object-fit: cover; max-height: 320px; }
