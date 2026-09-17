@@ -496,6 +496,7 @@ ${renderHreflangTags(beschikbareTalen, slug)}
 ${bouwJsonLd(vacature)}
 </script>
 
+<link rel="icon" href="/images/favicon-og.ico">
 <link rel="stylesheet" href="/styles.css">
 <style>
   .detail-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
