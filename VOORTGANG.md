@@ -1402,3 +1402,12 @@ bestaand patroon). Gemerged via [PR #67](https://github.com/woutervisser-og/werk
   altijd naar de onderkant van het scherm zakt.
 
 Gemerged via [PR #68](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/68).
+
+## Afgerond: foto's in de betrokkenheid-kaarten (over ons)
+
+Wouter voegde 3 foto's toe (rechtstreeks op main): Lisa Peters (OG
+Heroes-sponsoring, downhill-skater), de ingang van het Beatrix
+Kinderziekenhuis, en het OG Capitals-ijshockeyteam. Elke
+betrokkenheid-kaart op over-ons.html toont nu de bijpassende foto
+bovenaan, tekst ongewijzigd. Kaart kreeg een subtiele hover-lift,
+consistent met andere kaartcomponenten. Gemerged via [PR #69](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/69).
