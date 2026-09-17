@@ -93,7 +93,7 @@
     const maxAantal = Math.max(1, ...Object.values(aantallen));
     const kleurschaal = d3.scaleLinear()
       .domain([1, maxAantal])
-      .range(["#CDEDD6", "#0E7C29"])
+      .range(["#F9B662", "#C96100"])
       .interpolate(d3.interpolateRgb)
       .clamp(true);
 

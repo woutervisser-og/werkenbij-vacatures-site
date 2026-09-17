@@ -634,6 +634,7 @@ header.mobiel-menu-open .hamburger-knop span:nth-child(3) { transform: translate
 
 /* ===== Content sections ===== */
 section.content {
+  width: 100%;
   padding: 90px 6%;
   max-width: 1100px;
   margin: 0 auto;
@@ -1744,12 +1745,12 @@ footer .logo-footer {
 }
 
 /* ===== Europa-kaart met vacatures per land (europa-kaart.js). Kleurschaal
-   loopt van een lichte tint naar --og-green-dark; landen zonder vacatures
-   krijgen een neutrale lichtgrijze vlakte (zelfde grijs als elders, geen
-   wit/weggelaten land). ===== */
+   loopt van --og-orange-light naar --og-orange-dark; landen zonder
+   vacatures krijgen een neutrale lichtgrijze vlakte (zelfde grijs als
+   elders, geen wit/weggelaten land). ===== */
 .europa-kaart {
   position: relative;
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 .europa-kaart-svg-houder { width: 100%; }
@@ -1816,7 +1817,7 @@ footer .logo-footer {
 .europa-kaart-lijst a:hover,
 .europa-kaart-lijst a:focus-visible { color: var(--og-orange-dark); }
 .europa-kaart-lijst-aantal {
-  background: var(--og-green-dark);
+  background: var(--og-orange-dark);
   color: var(--og-white);
   font-family: 'Komu', sans-serif;
   font-size: 13px;
