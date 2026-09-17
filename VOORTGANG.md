@@ -1529,3 +1529,28 @@ krijgen een groene placeholder met de spark als watermerk. Op mobiel
 wordt de jaartallen-lijst een horizontale balk onderaan. De oude
 links/rechts-tijdlijn met de meerijdende vrachtwagen is hiermee
 vervallen. Gemerged via [PR #79](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/79).
+
+## Afgerond: tijdlijn echt 100vw, grotere jaartal-knoppen, crop-fixes + GSAP-animaties
+
+Vervolg op de full-screen sticky-slider hierboven, 2 samengevoegde
+verzoeken:
+
+- De achtergrondfoto was niet echt schermbreed: de slider zat binnen
+  `section.content`'s `max-width:1100px` en erfde die beperking mee.
+  `.tijdlijn-slider` breekt nu bewust uit die kolom (`width:100vw` +
+  negatieve marges); een nieuwe `.tijdlijn-slider-binnen`-laag herstelt
+  de kolombreedte alleen voor tekst/jaartallen erbovenop.
+- Jaartal-knoppen waren te klein om als klikbaar te herkennen: groter
+  lettertype, echte padding, hover/actief-achtergrond (pil-effect).
+- Alle 8 foto's nagelopen op crop in het 100vw/100vh-formaat,
+  `background-position` aangepast waar een onderwerp afsneed (2009:
+  hoofd was afgeknipt).
+- GSAP + ScrollTrigger toegevoegd op over-ons.html (via CDN, defer,
+  los bestand `over-ons-animaties.js`, niet in het generieke
+  `animations.js`): subtiele parallax op de hero-video, de 3 "wat we
+  belangrijk vinden"-kaarten komen gestaggerd in beeld, de quote-tekst
+  verschijnt woord voor woord. Progressive enhancement: als de CDN niet
+  laadt, blijft de pagina volledig leesbaar/functioneel zonder
+  animaties.
+
+Gemerged via [PR #80](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/80).
