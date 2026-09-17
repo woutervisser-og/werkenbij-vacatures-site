@@ -1,17 +1,17 @@
 // Interactieve Europa-kaart met vacatures per land (choropleth via D3 +
 // TopoJSON/GeoJSON, zie DATASET-toelichting in het bijbehorende PR-bericht).
 //
-// Dummy-databronnen op dit moment: DATA_URL wijst naar een los, statisch
-// JSON-bestand. Zodra de Azure Function live is verandert alleen de
-// constante DATA_URL hieronder naar het echte endpoint (bv.
-// "/api/VacaturesPerLand") — de rest van dit bestand (rendering, kleuren,
-// tooltip, klik-navigatie, animatie) blijft ongewijzigd, want het
-// responseformaat is al afgestemd: [{ "land": "FR", "aantal": 3 }, ...].
+// DATA_URL wijst naar de echte Azure Function (api/GetVacaturesPerLand),
+// die per land telt hoeveel GEPUBLICEERDE vacatures er zijn. Responseformaat:
+// { "tellingen": [{ "land": "FR", "aantal": 3 }, ...], "niet_gematcht": [...] }
+// — "niet_gematcht" wordt hier bewust genegeerd (die lijst is voor Wouter om
+// Locatie-waardes op te schonen/aan te vullen, zie de Function zelf), de
+// kaart gebruikt alleen "tellingen".
 (function () {
   "use strict";
 
   const GEO_URL = "/data/europa-landen.geo.json";
-  const DATA_URL = "/data/dummy-vacatures-per-land.json";
+  const DATA_URL = "/api/GetVacaturesPerLand";
 
   // TopoJSON/GeoJSON-bron (world-atlas, afgeleid van Natural Earth) gebruikt
   // de NUMERIEKE ISO 3166-1-landcode als feature-id (bv. "528"). Deze tabel
@@ -77,9 +77,10 @@
       fetch(DATA_URL).then((r) => r.json()),
       window.OG_I18N_KLAAR || Promise.resolve()
     ])
-      .then(([geojson, vacatureData]) => {
+      .then(([geojson, respons]) => {
+        const tellingen = Array.isArray(respons) ? respons : (respons.tellingen || []);
         const aantallen = {};
-        vacatureData.forEach((rij) => { aantallen[rij.land] = rij.aantal; });
+        tellingen.forEach((rij) => { aantallen[rij.land] = rij.aantal; });
         renderKaart(container, geojson, aantallen);
         renderMobieleLijst(container, geojson, aantallen);
       })
