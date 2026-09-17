@@ -137,14 +137,21 @@
   }
 
   // Thumbnail op de tegel: dezelfde headerfoto als op de vacature-
-  // detailpagina. Een video-header heeft geen los thumbnail/poster-veld
-  // (bron is een embed-URL, geen afbeelding), dus die en vacatures zonder
+  // detailpagina, maar via /api/Thumbnail verkleind en gecomprimeerd
+  // i.p.v. de originele (vaak 2-4 MB, ongewijzigde camera-)foto
+  // rechtstreeks te laden — dat maakte het vacature-overzicht merkbaar
+  // traag. Een video-header heeft geen los thumbnail/poster-veld (bron
+  // is een embed-URL, geen afbeelding), dus die en vacatures zonder
   // header krijgen een oranje verloop-placeholder i.p.v. een kapotte img.
+  function maakThumbnailUrl(bron) {
+    const bestandsnaam = (bron || "").split("/").pop();
+    return bestandsnaam ? `/api/Thumbnail?bestand=${encodeURIComponent(bestandsnaam)}&breedte=800` : null;
+  }
   function maakThumbnailHtml(vacature) {
     const header = vacature.header;
-    const heeftFoto = header && header.type !== "video" && header.bron;
-    if (heeftFoto) {
-      return `<img class="vacature-card-thumb" src="${header.bron}" alt="">`;
+    const thumbnailUrl = header && header.type !== "video" && header.bron && maakThumbnailUrl(header.bron);
+    if (thumbnailUrl) {
+      return `<img class="vacature-card-thumb" src="${thumbnailUrl}" alt="" loading="lazy" decoding="async">`;
     }
     return `<div class="vacature-card-thumb vacature-card-thumb-fallback"></div>`;
   }
