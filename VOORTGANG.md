@@ -1643,7 +1643,7 @@ hoofd gezien: de placeholder-achtergrond voor jaren zonder foto
 gebruikte nog het groene verloop. Nu oranje, consistent met de rest
 van de pagina. Gemerged via [PR #85](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/85).
 
-## Bezig: interactieve Europa-vacaturekaart — fase 1+2 (dummy data, live op homepage) afgerond
+## Afgerond: interactieve Europa-vacaturekaart (fase 1 t/m 4, echte data live)
 
 Nieuwe wens van Wouter: een Europa-kaart die per land toont hoeveel
 vacatures er openstaan (choropleth, geen losse pins), gebouwd in
@@ -1690,7 +1690,27 @@ bij hover (geen tooltip, geen aria-label/role) i.p.v. een "geen
 vacatures op dit moment"-melding. Gemerged via
 [PR #88](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/88).
 
-**Nog te doen**: de Azure Function die vacatures per land aggregeert
-uit Table Storage (Locatie-veld parsen, landnaam-lookup, response
-`niet_gematcht`-array voor onherkende Locatie-waardes). `DATA_URL` in
-`europa-kaart.js` wijst nog naar het statische dummy-bestand.
+**Fase 4**: de echte koppeling. Nieuwe Function `api/GetVacaturesPerLand`
+(anoniem, net als `GetVacatures`, route bewust niet met "vacatures"
+beginnend om niet onder de authenticated-only `/api/vacatures*`-regel te
+vallen) telt per land hoeveel vacatures de status "gepubliceerd" hebben,
+zelfde OData-filter als `GetVacatures`. Locatie-parsing: eerst de
+bestaande `LOCATIE_LANDCODE`-tabel (dekt de huidige 5 kantoren +
+"Nederland (reizend)"), met als terugval split-op-komma plus een bredere
+landnaam-naar-ISO-lookup. Response: `{ tellingen: [...], niet_gematcht:
+[...] }` — die laatste lijst toont elke vacature waarvan de Locatie niet
+te matchen was (id + titel + ruwe locatie), zodat die op te schonen of
+toe te voegen is aan de lookup-tabel. `DATA_URL` in `europa-kaart.js`
+wijst nu naar dit endpoint i.p.v. het dummy-bestand; de dummy-preview
+(`europa-kaart-preview.html` + dummy-databestand) is verwijderd, die
+taak was klaar. Gemerged via
+[PR #89](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/89).
+
+Lokaal alleen tegen Azurite getest (Functions Core Tools niet
+beschikbaar in de sandbox, dus de Function-module direct aangeroepen
+i.p.v. via een echte HTTP-host) — geen toegang tot de echte productie-
+Table-Storage vanuit de sandbox. **Check voor Wouter**: kijk na deploy
+op het live `/api/GetVacaturesPerLand`-endpoint of `niet_gematcht` nog
+Locatie-waardes bevat die niet automatisch matchen, en meld die dan
+zodat de lookup-tabel in `api/GetVacaturesPerLand/index.js` aangevuld
+kan worden.
