@@ -1683,6 +1683,13 @@ flex-stretch van `<body>` (column-flex) niet betrouwbaar de volle
 ook de al langer bestaande statistieken-sectie erboven. Gemerged via
 [PR #87](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/87).
 
+**Fase 3**: de hover-tooltip/aria-label liep via hardcoded Nederlandse
+tekst; nu via de bestaande i18n.js (nieuwe `europaKaart`-sleutels in
+nl.json/en.json). Landen zonder vacatures tonen nu helemaal niets meer
+bij hover (geen tooltip, geen aria-label/role) i.p.v. een "geen
+vacatures op dit moment"-melding. Gemerged via
+[PR #88](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/88).
+
 **Nog te doen**: de Azure Function die vacatures per land aggregeert
 uit Table Storage (Locatie-veld parsen, landnaam-lookup, response
 `niet_gematcht`-array voor onherkende Locatie-waardes). `DATA_URL` in
