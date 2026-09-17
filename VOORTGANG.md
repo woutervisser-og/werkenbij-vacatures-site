@@ -1428,3 +1428,36 @@ https://ogcleanfuels.com/nl/heroes. Alleen zichtbaar in het NL (via
 `window.OG_HUIDIGE_TAAL`), verborgen in de andere 5 talen — de
 OG Heroes-pagina bestaat alleen in het Nederlands. Gemerged via
 [PR #71](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/71).
+
+## Afgerond: kopstructuur vacaturedetailpagina's rechtgetrokken
+
+De intro-titel op de vacaturedetailpagina's stond op H3, moest H2
+zijn. Bij het kritisch nalopen van de hele koppenhierarchie in
+generate.js bleek dit niet consistent toegepast: ook de kop van
+tekst/tekst_kolommen/afbeelding_tekst/veelgestelde_vragen-blokken (H3),
+de bullet_lijst-titel (H4), de recruiter-vraagkop en de
+solliciteer-formulierkop stonden te laag. Allemaal naar H2 getild.
+Losse bug gevonden en gefixt: de fallback-titelsectie (zonder
+headermedia) had daardoor helemaal geen H1 — nu wel. De
+sollicitatieproces-stappen (H4 per stap) blijven bewust H4, dat zijn
+herhaalde subitem-labels, niet de kop van hun blok. Gemerged via
+[PR #72](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/72).
+
+## Afgerond: Duitse teksten, "sauber" vervangen door "nachhaltig"
+
+Het woord "sauber" mag niet gebruikt worden op de Duitse site,
+"nachhaltig" is de voorgeschreven vervanging. 5 plekken in
+`i18n/de.json` aangepast (home- en over-ons-sectie), naamvalsvormen
+aangehouden. Gemerged via [PR #73](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/73).
+
+## Afgerond: vacatures-overzicht, NL-filter + "Alle vacatures (EN)" + meer filters
+
+NL filterde nog niet automatisch op eigen land, in tegenstelling tot
+FR/DE/IT/SE (die al hun eigen kantoor-land voorselecteerden). Nu
+filtert NL ook standaard op "Netherlands". EN blijft de ongefilterde
+basistaal (elke vacature heeft minstens een EN-versie, geen aparte
+"internationale markt"). Nieuwe "Alle vacatures (EN)"-chip naast het
+landfilter linkt in 1 klik naar de ongefilterde Engelse lijst. Ook een
+nieuwe "Meer filters"-knop die Dienstverband en Niveau openklapt,
+dezelfde vaste opties als in `/beheer/vacature.html`. Gemerged via
+[PR #74](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/74).
