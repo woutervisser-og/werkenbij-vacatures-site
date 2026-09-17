@@ -1288,62 +1288,135 @@ footer .logo-footer {
 .betrokkenheid-kaart p { font-size: 14px; color: #4a4a4a; }
 .betrokkenheid-kaart p + p { margin-top: 10px; }
 
-/* ===== Tijdlijn "onze geschiedenis" (over-ons). Groene lijn i.p.v. het
-   gebruikelijke oranje: dit onderscheidt het geschiedenis-hoofdstuk
-   visueel van de rest van de pagina, en --og-green stond al in de
-   tokenlijst maar werd nog nergens gebruikt. De vrachtwagen-emoji rijdt
-   met de scroll mee langs de lijn (zie animations.js). ===== */
-.tijdlijn-track { position: relative; padding: 10px 0 30px; }
-.tijdlijn-lijn {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 3px;
+/* ===== Tijdlijn "onze geschiedenis" (over-ons): full-screen sticky
+   foto-slider. De wrapper (.tijdlijn-slider) is een hoge kolom; de
+   binnenste .tijdlijn-slider-sticky blijft op zijn plek staan
+   (position:sticky) terwijl je 'm doorscrolt, en animations.js
+   berekent op basis van de scrollpositie welk jaar actief is (foto,
+   tekst en jaartal-knop kruisfaden mee via de .is-actief-klasse). De
+   jaartallen-balk is ook los klikbaar, met smooth scroll naar het
+   bijbehorende punt in de wrapper. Groen i.p.v. het gebruikelijke
+   oranje: onderscheidt dit geschiedenis-hoofdstuk visueel van de rest
+   van de pagina, --og-green stond al in de tokenlijst. ===== */
+.tijdlijn-slider-intro {
+  max-width: 720px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+.tijdlijn-slider-intro h3 { font-size: 26px; margin: 10px 0 14px; color: var(--og-green-dark); }
+.tijdlijn-slider-intro p { font-size: 15px; color: #4a4a4a; line-height: 1.7; }
+/* .tag is verder alleen binnen .section-head gestyled als pill (oranje);
+   deze 2 blokken horen bij het groene geschiedenis-hoofdstuk en krijgen
+   daarom hun eigen groene pill-variant i.p.v. platte tekst. */
+.tijdlijn-slider-intro .tag,
+.tijdlijn-outro .tag {
+  display: inline-block;
   background: var(--og-green);
-  transform: translateX(-50%);
-}
-.tijdlijn-truck {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translate(-50%, -50%);
-  font-size: 28px;
+  color: var(--og-white);
+  font-family: 'Komu', sans-serif;
+  font-size: 13px;
   line-height: 1;
-  z-index: 2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.41em 14px 0.21em;
+  border-radius: 3px;
+  margin-bottom: 4px;
 }
-.tijdlijn-item { position: relative; width: 44%; margin-bottom: 56px; }
-.tijdlijn-item.tijdlijn-rechts { margin-left: 56%; }
-.tijdlijn-item.tijdlijn-links { margin-right: 56%; }
-.tijdlijn-jaar {
+
+.tijdlijn-slider {
+  position: relative;
+  height: calc(11 * 70vh);
+  margin-bottom: 40px;
+}
+.tijdlijn-slider-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  border-radius: 16px;
+}
+.tijdlijn-slider-achtergronden { position: absolute; inset: 0; }
+.tijdlijn-slider-achtergrond {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.tijdlijn-slider-achtergrond.is-actief { opacity: 1; }
+/* Placeholder voor jaren zonder foto (2012/2015/2022): een groen
+   verloop met de spark als watermerk i.p.v. een lege of kapoate plek,
+   duidelijk herkenbaar als "hier komt nog beeld" en makkelijk te
+   vervangen door gewoon de achtergrond-stijl te vervangen. */
+.tijdlijn-slider-placeholder { background-image: linear-gradient(135deg, var(--og-green-dark), var(--og-green)); }
+.tijdlijn-slider-placeholder::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 30%;
+  height: 30%;
+  background-color: var(--og-white);
+  -webkit-mask: url('/images/spark-orange.png') center / contain no-repeat;
+  mask: url('/images/spark-orange.png') center / contain no-repeat;
+  opacity: 0.5;
+}
+.tijdlijn-slider-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.05) 70%);
+}
+
+.tijdlijn-slider-inhoud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 40px 6% 100px;
+  color: var(--og-white);
+}
+.tijdlijn-slider-jaar {
   display: block;
   font-family: 'Komu', sans-serif;
-  font-size: 32px;
-  color: var(--og-green-dark);
-  margin-bottom: 8px;
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 12px;
 }
-.tijdlijn-item p { font-size: 14.5px; color: #4a4a4a; line-height: 1.65; }
-.tijdlijn-fotos { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-.tijdlijn-foto { width: 100%; max-width: 260px; border-radius: 10px; object-fit: cover; display: block; }
-.tijdlijn-fotos:has(.tijdlijn-foto:nth-child(2)) .tijdlijn-foto { max-width: calc(50% - 5px); }
-
-/* Elk jaartal schuift vanaf de kant waar het staat naar binnen i.p.v. de
-   generieke omhoog-fade van .reveal: dat past bij de alternerende
-   links/rechts-indeling en maakt het scrollen door de geschiedenis
-   actiever. De foto's volgen met een korte vertraging, zelfde patroon
-   als de .label-tag/.tag-pop hierboven. */
-.tijdlijn-item.tijdlijn-links.reveal { transform: translateX(-40px); }
-.tijdlijn-item.tijdlijn-rechts.reveal { transform: translateX(40px); }
-.tijdlijn-item.reveal.is-visible { transform: translateX(0); }
-.tijdlijn-fotos {
+.tijdlijn-slider-inhoud p {
+  max-width: 560px;
+  font-size: 15px;
+  line-height: 1.65;
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s ease 0.15s, transform 0.6s ease 0.15s;
+  position: absolute;
+  transition: opacity 0.5s ease;
 }
-.tijdlijn-item.is-visible .tijdlijn-fotos {
-  opacity: 1;
-  transform: translateY(0);
+.tijdlijn-slider-inhoud p.is-actief { opacity: 1; position: relative; }
+
+.tijdlijn-slider-nav {
+  position: absolute;
+  right: 6%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2;
 }
+.tijdlijn-slider-nav-knop {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.55);
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 4px 0;
+  cursor: pointer;
+  text-align: right;
+  transition: color 0.2s ease, font-size 0.2s ease;
+}
+.tijdlijn-slider-nav-knop:hover { color: rgba(255,255,255,0.85); }
+.tijdlijn-slider-nav-knop.is-actief { color: var(--og-white); font-size: 19px; }
 
 .tijdlijn-outro {
   max-width: 720px;
@@ -1354,22 +1427,27 @@ footer .logo-footer {
 .tijdlijn-outro p { font-size: 15px; color: #4a4a4a; line-height: 1.7; }
 
 @media (max-width: 720px) {
-  .tijdlijn-lijn, .tijdlijn-truck { left: 12px; }
-  .tijdlijn-item,
-  .tijdlijn-item.tijdlijn-rechts,
-  .tijdlijn-item.tijdlijn-links {
-    width: calc(100% - 40px);
-    margin-left: 40px;
-    margin-right: 0;
+  .tijdlijn-slider { height: calc(11 * 60vh); }
+  .tijdlijn-slider-inhoud { padding: 30px 6% 90px; }
+  .tijdlijn-slider-jaar { font-size: 40px; }
+  /* Zijbalk met jaartallen past niet op een smal scherm: wordt een
+     horizontale, scrollbare balk onderaan i.p.v. een verticale lijst
+     rechts, zelfde sticky-scroll-effect blijft verder ongewijzigd. */
+  .tijdlijn-slider-nav {
+    right: 0;
+    left: 0;
+    top: auto;
+    bottom: 0;
+    transform: none;
+    flex-direction: row;
+    gap: 18px;
+    padding: 14px 6%;
+    background: linear-gradient(0deg, rgba(0,0,0,0.55), transparent);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
-  /* Op mobiel staan alle items in 1 kolom tegen de linkerlijn aan: een
-     zijwaartse schuifbeweging zou daar oncomfortabel dicht bij de rand
-     beginnen, dus terug naar de gewone omhoog-fade van .reveal. */
-  .tijdlijn-item.tijdlijn-links.reveal,
-  .tijdlijn-item.tijdlijn-rechts.reveal {
-    transform: translateY(24px) scale(0.97);
-  }
-  .tijdlijn-item.reveal.is-visible { transform: translateY(0) scale(1); }
+  .tijdlijn-slider-nav-knop { flex: 0 0 auto; text-align: center; }
+  .tijdlijn-slider-inhoud { padding-bottom: 130px; }
 }
 
 .blok-afbeelding-tekst { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }

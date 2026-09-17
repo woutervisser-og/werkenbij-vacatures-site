@@ -31,25 +31,52 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", bijwerken, { passive: true });
 });
 
-// Tijdlijn "onze geschiedenis" (over-ons.html): een vrachtwagen-icoon
-// rijdt met de scroll mee langs de verticale lijn, van het eerste jaartal
-// (boven) naar het laatste (onder). Voortgang wordt bepaald door hoe ver
-// het midden van het beeldscherm al door de tijdlijn-track gezakt is,
-// geklemd tussen 0 en 1 zodat de truck nooit boven/onder de lijn uitsteekt.
+// Tijdlijn "onze geschiedenis" (over-ons.html): full-screen sticky
+// foto-slider. Terwijl je de hoge #tijdlijn-slider-wrapper doorscrolt
+// blijft .tijdlijn-slider-sticky op zijn plek staan; hier berekenen we
+// aan de hand van de scrollpositie welk jaar daarbij hoort en kruisfaden
+// we de achtergrondfoto, tekst en actieve jaartal-knop. Klikken op een
+// jaartal in de nav scrollt (smooth) naar het bijbehorende punt in de
+// wrapper, wat via dezelfde logica de kruisfade triggert.
 document.addEventListener("DOMContentLoaded", () => {
-  const track = document.querySelector(".tijdlijn-track");
-  const truck = document.querySelector(".tijdlijn-truck");
-  if (!track || !truck) return;
+  const wrapper = document.getElementById("tijdlijn-slider");
+  if (!wrapper) return;
+
+  const jaren = wrapper.dataset.jaren.split(",");
+  const achtergronden = wrapper.querySelectorAll(".tijdlijn-slider-achtergrond");
+  const teksten = wrapper.querySelectorAll(".tijdlijn-slider-inhoud p");
+  const jaarLabel = document.getElementById("tijdlijn-slider-jaar");
+  const navKnoppen = wrapper.querySelectorAll(".tijdlijn-slider-nav-knop");
+
+  let huidigeIndex = -1;
+
+  const zetActief = (index) => {
+    if (index === huidigeIndex) return;
+    huidigeIndex = index;
+    achtergronden.forEach((el, i) => el.classList.toggle("is-actief", i === index));
+    teksten.forEach((el, i) => el.classList.toggle("is-actief", i === index));
+    navKnoppen.forEach((el, i) => el.classList.toggle("is-actief", i === index));
+    if (jaarLabel) jaarLabel.textContent = jaren[index];
+  };
+
+  const totaalScrollbaar = () => wrapper.offsetHeight - window.innerHeight;
 
   const bijwerken = () => {
-    const rect = track.getBoundingClientRect();
-    const viewportMidden = window.innerHeight * 0.5;
-    const voortgang = Math.min(1, Math.max(0, (viewportMidden - rect.top) / rect.height));
-    truck.style.top = (voortgang * rect.height) + "px";
+    const scrollbaar = totaalScrollbaar();
+    const voortgang = scrollbaar > 0 ? Math.min(1, Math.max(0, -wrapper.getBoundingClientRect().top / scrollbaar)) : 0;
+    zetActief(Math.round(voortgang * (jaren.length - 1)));
   };
   bijwerken();
   window.addEventListener("scroll", bijwerken, { passive: true });
   window.addEventListener("resize", bijwerken);
+
+  navKnoppen.forEach((knop, i) => {
+    knop.addEventListener("click", () => {
+      const scrollbaar = totaalScrollbaar();
+      const doel = wrapper.offsetTop + (scrollbaar > 0 ? (i / (jaren.length - 1)) * scrollbaar : 0);
+      window.scrollTo({ top: doel, behavior: "smooth" });
+    });
+  });
 });
 
 // Taal-selector in de header: klik op de knop opent/sluit de dropdown met
