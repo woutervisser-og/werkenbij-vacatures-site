@@ -819,7 +819,7 @@ section.content {
   background: var(--og-white);
   border: 1px solid #e5e5e2;
   border-radius: 18px;
-  padding: 28px;
+  overflow: hidden;
   box-shadow: 0 2px 8px rgba(26, 26, 26, 0.05);
   display: flex;
   flex-direction: column;
@@ -829,6 +829,25 @@ section.content {
   box-shadow: 0 14px 30px rgba(241, 135, 0, 0.15);
   transform: translateY(-6px);
   border-color: var(--og-orange-light);
+}
+/* Headerfoto van de vacature (of, bij een video-header/geen header, een
+   oranje verloop-placeholder) als volle-breedte banner bovenaan de
+   tegel. .vacature-card-inhoud krijgt de padding die eerder direct op
+   .vacature-card stond. */
+.vacature-card-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+.vacature-card-thumb-fallback {
+  background-image: linear-gradient(135deg, var(--og-orange-dark), var(--og-orange));
+}
+.vacature-card-inhoud {
+  padding: 24px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 /* Rustige "locatie · afdeling"-regel i.p.v. een felle oranje uppercase
    afdelings-tag: leesbaarder tussen veel kaarten, minder schreeuwerig. */
