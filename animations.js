@@ -31,6 +31,27 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", bijwerken, { passive: true });
 });
 
+// Tijdlijn "onze geschiedenis" (over-ons.html): een vrachtwagen-icoon
+// rijdt met de scroll mee langs de verticale lijn, van het eerste jaartal
+// (boven) naar het laatste (onder). Voortgang wordt bepaald door hoe ver
+// het midden van het beeldscherm al door de tijdlijn-track gezakt is,
+// geklemd tussen 0 en 1 zodat de truck nooit boven/onder de lijn uitsteekt.
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.querySelector(".tijdlijn-track");
+  const truck = document.querySelector(".tijdlijn-truck");
+  if (!track || !truck) return;
+
+  const bijwerken = () => {
+    const rect = track.getBoundingClientRect();
+    const viewportMidden = window.innerHeight * 0.5;
+    const voortgang = Math.min(1, Math.max(0, (viewportMidden - rect.top) / rect.height));
+    truck.style.top = (voortgang * rect.height) + "px";
+  };
+  bijwerken();
+  window.addEventListener("scroll", bijwerken, { passive: true });
+  window.addEventListener("resize", bijwerken);
+});
+
 // Taal-selector in de header: klik op de knop opent/sluit de dropdown met
 // taalopties, een klik buiten de selector sluit 'm weer. Werkt voor elke
 // ".taal-nav-selector" op de pagina (er hoort er maar 1 te zijn, maar dit

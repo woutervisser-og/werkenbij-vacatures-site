@@ -1287,6 +1287,61 @@ footer .logo-footer {
 .betrokkenheid-kaart h3 { font-size: 17px; margin-bottom: 8px; color: var(--og-dark); }
 .betrokkenheid-kaart p { font-size: 14px; color: #4a4a4a; }
 
+/* ===== Tijdlijn "onze geschiedenis" (over-ons). Groene lijn i.p.v. het
+   gebruikelijke oranje: dit onderscheidt het geschiedenis-hoofdstuk
+   visueel van de rest van de pagina, en --og-green stond al in de
+   tokenlijst maar werd nog nergens gebruikt. De vrachtwagen-emoji rijdt
+   met de scroll mee langs de lijn (zie animations.js). ===== */
+.tijdlijn-track { position: relative; padding: 10px 0 30px; }
+.tijdlijn-lijn {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--og-green);
+  transform: translateX(-50%);
+}
+.tijdlijn-truck {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -50%);
+  font-size: 28px;
+  line-height: 1;
+  z-index: 2;
+}
+.tijdlijn-item { position: relative; width: 44%; margin-bottom: 56px; }
+.tijdlijn-item.tijdlijn-rechts { margin-left: 56%; }
+.tijdlijn-item.tijdlijn-links { margin-right: 56%; }
+.tijdlijn-jaar {
+  display: block;
+  font-family: 'Komu', sans-serif;
+  font-size: 32px;
+  color: var(--og-green-dark);
+  margin-bottom: 8px;
+}
+.tijdlijn-item p { font-size: 14.5px; color: #4a4a4a; line-height: 1.65; }
+
+.tijdlijn-outro {
+  max-width: 720px;
+  margin: 10px auto 0;
+  text-align: center;
+}
+.tijdlijn-outro h3 { font-size: 26px; margin: 10px 0 14px; color: var(--og-green-dark); }
+.tijdlijn-outro p { font-size: 15px; color: #4a4a4a; line-height: 1.7; }
+
+@media (max-width: 720px) {
+  .tijdlijn-lijn, .tijdlijn-truck { left: 12px; }
+  .tijdlijn-item,
+  .tijdlijn-item.tijdlijn-rechts,
+  .tijdlijn-item.tijdlijn-links {
+    width: calc(100% - 40px);
+    margin-left: 40px;
+    margin-right: 0;
+  }
+}
+
 .blok-afbeelding-tekst { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
 .blok-afbeelding-tekst img { width: 100%; border-radius: 12px; object-fit: cover; max-height: 320px; }
 .blok-afbeelding-tekst.blok-richting-rechts img { order: 2; }
