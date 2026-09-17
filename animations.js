@@ -148,6 +148,58 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// Maatschappelijke-betrokkenheid galerij (over-ons.html): een ECHTE
+// (native) horizontale scroll-container, in tegenstelling tot de
+// tijdlijn-slider hierboven. Met maar 3 frames is er geen eigen
+// slide-logica nodig: overflow-x + scroll-snap doen het werk, dit
+// script voegt alleen de pijlknoppen en de dot-indicator toe als extra
+// (niet als vereiste) navigatiehulp bovenop swipen/slepen/scrollen.
+document.addEventListener("DOMContentLoaded", () => {
+  const galerij = document.getElementById("betrokkenheid-galerij");
+  if (!galerij) return;
+  // De pijlknoppen en dots staan bewust buiten #betrokkenheid-galerij (de
+  // scrollcontainer zelf) in .betrokkenheid-galerij-wrap: position:absolute
+  // binnen een scrollende ouder scrollt gewoon mee met de inhoud, dus
+  // alleen als sibling van de scrollcontainer blijven ze op vaste plek
+  // staan (zie styles.css).
+  const wrap = galerij.parentElement;
+
+  const frames = Array.from(galerij.querySelectorAll(".betrokkenheid-frame"));
+  const vorigeKnop = wrap.querySelector(".betrokkenheid-galerij-pijl-vorige");
+  const volgendeKnop = wrap.querySelector(".betrokkenheid-galerij-pijl-volgende");
+  const dots = Array.from(wrap.querySelectorAll(".betrokkenheid-galerij-dot"));
+
+  const huidigeIndex = () => Math.round(galerij.scrollLeft / galerij.clientWidth);
+
+  const werkBij = () => {
+    const index = Math.max(0, Math.min(frames.length - 1, huidigeIndex()));
+    if (vorigeKnop) vorigeKnop.disabled = index === 0;
+    if (volgendeKnop) volgendeKnop.disabled = index === frames.length - 1;
+    dots.forEach((dot, i) => dot.classList.toggle("is-actief", i === index));
+  };
+  werkBij();
+
+  const gaNaar = (index) => {
+    const doel = Math.max(0, Math.min(frames.length - 1, index));
+    galerij.scrollTo({ left: doel * galerij.clientWidth, behavior: "smooth" });
+  };
+
+  if (vorigeKnop) vorigeKnop.addEventListener("click", () => gaNaar(huidigeIndex() - 1));
+  if (volgendeKnop) volgendeKnop.addEventListener("click", () => gaNaar(huidigeIndex() + 1));
+  dots.forEach((dot, i) => dot.addEventListener("click", () => gaNaar(i)));
+
+  let bijwerkGepland = false;
+  galerij.addEventListener("scroll", () => {
+    if (bijwerkGepland) return;
+    bijwerkGepland = true;
+    requestAnimationFrame(() => {
+      werkBij();
+      bijwerkGepland = false;
+    });
+  }, { passive: true });
+  window.addEventListener("resize", werkBij);
+});
+
 // Taal-selector in de header: klik op de knop opent/sluit de dropdown met
 // taalopties, een klik buiten de selector sluit 'm weer. Werkt voor elke
 // ".taal-nav-selector" op de pagina (er hoort er maar 1 te zijn, maar dit

@@ -1275,27 +1275,133 @@ footer .logo-footer {
 .collega-quote-kaart blockquote { font-size: 15.5px; line-height: 1.5; margin-bottom: 12px; }
 .collega-quote-kaart .collega-rol { font-weight: 700; font-size: 13.5px; color: var(--og-orange-dark); }
 
-/* ===== Maatschappelijke-betrokkenheid kaarten (over-ons). ===== */
-.betrokkenheid-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
+/* ===== Maatschappelijke-betrokkenheid galerij (over-ons): horizontale,
+   beeldvullende foto-galerij, 1 frame per categorie (Sponsoring/Goede
+   doelen/Sport). Net als de tijdlijn-slider hierboven breekt de galerij
+   bewust uit de gecentreerde max-width:1100px-kolom (echt 100vw), met
+   dezelfde "binnen"-laag om de tekst weer in de normale kolom te zetten.
+   In tegenstelling tot de tijdlijn-slider is dit een ECHTE (native)
+   horizontale scroll-container (overflow-x + scroll-snap): met maar 3
+   frames volstaat swipen/scrollen/slepen zonder eigen JS-slide-logica,
+   de pijlknoppen en dots zijn alleen een extra, geen vereiste.
+   Belangrijk: de pijlknoppen/dots staan buiten .betrokkenheid-galerij
+   (de scrollcontainer zelf), als kind van .betrokkenheid-galerij-wrap.
+   Position:absolute binnen een scrollende ouder scrollt gewoon mee met
+   de inhoud (geen sticky/fixed-gedrag), dus alleen zo blijven ze altijd
+   op vaste plek zichtbaar, ongeacht hoever je door de galerij bent. */
+.betrokkenheid-galerij-wrap {
+  position: relative;
+  height: 82vh;
+  min-height: 480px;
+  max-height: 720px;
+  margin-bottom: 12px;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
 }
-.betrokkenheid-kaart {
-  border: 1px solid #e5e5e2;
-  border-radius: 12px;
-  overflow: hidden;
+.betrokkenheid-galerij {
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
 }
-.betrokkenheid-kaart:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(36, 28, 20, 0.12); }
-.betrokkenheid-kaart-foto { width: 100%; height: 170px; object-fit: cover; display: block; }
-.betrokkenheid-kaart-inhoud { padding: 26px; }
-.betrokkenheid-kaart .label-tag { margin-bottom: 14px; }
-.betrokkenheid-kaart h3 { font-size: 17px; margin-bottom: 8px; color: var(--og-dark); }
-.betrokkenheid-kaart p { font-size: 14px; color: #4a4a4a; }
-.betrokkenheid-kaart p + p { margin-top: 10px; }
+.betrokkenheid-galerij::-webkit-scrollbar { display: none; }
+
+.betrokkenheid-frame {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  position: relative;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.betrokkenheid-frame-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.05) 70%);
+  pointer-events: none;
+}
+.betrokkenheid-frame-binnen {
+  position: absolute;
+  inset: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 6%;
+  pointer-events: none;
+}
+.betrokkenheid-frame-inhoud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 620px;
+  padding: 40px 0 70px;
+  color: var(--og-white);
+  /* Geen interactieve elementen binnenin, dus geen pointer-events:auto
+     nodig — anders zou deze tekstlaag klikken op de dots/pijlen eronder/
+     ernaast kunnen onderscheppen. */
+}
+.betrokkenheid-frame-inhoud .label-tag { margin-bottom: 14px; }
+.betrokkenheid-frame-inhoud h3 { font-size: 26px; margin-bottom: 10px; color: var(--og-white); }
+.betrokkenheid-frame-inhoud p { font-size: 15px; line-height: 1.65; }
+.betrokkenheid-frame-inhoud p + p { margin-top: 10px; }
+
+.betrokkenheid-galerij-pijl {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.35);
+  color: var(--og-white);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.betrokkenheid-galerij-pijl:hover { background: rgba(0,0,0,0.55); }
+.betrokkenheid-galerij-pijl:disabled { opacity: 0.35; cursor: default; }
+.betrokkenheid-galerij-pijl-vorige { left: 16px; }
+.betrokkenheid-galerij-pijl-volgende { right: 16px; }
+
+.betrokkenheid-galerij-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.betrokkenheid-galerij-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(255,255,255,0.4);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.betrokkenheid-galerij-dot.is-actief { background: var(--og-white); transform: scale(1.25); }
+
+@media (max-width: 720px) {
+  .betrokkenheid-galerij-wrap { height: 78vh; min-height: 420px; }
+  .betrokkenheid-galerij-pijl { width: 40px; height: 40px; font-size: 22px; }
+  .betrokkenheid-galerij-pijl-vorige { left: 8px; }
+  .betrokkenheid-galerij-pijl-volgende { right: 8px; }
+  .betrokkenheid-frame-inhoud { padding-bottom: 44px; }
+}
 
 /* ===== Tijdlijn "onze geschiedenis" (over-ons): horizontale,
    beeldvullende foto-slider met een vaste hoogte (geen scroll-jacking
@@ -1305,33 +1411,15 @@ footer .logo-footer {
    swipe/sleep, of pijltjestoetsen. animations.js schuift de actieve foto
    in vanaf links/rechts (transform:translateX) afhankelijk van de
    richting, terwijl tekst en jaartal-knop kruisfaden via .is-actief.
-   Groen i.p.v. het gebruikelijke oranje: onderscheidt dit
-   geschiedenis-hoofdstuk visueel van de rest van de pagina, --og-green
-   stond al in de tokenlijst. ===== */
+   De intro/outro-tekstblokken (2008 en de vooruitblik) zijn gewone
+   H2's, links uitgelijnd en in de standaard huisstijlkleur, net als de
+   rest van de pagina — geen eigen eyebrow/groen accent meer. ===== */
 .tijdlijn-slider-intro {
   max-width: 720px;
-  margin: 0 auto 40px;
-  text-align: center;
+  margin: 0 0 40px;
 }
-.tijdlijn-slider-intro h3 { font-size: 26px; margin: 10px 0 14px; color: var(--og-green-dark); }
+.tijdlijn-slider-intro h2 { font-size: 32px; margin-bottom: 14px; color: var(--og-orange-dark); }
 .tijdlijn-slider-intro p { font-size: 15px; color: #4a4a4a; line-height: 1.7; }
-/* .tag is verder alleen binnen .section-head gestyled als pill (oranje);
-   deze 2 blokken horen bij het groene geschiedenis-hoofdstuk en krijgen
-   daarom hun eigen groene pill-variant i.p.v. platte tekst. */
-.tijdlijn-slider-intro .tag,
-.tijdlijn-outro .tag {
-  display: inline-block;
-  background: var(--og-green);
-  color: var(--og-white);
-  font-family: 'Komu', sans-serif;
-  font-size: 13px;
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.41em 14px 0.21em;
-  border-radius: 3px;
-  margin-bottom: 4px;
-}
 
 .tijdlijn-slider {
   position: relative;
@@ -1498,11 +1586,11 @@ footer .logo-footer {
 
 .tijdlijn-outro {
   max-width: 720px;
-  margin: 10px auto 0;
-  text-align: center;
+  margin: 10px 0 0;
 }
-.tijdlijn-outro h3 { font-size: 26px; margin: 10px 0 14px; color: var(--og-green-dark); }
+.tijdlijn-outro h2 { font-size: 32px; margin-bottom: 14px; color: var(--og-orange-dark); }
 .tijdlijn-outro p { font-size: 15px; color: #4a4a4a; line-height: 1.7; }
+.tijdlijn-outro .btn-text { margin-top: 12px; }
 
 @media (max-width: 720px) {
   .tijdlijn-slider { height: 78vh; min-height: 420px; }
