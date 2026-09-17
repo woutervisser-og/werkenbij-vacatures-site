@@ -33,13 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 2. De 3 "wat we belangrijk vinden"-kaarten komen na elkaar in beeld
-  // (150ms stagger) i.p.v. gelijktijdig, fade + lichte omhoog-schuif.
+  // (150ms stagger) i.p.v. gelijktijdig: alleen fade, geen y-verschuiving.
+  // Een y-schuif in combinatie met een stagger laat de kaarten tijdens de
+  // overgang tijdelijk op ongelijke hoogte staan ("scheef"); ze moeten
+  // altijd gewoon netjes naast elkaar staan, alleen de zichtbaarheid komt
+  // na elkaar in beeld.
   const kaarten = gsap.utils.toArray(".card-grid-3 .teaser-card");
   if (kaarten.length) {
-    gsap.set(kaarten, { willChange: "transform, opacity" });
+    gsap.set(kaarten, { willChange: "opacity" });
     gsap.from(kaarten, {
       opacity: 0,
-      y: 30,
       duration: 0.6,
       ease: "power2.out",
       stagger: 0.15,
