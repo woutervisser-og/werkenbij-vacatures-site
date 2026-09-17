@@ -1411,3 +1411,11 @@ Kinderziekenhuis, en het OG Capitals-ijshockeyteam. Elke
 betrokkenheid-kaart op over-ons.html toont nu de bijpassende foto
 bovenaan, tekst ongewijzigd. Kaart kreeg een subtiele hover-lift,
 consistent met andere kaartcomponenten. Gemerged via [PR #69](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/69).
+
+## Afgerond: favicon
+
+Wouter voegde `images/favicon-og.ico` toe (rechtstreeks op main).
+`<link rel="icon">` toegevoegd op alle 5 marketingpagina's, de
+generate.js-template (vacature-detailpagina's, alle 6 talen) en de 4
+`/beheer`-pagina's, voor een consistent tabblad-icoon door de hele
+site. Gemerged via [PR #70](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/70).
