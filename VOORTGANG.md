@@ -1554,3 +1554,23 @@ verzoeken:
   animaties.
 
 Gemerged via [PR #80](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/80).
+
+## Afgerond: tijdlijn omgebouwd naar horizontale slider (geen scroll-jacking meer)
+
+Wouter meldde terecht dat de tijdlijn de pagina-scroll vasthield: je
+moest eerst door alle 11 jaren heen scrollen (11 × 70vh) voordat je
+verder kon op de pagina, en de overgang tussen jaren voelde te snel/
+grillig aan. Omgebouwd naar een horizontale, beeldvullende slider:
+
+- `.tijdlijn-slider` is nu een gewoon vast blok in de paginaflow (82vh,
+  max 720px) i.p.v. een hoge scroll-jacking kolom. Verticaal scrollen
+  gaat er gewoon doorheen.
+- Navigeren tussen jaren gaat voortaan horizontaal: klik op een
+  jaartal, nieuwe pijlknoppen (vorig/volgend, uitgeschakeld aan de
+  uiteinden), swipe/sleep (touch + muis), of de pijltjestoetsen. De
+  actieve foto schuift in vanaf links/rechts i.p.v. de oude
+  scrollpositie-naar-jaar-berekening.
+- Jaartallen-balk is nu altijd een horizontale, edge-to-edge balk
+  onderaan (was op desktop nog een verticale lijst rechts).
+
+Gemerged via [PR #81](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/81).
