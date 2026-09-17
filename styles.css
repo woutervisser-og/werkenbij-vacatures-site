@@ -1327,6 +1327,24 @@ footer .logo-footer {
 .tijdlijn-foto { width: 100%; max-width: 260px; border-radius: 10px; object-fit: cover; display: block; }
 .tijdlijn-fotos:has(.tijdlijn-foto:nth-child(2)) .tijdlijn-foto { max-width: calc(50% - 5px); }
 
+/* Elk jaartal schuift vanaf de kant waar het staat naar binnen i.p.v. de
+   generieke omhoog-fade van .reveal: dat past bij de alternerende
+   links/rechts-indeling en maakt het scrollen door de geschiedenis
+   actiever. De foto's volgen met een korte vertraging, zelfde patroon
+   als de .label-tag/.tag-pop hierboven. */
+.tijdlijn-item.tijdlijn-links.reveal { transform: translateX(-40px); }
+.tijdlijn-item.tijdlijn-rechts.reveal { transform: translateX(40px); }
+.tijdlijn-item.reveal.is-visible { transform: translateX(0); }
+.tijdlijn-fotos {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease 0.15s, transform 0.6s ease 0.15s;
+}
+.tijdlijn-item.is-visible .tijdlijn-fotos {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .tijdlijn-outro {
   max-width: 720px;
   margin: 10px auto 0;
@@ -1344,6 +1362,14 @@ footer .logo-footer {
     margin-left: 40px;
     margin-right: 0;
   }
+  /* Op mobiel staan alle items in 1 kolom tegen de linkerlijn aan: een
+     zijwaartse schuifbeweging zou daar oncomfortabel dicht bij de rand
+     beginnen, dus terug naar de gewone omhoog-fade van .reveal. */
+  .tijdlijn-item.tijdlijn-links.reveal,
+  .tijdlijn-item.tijdlijn-rechts.reveal {
+    transform: translateY(24px) scale(0.97);
+  }
+  .tijdlijn-item.reveal.is-visible { transform: translateY(0) scale(1); }
 }
 
 .blok-afbeelding-tekst { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
