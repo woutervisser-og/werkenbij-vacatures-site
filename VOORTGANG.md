@@ -1486,3 +1486,22 @@ het scherm door de tijdlijn-track gezakt is). Bewust geen foto's per
 mijlpaal: wel gedeeld als screenshot, maar geen brondbestanden
 beschikbaar — grote jaartal-typografie i.p.v. placeholders, zelfde
 aanpak als de afdelingen-index. Gemerged via [PR #76](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/76).
+
+## Afgerond: tijdlijn, foto's + scroll-effect + 2025/2026-mijlpalen
+
+Vervolg op PR #76:
+- Wouter leverde alsnog de brondfoto's aan voor 7 van de 10 mijlpalen
+  (2008 en 2009 elk met 2 foto's, de rest met 1). Geconverteerd naar
+  webp (~1MB PNG werd 40-140KB) en gekoppeld op basis van de inhoud.
+  2012, 2015 en 2022 blijven zonder foto (geen duidelijk passend beeld
+  beschikbaar).
+- Directioneel scroll-effect: elk jaartal schuift nu vanaf de kant
+  waar het staat naar binnen (i.p.v. de standaard omhoog-fade), foto's
+  volgen met een korte vertraging. Op mobiel valt dit terug op de
+  gewone fade. Geen nieuwe JS, hergebruikt de bestaande
+  IntersectionObserver.
+- 2 nieuwe mijlpalen: 2025 (overname van 19 tanklocaties van Proviridis
+  in Frankrijk) en 2026 (overname van 11 (Bio-)CNG-tanklocaties van X3
+  in Italië), inclusief foto's.
+
+Gemerged via [PR #77](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/77).
