@@ -62,6 +62,20 @@
       <h3 class="filter-groep-label" data-i18n="vacaturesPagina.filterAfdeling">Afdeling</h3>
       <div class="filter-chips" id="filter-afdeling"></div>
     </div>
+    <button type="button" class="filter-meer-knop" id="filter-meer-knop" aria-expanded="false" aria-controls="filter-meer-paneel">
+      <span id="filter-meer-knop-tekst" data-i18n="vacaturesPagina.meerFilters">Meer filters</span>
+      <svg class="filter-meer-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="filter-meer-paneel" id="filter-meer-paneel" hidden>
+      <div class="filter-groep">
+        <h3 class="filter-groep-label" data-i18n="vacaturesPagina.filterDienstverband">Dienstverband</h3>
+        <div class="filter-chips" id="filter-dienstverband"></div>
+      </div>
+      <div class="filter-groep">
+        <h3 class="filter-groep-label" data-i18n="vacaturesPagina.filterNiveau">Niveau</h3>
+        <div class="filter-chips" id="filter-niveau"></div>
+      </div>
+    </div>
   </div>
   <div class="card-grid reveal" id="vacature-lijst">
     <p id="laad-status" data-i18n="vacaturesPagina.laden">Vacatures laden...</p>
@@ -151,6 +165,9 @@
   // dit moment voor precies 1 land, dus "Stad, Land" -> Land is genoeg.
   // "Nederland (reizend)" hoort qua land bij Netherlands.
   const LANDEN = ["Netherlands", "France", "Germany", "Italy", "Sweden"];
+  // Zelfde vaste opties als de <select>-velden in /beheer/vacature.html.
+  const DIENSTVERBANDEN = ["Fulltime", "Parttime", "Stage", "Overig"];
+  const NIVEAUS = ["MBO", "HBO", "WO", "Geen vereiste"];
   function landVoorVacature(vacature) {
     const locatie = vacature.locatie || "";
     if (locatie === "Nederland (reizend)") return "Netherlands";
@@ -159,18 +176,22 @@
   }
 
   // Bij een taalversie die bij 1 specifiek kantoor hoort, dat land vooraf
-  // aanvinken (aanpasbaar, niks wordt echt verborgen). NL en EN blijven
-  // ongefilterd: NL is de hoofdmarkt, EN is de internationale/standaardtaal.
-  const TAAL_LAND_VOORSELECTIE = { fr: "France", de: "Germany", it: "Italy", se: "Sweden" };
+  // aanvinken (aanpasbaar, niks wordt echt verborgen). Alleen EN blijft
+  // ongefilterd: dat is de basistaal die elke vacature minstens heeft (zie
+  // "Alle vacatures (EN)"-link hieronder), geen aparte "internationale" markt.
+  const TAAL_LAND_VOORSELECTIE = { nl: "Netherlands", fr: "France", de: "Germany", it: "Italy", se: "Sweden" };
 
-  const filterState = { land: new Set(), afdeling: new Set() };
+  const filterState = { land: new Set(), afdeling: new Set(), dienstverband: new Set(), niveau: new Set() };
   let alleVacatures = [];
 
   function leesFilterUitUrl() {
     const params = new URLSearchParams(location.search);
-    if (params.has("land") || params.has("afdeling")) {
+    const heeftFilterInUrl = ["land", "afdeling", "dienstverband", "niveau"].some(sleutel => params.has(sleutel));
+    if (heeftFilterInUrl) {
       (params.get("land") || "").split(",").filter(Boolean).forEach(w => filterState.land.add(w));
       (params.get("afdeling") || "").split(",").filter(Boolean).forEach(w => filterState.afdeling.add(w));
+      (params.get("dienstverband") || "").split(",").filter(Boolean).forEach(w => filterState.dienstverband.add(w));
+      (params.get("niveau") || "").split(",").filter(Boolean).forEach(w => filterState.niveau.add(w));
       return;
     }
     const voorselectie = TAAL_LAND_VOORSELECTIE[window.OG_HUIDIGE_TAAL];
@@ -181,6 +202,8 @@
     const params = new URLSearchParams();
     if (filterState.land.size) params.set("land", [...filterState.land].join(","));
     if (filterState.afdeling.size) params.set("afdeling", [...filterState.afdeling].join(","));
+    if (filterState.dienstverband.size) params.set("dienstverband", [...filterState.dienstverband].join(","));
+    if (filterState.niveau.size) params.set("niveau", [...filterState.niveau].join(","));
     const query = params.toString();
     history.replaceState(null, "", location.pathname + (query ? `?${query}` : ""));
   }
@@ -203,21 +226,60 @@
     container.appendChild(chip);
   }
 
+  // Vaste uitgang naast het landfilter: elke vacature staat er minstens in
+  // het Engels op (de basistaal), dus dit is de manier om alles te zien
+  // zonder land- of taalvoorselectie, ongeacht welke taal je nu bekijkt.
+  function maakAlleVacaturesLink(container) {
+    const link = document.createElement("a");
+    link.className = "chip chip-alle";
+    link.href = "/en/vacatures.html";
+    link.textContent = window.t("vacaturesPagina.filterAlleEnLink");
+    container.appendChild(link);
+  }
+
+  // Knop die het "meer filters"-paneel (dienstverband + niveau) open- en
+  // dichtklapt. Staat standaard al open als er via de URL al een filter
+  // uit dat paneel actief is, anders zou de actieve filter onzichtbaar
+  // dichtgeklapt blijven staan.
+  function initMeerFilters() {
+    const knop = document.getElementById("filter-meer-knop");
+    const knopTekst = document.getElementById("filter-meer-knop-tekst");
+    const paneel = document.getElementById("filter-meer-paneel");
+    const zetStand = open => {
+      paneel.hidden = !open;
+      knop.setAttribute("aria-expanded", String(open));
+      knop.classList.toggle("filter-meer-open", open);
+      knopTekst.textContent = window.t(open ? "vacaturesPagina.minderFilters" : "vacaturesPagina.meerFilters");
+    };
+    zetStand(filterState.dienstverband.size > 0 || filterState.niveau.size > 0);
+    knop.addEventListener("click", () => zetStand(paneel.hidden));
+  }
+
   // Land altijd volledig tonen (ook zonder vacatures in dat land — dat is
   // juist relevant om te laten zien welke landen er zijn). Afdeling alleen
   // tonen als er ook echt een vacature in die afdeling openstaat: anders
-  // levert een lege afdeling-chip toch niks op.
+  // levert een lege afdeling-chip toch niks op. Dienstverband en niveau
+  // komen uit een vaste, korte lijst (zelfde opties als /beheer), die
+  // altijd volledig getoond wordt, net als land.
   function bouwFilterChips() {
     const landContainer = document.getElementById("filter-land");
     const afdelingContainer = document.getElementById("filter-afdeling");
+    const dienstverbandContainer = document.getElementById("filter-dienstverband");
+    const niveauContainer = document.getElementById("filter-niveau");
     landContainer.innerHTML = "";
     afdelingContainer.innerHTML = "";
+    dienstverbandContainer.innerHTML = "";
+    niveauContainer.innerHTML = "";
 
     const aanwezigeAfdelingen = new Set(alleVacatures.map(v => v.afdeling).filter(Boolean));
 
+    maakAlleVacaturesLink(landContainer);
     LANDEN.forEach(land => maakChip(landContainer, land, "land"));
     AFDELINGEN.filter(afdeling => aanwezigeAfdelingen.has(afdeling))
       .forEach(afdeling => maakChip(afdelingContainer, afdeling, "afdeling"));
+    DIENSTVERBANDEN.forEach(waarde => maakChip(dienstverbandContainer, waarde, "dienstverband"));
+    NIVEAUS.forEach(waarde => maakChip(niveauContainer, waarde, "niveau"));
+    initMeerFilters();
     document.getElementById("filter-balk").hidden = false;
   }
 
@@ -229,7 +291,9 @@
     const gefilterd = alleVacatures.filter(vacature => {
       const landOk = filterState.land.size === 0 || filterState.land.has(landVoorVacature(vacature));
       const afdelingOk = filterState.afdeling.size === 0 || filterState.afdeling.has(vacature.afdeling);
-      return landOk && afdelingOk;
+      const dienstverbandOk = filterState.dienstverband.size === 0 || filterState.dienstverband.has(vacature.dienstverband);
+      const niveauOk = filterState.niveau.size === 0 || filterState.niveau.has(vacature.opleidingsniveau);
+      return landOk && afdelingOk && dienstverbandOk && niveauOk;
     });
 
     if (gefilterd.length === 0) {

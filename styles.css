@@ -659,6 +659,11 @@ section.content {
 /* Filterchips boven de vacature-overzichtslijst: land + afdeling,
    multi-select, aan/uit per klik. */
 .filter-balk { max-width: 1100px; margin: 0 auto 30px; display: flex; flex-direction: column; gap: 12px; }
+/* .filter-balk zet zelf altijd display:flex, dus zonder deze regel wint
+   die (author-normal) het van de UA-regel voor [hidden] (ook normal, maar
+   uit de UA-stylesheet) en blijft de balk zichtbaar. Hogere specificiteit
+   hier lost dat op. */
+.filter-balk[hidden] { display: none; }
 .filter-groep { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .filter-groep-label {
   font-family: 'Komu', sans-serif;
@@ -683,6 +688,35 @@ section.content {
 }
 .chip:hover { background: var(--og-orange-light); }
 .chip.actief { background: var(--og-orange); color: var(--og-white); }
+/* Geen aan/uit-toggle zoals de andere chips, maar een link naar de
+   EN-vacaturepagina: daarom een outline i.p.v. een gevulde achtergrond. */
+.chip-alle {
+  background: transparent;
+  border: 1px solid #e5e5e2;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.chip-alle:hover { background: var(--og-cream-2); border-color: var(--og-orange); color: var(--og-dark); }
+
+.filter-meer-knop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--og-orange-dark);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.filter-meer-chevron { width: 16px; height: 16px; transition: transform 0.2s ease; }
+.filter-meer-knop.filter-meer-open .filter-meer-chevron { transform: rotate(180deg); }
+.filter-meer-paneel { display: flex; flex-direction: column; gap: 12px; }
+.filter-meer-paneel[hidden] { display: none; }
 
 /* Voor een vast aantal kaarten (bv. de 3 kernwaarden) die altijd naast
    elkaar horen te staan, in plaats van los uit te lijnen bij een oneven
