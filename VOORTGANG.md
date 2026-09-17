@@ -1419,3 +1419,12 @@ Wouter voegde `images/favicon-og.ico` toe (rechtstreeks op main).
 generate.js-template (vacature-detailpagina's, alle 6 talen) en de 4
 `/beheer`-pagina's, voor een consistent tabblad-icoon door de hele
 site. Gemerged via [PR #70](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/70).
+
+## Afgerond: "Ontdek alle OG Heroes"-link op over ons
+
+Tekstlink (laagste nadruk, `.btn-text`) onder de
+"Maatschappelijke betrokkenheid"-kaarten op over-ons.html, naar
+https://ogcleanfuels.com/nl/heroes. Alleen zichtbaar in het NL (via
+`window.OG_HUIDIGE_TAAL`), verborgen in de andere 5 talen — de
+OG Heroes-pagina bestaat alleen in het Nederlands. Gemerged via
+[PR #71](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/71).
