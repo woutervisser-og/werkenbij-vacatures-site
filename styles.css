@@ -1323,6 +1323,9 @@ footer .logo-footer {
   margin-bottom: 8px;
 }
 .tijdlijn-item p { font-size: 14.5px; color: #4a4a4a; line-height: 1.65; }
+.tijdlijn-fotos { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.tijdlijn-foto { width: 100%; max-width: 260px; border-radius: 10px; object-fit: cover; display: block; }
+.tijdlijn-fotos:has(.tijdlijn-foto:nth-child(2)) .tijdlijn-foto { max-width: calc(50% - 5px); }
 
 .tijdlijn-outro {
   max-width: 720px;
