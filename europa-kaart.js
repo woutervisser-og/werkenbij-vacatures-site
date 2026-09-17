@@ -55,13 +55,27 @@
     return (alpha2 && ALPHA2_NAAR_NAAM[alpha2]) || feature.properties.name;
   }
 
+  // Vertaalt via de site-brede i18n.js (window.t, gevuld door /i18n/<taal>.json)
+  // met een Nederlandstalige terugval als i18n.js om wat voor reden dan ook
+  // niet geladen is — zelfde progressive-enhancement-patroon als elders.
+  function vertaal(key, vars, terugval) {
+    return typeof window.t === "function" ? window.t(key, vars) : terugval;
+  }
+
+  function aantalTekst(aantal) {
+    const key = aantal === 1 ? "europaKaart.vacatureEnkelvoud" : "europaKaart.vacatureMeervoud";
+    const terugval = aantal === 1 ? `${aantal} openstaande vacature` : `${aantal} openstaande vacatures`;
+    return vertaal(key, { aantal }, terugval);
+  }
+
   function init() {
     const container = document.getElementById("europa-kaart");
     if (!container) return;
 
     Promise.all([
       fetch(GEO_URL).then((r) => r.json()),
-      fetch(DATA_URL).then((r) => r.json())
+      fetch(DATA_URL).then((r) => r.json()),
+      window.OG_I18N_KLAAR || Promise.resolve()
     ])
       .then(([geojson, vacatureData]) => {
         const aantallen = {};
@@ -114,7 +128,7 @@
         .attr("class", "europa-kaart-svg")
         .attr("viewBox", `0 0 ${breedte} ${hoogte}`)
         .attr("role", "img")
-        .attr("aria-label", "Interactieve kaart van Europa met het aantal openstaande vacatures per land");
+        .attr("aria-label", vertaal("europaKaart.ariaLabel", null, "Interactieve kaart van Europa met het aantal openstaande vacatures per land"));
 
       projectie = d3.geoMercator().fitSize([breedte, hoogte], geojson);
       pad = d3.geoPath(projectie);
@@ -126,16 +140,17 @@
         .attr("d", pad)
         .attr("fill", kleurVoorFeature)
         .attr("tabindex", (d) => (aantalVoorFeature(d) > 0 ? 0 : -1))
-        .attr("role", "button")
+        .attr("role", (d) => (aantalVoorFeature(d) > 0 ? "button" : null))
+        .attr("aria-hidden", (d) => (aantalVoorFeature(d) > 0 ? null : "true"))
         .attr("aria-label", (d) => {
           const aantal = aantalVoorFeature(d);
-          const naam = naamVoorFeature(d);
-          return aantal > 0
-            ? `${naam}: ${aantal} openstaande vacature${aantal === 1 ? "" : "s"}`
-            : `${naam}: geen openstaande vacatures op dit moment`;
+          if (aantal <= 0) return null;
+          return `${naamVoorFeature(d)}: ${aantalTekst(aantal)}`;
         })
         .style("cursor", (d) => (aantalVoorFeature(d) > 0 ? "pointer" : "default"))
-        .on("mouseenter mousemove", (event, d) => toonTooltip(event, d))
+        .on("mouseenter mousemove", (event, d) => {
+          if (aantalVoorFeature(d) > 0) toonTooltip(event, d);
+        })
         .on("mouseleave", verbergTooltip)
         .on("click", (event, d) => gaNaarVacatures(d))
         .on("keydown", (event, d) => {
@@ -155,9 +170,7 @@
     function toonTooltip(event, feature) {
       const aantal = aantalVoorFeature(feature);
       const naam = naamVoorFeature(feature);
-      tooltip.textContent = aantal > 0
-        ? `${naam}: ${aantal} openstaande vacature${aantal === 1 ? "" : "s"}`
-        : `${naam}: geen openstaande vacatures op dit moment`;
+      tooltip.textContent = `${naam}: ${aantalTekst(aantal)}`;
       tooltip.hidden = false;
 
       const containerRect = container.getBoundingClientRect();

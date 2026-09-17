@@ -10,6 +10,11 @@
     "copyright": "© 2026 OG Clean Fuels. All rights reserved.",
     "menuKop": "Menu"
   },
+  "europaKaart": {
+    "ariaLabel": "Interactive map of Europe showing the number of open vacancies per country",
+    "vacatureEnkelvoud": "{{aantal}} open vacancy",
+    "vacatureMeervoud": "{{aantal}} open vacancies"
+  },
   "breadcrumb": {
     "home": "Home"
   },
