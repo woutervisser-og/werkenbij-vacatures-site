@@ -1584,3 +1584,38 @@ tijdens de overgang tijdelijk op ongelijke hoogte stonden. De
 y-verschuiving verwijderd uit `over-ons-animaties.js`, alleen de
 gestaggerde fade blijft over: de kaarten blijven nu de hele tijd op
 precies dezelfde hoogte staan. Gemerged via [PR #82](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/82).
+
+## Afgerond: over-ons.html opgeruimd (koppen, uitlijning, vacature-CTA, betrokkenheid als horizontale galerij)
+
+6 losse punten van Wouter in 1 ronde:
+
+- "Waar het allemaal begon" en "Hoe wij onze reis voortzetten" waren
+  h3's met een eigen groen accent (kleur + eyebrow-tag) dat niet
+  strookte met de rest van de huisstijl. Nu gewone H2's in de
+  standaard oranje kopkleur, links uitgelijnd i.p.v. gecentreerd,
+  eyebrow-tag weg.
+- Nieuwe link onder de "Hoe wij onze reis voortzetten"-alinea naar
+  vacatures.html ("Wil jij bijdragen aan deze ambitie? Bekijk alle
+  vacatures. →"), laagste-nadruk-stijl (`.btn-text`, zelfde opmaak als
+  de bestaande "Ontdek alle OG Heroes ↗"-link).
+- Tijdlijn-fotoleesbaarheid gecontroleerd: bestaande donkere
+  gradient-overlay bleek al voldoende.
+- "Maatschappelijke betrokkenheid zit in ons DNA": de 3 kaarten
+  (Sponsoring/Goede doelen/Sport) vervangen door een horizontale,
+  100vw beeldvullende galerij (1 frame per categorie, foto als
+  achtergrond met tekst als overlay). Native scroll-snap
+  (overflow-x + scroll-snap-type), dus swipen/scrollen/slepen werkt
+  vanzelf; pijlknoppen en dots zijn een extra, geen vereiste.
+- De losse CTA-sectie helemaal onderaan ("Nieuwsgierig geworden" /
+  "Bekijk onze openstaande vacatures") verwijderd: voelde willekeurig,
+  de vacature-CTA zit nu al subtieler verwerkt in de nieuwe link
+  hierboven.
+
+Bug gevonden en gefixt tijdens het bouwen van de galerij: de
+pijlknoppen/dots stonden aanvankelijk als kind van de scrollende
+container zelf, waardoor ze zelf meescrolden met de inhoud (position:
+absolute binnen een scrollende ouder scrollt gewoon mee, geen
+sticky-gedrag) en na 1 klik buiten beeld raakten. Opgelost door ze naar
+een niet-scrollende wrapper-laag te verplaatsen.
+
+Gemerged via [PR #83](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/83).
