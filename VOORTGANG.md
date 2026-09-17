@@ -1505,3 +1505,27 @@ Vervolg op PR #76:
   in Italië), inclusief foto's.
 
 Gemerged via [PR #77](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/77).
+
+## Afgerond: script voor consistente tijdlijnfoto's
+
+Losstaand hulpscript (`scripts/verwerk-tijdlijnfotos.py`) dat Wouter
+lokaal kan draaien over een map met foto's: center-crop naar exact 4:3
+en een instelbare kleurcorrectie (warmte/contrast/verzadiging,
+standaard +10/+8/+10) zodat koele/grijze foto's dichter bij de warme
+merkkleur komen. Alleen Pillow als dependency, schrijft naar een
+aparte uitvoermap, origineel blijft onaangetast. Gemerged via
+[PR #78](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/78).
+
+## Afgerond: tijdlijn herbouwd tot full-screen sticky foto-slider
+
+Op verzoek van Wouter de hele tijdlijn-sectie vervangen (geen Swiper,
+vanilla JS/CSS): elk jaar toont zijn foto als volledige achtergrond,
+scrollen door de sectie laat het jaar wisselen terwijl de sectie zelf
+op zijn plek blijft staan (sticky), en de jaartallen-lijst is ook los
+klikbaar met smooth scroll. Begint bij 2009; 2008 (geen sterke
+hero-foto) staat nu als tekstblok boven de slider, in dezelfde stijl
+als het vooruitblik-blok onderaan. Jaren zonder foto (2012/2015/2022)
+krijgen een groene placeholder met de spark als watermerk. Op mobiel
+wordt de jaartallen-lijst een horizontale balk onderaan. De oude
+links/rechts-tijdlijn met de meerijdende vrachtwagen is hiermee
+vervallen. Gemerged via [PR #79](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/79).
