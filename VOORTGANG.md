@@ -1574,3 +1574,13 @@ grillig aan. Omgebouwd naar een horizontale, beeldvullende slider:
   onderaan (was op desktop nog een verticale lijst rechts).
 
 Gemerged via [PR #81](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/81).
+
+## Afgerond: Bold/Eager/Human-kaarten stonden scheef tijdens de stagger-animatie
+
+Wouter meldde dat de 3 kaarten tijdens het in-beeld-komen scheef naast
+elkaar stonden i.p.v. netjes uitgelijnd. Oorzaak: de GSAP-stagger (150ms)
+combineerde met een y-verschuiving van 30px per kaart, waardoor ze
+tijdens de overgang tijdelijk op ongelijke hoogte stonden. De
+y-verschuiving verwijderd uit `over-ons-animaties.js`, alleen de
+gestaggerde fade blijft over: de kaarten blijven nu de hele tijd op
+precies dezelfde hoogte staan. Gemerged via [PR #82](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/82).
