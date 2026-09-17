@@ -132,6 +132,7 @@
       </div>
     </div>
   </div>
+  <a class="btn btn-text" id="og-heroes-link" href="https://ogcleanfuels.com/nl/heroes" target="_blank" rel="noopener" style="display:none;">Ontdek alle OG Heroes ↗</a>
 </section>
 
 <section class="content">
@@ -171,6 +172,13 @@
 
 <script src="/i18n/i18n.js"></script>
 <script src="/animations.js"></script>
+<script>
+  // "Ontdek alle OG Heroes"-link alleen tonen in het NL: de OG Heroes-
+  // pagina op de corporate site bestaat alleen in het Nederlands.
+  if (window.OG_HUIDIGE_TAAL === "nl") {
+    document.getElementById("og-heroes-link").style.display = "";
+  }
+</script>
 
 </body>
 </html>
