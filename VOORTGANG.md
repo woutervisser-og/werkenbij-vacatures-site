@@ -1643,7 +1643,7 @@ hoofd gezien: de placeholder-achtergrond voor jaren zonder foto
 gebruikte nog het groene verloop. Nu oranje, consistent met de rest
 van de pagina. Gemerged via [PR #85](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/85).
 
-## Bezig: interactieve Europa-vacaturekaart — fase 1 (dummy data) afgerond
+## Bezig: interactieve Europa-vacaturekaart — fase 1+2 (dummy data, live op homepage) afgerond
 
 Nieuwe wens van Wouter: een Europa-kaart die per land toont hoeveel
 vacatures er openstaan (choropleth, geen losse pins), gebouwd in
@@ -1670,8 +1670,20 @@ fases. Fase 1 nu gemerged: `europa-kaart.js` + `europa-kaart-preview.html`
   zijn op geen enkel schermformaat precies aan te tikken op de kaart
   zelf).
 
+Gemerged via [PR #86](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/86).
+
+**Fase 2, na akkoord op de stijl**: kleurschaal van groen naar oranje
+(`--og-orange-light` -> `--og-orange-dark`, consistent met de rest van
+de site), en de kaart daadwerkelijk op de homepage geïmplementeerd
+(nieuwe sectie onder de "Europese koploper"-statistieken). Daarbij een
+pre-existing bug gevonden en in 1 keer voor de hele site gefixt:
+`section.content` miste een expliciete `width:100%`, waardoor de
+flex-stretch van `<body>` (column-flex) niet betrouwbaar de volle
+1100px-kolombreedte gaf — trof niet alleen de nieuwe kaart-sectie maar
+ook de al langer bestaande statistieken-sectie erboven. Gemerged via
+[PR #87](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/87).
+
 **Nog te doen**: de Azure Function die vacatures per land aggregeert
 uit Table Storage (Locatie-veld parsen, landnaam-lookup, response
-`niet_gematcht`-array voor onherkende Locatie-waardes). Wacht op
-Wouters akkoord over de visuele stijl, net binnen via PR #86.
-Gemerged via [PR #86](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/86).
+`niet_gematcht`-array voor onherkende Locatie-waardes). `DATA_URL` in
+`europa-kaart.js` wijst nog naar het statische dummy-bestand.
