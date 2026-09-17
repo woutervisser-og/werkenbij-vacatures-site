@@ -1159,6 +1159,58 @@ footer .logo-footer {
 .voordeel-kaart.voordeel-donker h4 { color: var(--og-orange); }
 .voordeel-kaart.voordeel-donker p { color: rgba(255,255,255,0.85); }
 
+/* ===== Afdelingen-index: bewust géén icon-cards (het standaard "feature
+   grid"-patroon), maar een editoriale, genummerde lijst — leunt op
+   typografie (Komu-cijfers) i.p.v. iconen/vlakken. Spark verschijnt
+   alleen bij hover, niet als vaste decoratie per regel, zodat het geen
+   herhaald sjabloon-element wordt. ===== */
+.afdelingen-index {
+  display: grid;
+  grid-template-columns: 1fr;
+  column-gap: 48px;
+}
+@media (min-width: 860px) {
+  .afdelingen-index { grid-template-columns: 1fr 1fr; }
+}
+.afdeling-regel {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 18px 0 18px 30px;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s ease, padding-left 0.2s ease;
+}
+.afdeling-regel:hover {
+  background: var(--og-cream);
+  padding-left: 40px;
+}
+.afdeling-regel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 26px;
+  width: 15px;
+  height: 15px;
+  background-color: var(--og-orange);
+  -webkit-mask: url('/images/spark-orange.png') center / contain no-repeat;
+  mask: url('/images/spark-orange.png') center / contain no-repeat;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.afdeling-regel:hover::before { opacity: 1; }
+.afdeling-nummer {
+  font-family: 'Komu', sans-serif;
+  font-size: 26px;
+  color: var(--og-orange-light);
+  flex-shrink: 0;
+  width: 42px;
+  line-height: 1;
+}
+.afdeling-inhoud { display: flex; flex-direction: column; gap: 4px; }
+.afdeling-naam { font-weight: 800; font-size: 16.5px; color: var(--og-dark); }
+.afdeling-tekst { font-size: 14px; color: #5a5a56; line-height: 1.5; }
+
 /* ===== Collega-quotes zonder foto (i.p.v. teruggrijpen op generieke
    stockfoto's die eerder al bewust uit de vacature-detailpagina's zijn
    gehaald). ===== */
