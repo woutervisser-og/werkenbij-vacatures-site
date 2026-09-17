@@ -918,12 +918,11 @@ footer {
 }
 .footer-kolom a:hover { opacity: 1; text-decoration: underline; }
 footer .logo-footer {
-  font-family: 'Komu', sans-serif;
-  color: var(--og-white);
-  font-size: 22px;
+  height: 40px;
+  width: auto;
+  align-self: flex-start;
   margin-bottom: 4px;
   display: block;
-  text-transform: uppercase;
 }
 .footer-onder {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
