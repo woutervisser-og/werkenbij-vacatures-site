@@ -1,0 +1,9 @@
+[
+  {"land": "NL", "aantal": 15},
+  {"land": "FR", "aantal": 8},
+  {"land": "DE", "aantal": 6},
+  {"land": "IT", "aantal": 5},
+  {"land": "SE", "aantal": 3},
+  {"land": "PL", "aantal": 2},
+  {"land": "ES", "aantal": 1}
+]

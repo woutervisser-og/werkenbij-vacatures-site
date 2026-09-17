@@ -1742,3 +1742,94 @@ footer .logo-footer {
   }
   .blok-afbeelding-tekst.blok-richting-rechts img { order: 0; }
 }
+
+/* ===== Europa-kaart met vacatures per land (europa-kaart.js). Kleurschaal
+   loopt van een lichte tint naar --og-green-dark; landen zonder vacatures
+   krijgen een neutrale lichtgrijze vlakte (zelfde grijs als elders, geen
+   wit/weggelaten land). ===== */
+.europa-kaart {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.europa-kaart-svg-houder { width: 100%; }
+.europa-kaart-svg { display: block; width: 100%; height: auto; }
+.europa-kaart-land {
+  stroke: var(--og-white);
+  stroke-width: 0.75;
+  transition: filter 0.15s ease;
+}
+.europa-kaart-land:hover,
+.europa-kaart-land:focus-visible {
+  filter: brightness(0.92);
+  outline: none;
+}
+.europa-kaart-land[tabindex="0"]:focus-visible {
+  stroke: var(--og-orange-dark);
+  stroke-width: 1.5;
+}
+
+.europa-kaart-tooltip {
+  position: absolute;
+  transform: translate(-50%, -130%);
+  background: var(--og-dark);
+  color: var(--og-white);
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
+}
+.europa-kaart-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--og-dark);
+}
+
+/* Lijstweergave: staat altijd in de DOM, maar alleen zichtbaar op smalle
+   schermen (zie media query hieronder) — micro-staten (Andorra, Monaco,
+   Vaticaanstad, ...) zijn op een telefoon nooit precies genoeg aan te
+   tikken op de kaart zelf; de lijst garandeert een bruikbaar aanraakvlak
+   ongeacht landgrootte. De kaart blijft ook op mobiel zichtbaar. */
+.europa-kaart-lijst {
+  display: none;
+  list-style: none;
+  margin-top: 20px;
+  border-top: 1px solid #e5e5e2;
+}
+.europa-kaart-lijst a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px;
+  border-bottom: 1px solid #e5e5e2;
+  color: var(--og-dark);
+  text-decoration: none;
+  font-size: 15px;
+}
+.europa-kaart-lijst a:hover,
+.europa-kaart-lijst a:focus-visible { color: var(--og-orange-dark); }
+.europa-kaart-lijst-aantal {
+  background: var(--og-green-dark);
+  color: var(--og-white);
+  font-family: 'Komu', sans-serif;
+  font-size: 13px;
+  padding: 0.3em 10px 0.15em;
+  border-radius: 12px;
+  min-width: 1.6em;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .europa-kaart-lijst { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .europa-kaart { opacity: 1 !important; transform: none !important; }
+}
