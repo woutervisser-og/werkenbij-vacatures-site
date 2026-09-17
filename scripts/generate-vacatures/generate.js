@@ -308,7 +308,7 @@ function renderBlok(blok, vacature) {
     case "intro_gecentreerd":
       return `<div class="blok blok-intro-gecentreerd">
         ${blok.eyebrow ? `<span class="eyebrow">${escapeHtml(blok.eyebrow)}</span>` : ""}
-        ${blok.kop ? `<h3>${escapeHtml(blok.kop)}</h3>` : ""}
+        ${blok.kop ? `<h2>${escapeHtml(blok.kop)}</h2>` : ""}
         <div class="blok-tekstinhoud">${paragrafen(blok.tekst)}</div>
       </div>`;
 
@@ -320,13 +320,13 @@ function renderBlok(blok, vacature) {
 
     case "tekst":
       return `<div class="blok blok-tekst">
-        ${blok.kop ? `<h3 class="blok-kop">${escapeHtml(blok.kop)}</h3>` : ""}
+        ${blok.kop ? `<h2 class="blok-kop">${escapeHtml(blok.kop)}</h2>` : ""}
         ${paragrafen(blok.inhoud)}
       </div>`;
 
     case "tekst_kolommen":
       return `<div class="blok">
-        ${blok.kop ? `<h3 class="blok-kop">${escapeHtml(blok.kop)}</h3>` : ""}
+        ${blok.kop ? `<h2 class="blok-kop">${escapeHtml(blok.kop)}</h2>` : ""}
         <div class="blok-tekst-kolommen">
           <div>${paragrafen(blok.kolom1)}</div>
           <div>${paragrafen(blok.kolom2)}</div>
@@ -343,7 +343,7 @@ function renderBlok(blok, vacature) {
 
     case "afbeelding_tekst":
       return `<div class="blok">
-        ${blok.kop ? `<h3 class="blok-kop">${escapeHtml(blok.kop)}</h3>` : ""}
+        ${blok.kop ? `<h2 class="blok-kop">${escapeHtml(blok.kop)}</h2>` : ""}
         <div class="blok-afbeelding-tekst blok-richting-${blok.richting === "rechts" ? "rechts" : "links"}">
           ${blok.afbeelding ? `<img src="${escapeHtml(blok.afbeelding)}" alt="">` : ""}
           <div class="blok-tekstinhoud">${paragrafen(blok.tekst)}</div>
@@ -352,7 +352,7 @@ function renderBlok(blok, vacature) {
 
     case "bullet_lijst":
       return `<div class="blok blok-bullets">
-        ${blok.titel ? `<h4>${escapeHtml(blok.titel)}</h4>` : ""}
+        ${blok.titel ? `<h2>${escapeHtml(blok.titel)}</h2>` : ""}
         <ul>
           ${(blok.punten || []).map(punt => `<li>${escapeHtml(punt.tekst)}</li>`).join("")}
         </ul>
@@ -400,7 +400,7 @@ function renderBlok(blok, vacature) {
 
     case "veelgestelde_vragen":
       return `<div class="blok blok-faq">
-        ${blok.kop ? `<h3 class="blok-kop">${escapeHtml(blok.kop)}</h3>` : ""}
+        ${blok.kop ? `<h2 class="blok-kop">${escapeHtml(blok.kop)}</h2>` : ""}
         ${(blok.vragen || []).map(item => `<details>
           <summary>${escapeHtml(item.vraag)}</summary>
           <div>${paragrafen(item.antwoord)}</div>
@@ -451,7 +451,7 @@ function renderVacatureHero(vacature, salaris, t) {
 function renderTitelSectie(vacature, salaris, t) {
   return `<div class="section-head reveal">
     <span class="tag">${escapeHtml(vacature.afdeling || t("vacature.tagFallback"))}</span>
-    <h2>${escapeHtml(vacature.titel)}</h2>
+    <h1>${escapeHtml(vacature.titel)}</h1>
   </div>
   <div class="detail-meta reveal">
     <span class="meta-pill">${escapeHtml(vacature.dienstverband || "")}</span>
@@ -552,7 +552,7 @@ ${renderBroodkruimel(vacature, taalcode, t)}
       <div class="recruiter-naam">${RECRUITER.naam},<br>${RECRUITER.functie}</div>
     </div>
     <div class="recruiter-tekst">
-      <h3>${t("recruiter.vraagKop")}</h3>
+      <h2>${t("recruiter.vraagKop")}</h2>
       <p>✉ <a href="mailto:${RECRUITER.email}">${RECRUITER.email}</a></p>
       <p>${t("recruiter.contactUitleg")}</p>
     </div>
@@ -560,7 +560,7 @@ ${renderBroodkruimel(vacature, taalcode, t)}
   </div>
 
   <div class="solliciteer-blok reveal" id="solliciteer-blok">
-    <h3 style="margin-bottom:20px;"><span class="titel-highlight">${t("form.titel")}</span></h3>
+    <h2 style="margin-bottom:20px;"><span class="titel-highlight">${t("form.titel")}</span></h2>
     <form id="sollicitatie-form">
       <input type="hidden" name="vacatureId" value="${escapeHtml(vacature.id)}">
       <fieldset id="sollicitatie-velden" style="border:0;padding:0;margin:0;">
