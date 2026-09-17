@@ -1736,3 +1736,15 @@ overnam. Een video-header (embed-URL, geen losse thumbnail/poster) of
 helemaal geen header krijgt een oranje verloop-placeholder i.p.v. een
 kapotte afbeelding. Previewpagina weer verwijderd, taak is klaar.
 Gemerged via [PR #91](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/91).
+
+Direct daarna bleek het vacature-overzicht merkbaar traag: de
+headerfoto's zijn ongewijzigde camera-originelen (1.7-2.1 MB op
+~4600px breedte), rechtstreeks als thumbnail geladen. Opgelost met een
+nieuwe, publieke Function `api/Thumbnail` (route bewust niet met
+"media" beginnend i.v.m. de authenticated-only `/api/media*`-regel):
+verkleint en comprimeert het origineel met `sharp` naar een vaste
+breedte (standaard 800px, WebP kwaliteit 75), met een jaar lang cachebaar
+(elke blobnaam is een unieke UUID, dus altijd dezelfde inhoud). Werkt
+meteen voor alle bestaande vacatures, geen herupload nodig. Thumbnails
+gingen van 2+ MB naar 21-34 KB, plus `loading="lazy"` op de tegel-
+afbeelding. Gemerged via [PR #92](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/92).
