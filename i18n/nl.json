@@ -212,6 +212,11 @@
     "geenVacaturesGefilterd": "Geen vacatures gevonden met deze filters.",
     "filterLand": "Land",
     "filterAfdeling": "Afdeling",
+    "filterAlleEnLink": "Alle vacatures (EN)",
+    "filterDienstverband": "Dienstverband",
+    "filterNiveau": "Niveau",
+    "meerFilters": "Meer filters",
+    "minderFilters": "Minder filters",
     "foutmelding": "Er ging iets mis bij het laden van de vacatures. Probeer het later opnieuw.",
     "heroIntro": "Bekijk onze openstaande vacatures en vind de rol die bij je past."
   },

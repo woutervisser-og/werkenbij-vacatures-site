@@ -212,6 +212,11 @@
     "geenVacaturesGefilterd": "No vacancies found with these filters.",
     "filterLand": "Country",
     "filterAfdeling": "Department",
+    "filterAlleEnLink": "All vacancies",
+    "filterDienstverband": "Employment type",
+    "filterNiveau": "Education level",
+    "meerFilters": "More filters",
+    "minderFilters": "Fewer filters",
     "foutmelding": "Something went wrong loading the vacancies. Please try again later.",
     "heroIntro": "Browse our open vacancies and find the role that fits you."
   },
