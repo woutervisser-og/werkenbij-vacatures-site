@@ -1635,3 +1635,10 @@ Wouter:
   begon er vrijwel direct onder.
 
 Gemerged via [PR #84](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/84).
+
+## Afgerond: tijdlijn-placeholders (2012/2015/2022) van groen naar oranje
+
+Laatste restant van het oude groene accent (vóór PR #83) over het
+hoofd gezien: de placeholder-achtergrond voor jaren zonder foto
+gebruikte nog het groene verloop. Nu oranje, consistent met de rest
+van de pagina. Gemerged via [PR #85](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/85).
