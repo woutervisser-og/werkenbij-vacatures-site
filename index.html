@@ -103,6 +103,18 @@
   </div>
 </section>
 
+<section class="content">
+  <div class="section-head reveal">
+    <span class="tag" data-i18n="home.sectie3Tag">Waar we actief zijn</span>
+    <h2><span data-i18n="home.sectie3TitelVoor">Onze </span><span class="titel-highlight" data-i18n="home.sectie3Highlight">vacatures in Europa</span></h2>
+  </div>
+  <div class="reveal">
+    <p class="content-intro-tekst" data-i18n="home.sectie3Intro">Klik op een land om de openstaande vacatures daar te bekijken.</p>
+  </div>
+
+  <div class="europa-kaart" id="europa-kaart"></div>
+</section>
+
 <footer>
   <div class="footer-content">
     <div class="footer-kolom">
@@ -132,5 +144,14 @@
 
 <script src="/i18n/i18n.js"></script>
 <script src="/animations.js"></script>
+
+<!-- Europa-vacaturekaart (europa-kaart.js): D3 (kernbundel) + GSAP/
+     ScrollTrigger voor de fade/scale-in bij eerste keer in beeld, via
+     CDN met defer. Progressive enhancement: als GSAP niet laadt, blijft
+     de kaart gewoon zichtbaar/werkend, alleen zonder entree-animatie. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="/europa-kaart.js" defer></script>
 </body>
 </html>
