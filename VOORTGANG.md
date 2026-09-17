@@ -1366,3 +1366,25 @@ Na PR #62 nog een paar directe bijsturingen van Wouter:
   toegevoegd als pill (alleen als gevuld — dit veld was al langer
   invulbaar in `/beheer` maar nog nergens publiek zichtbaar). Locatie
   blijft gewoon bovenaan de kaart staan. Gemerged via [PR #65](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/65).
+- **Footer-logo i.p.v. uitgeschreven tekst**: footer toont nu het witte
+  logo op alle 5 marketingpagina's en in de generate.js-template.
+  Onderweg een echte bug gevonden en gefixt: `.footer-kolom` is een
+  flex-column met de standaard `align-items:stretch`, waardoor de
+  afbeelding breed uitgerekt werd i.p.v. haar eigen beeldverhouding aan
+  te houden — `align-self:flex-start` toegevoegd.
+- **Tekstfix homepage**: "Een Europese koploper" → "De Europese
+  koploper" (NL). Gemerged via [PR #66](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/66).
+
+## Afgerond: onze 17 afdelingen op Werken bij OG
+
+Nieuwe sectie op `werken-bij-og.html`, tussen "Zo werken wij" en
+"Naast je salaris": introduceert de 17 afdelingen (uit
+`ALLOWED_AFDELINGEN`). Op expliciet verzoek van Wouter bewust niet het
+standaard AI-webdesign-patroon (een grid van identieke icon-cards),
+maar een editoriale, genummerde index: grote Komu-cijfers i.p.v.
+iconen-in-cirkels, geen kaartranden/schaduwen die 17x herhaald worden,
+en de spark verschijnt alleen bij hover i.p.v. als vaste decoratie per
+regel. 2 kolommen op desktop, 1 op mobiel. Elke afdeling heeft een
+eigen specifieke eenregelige tekst in de bestaande merkstem, geen lege
+vulzinnen. Alleen NL/EN vertaald (FR/DE/IT/SE vallen terug op EN,
+bestaand patroon). Gemerged via [PR #67](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/67).
