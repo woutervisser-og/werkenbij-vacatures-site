@@ -10,6 +10,11 @@
     "copyright": "© 2026 OG Clean Fuels. Alle rechten voorbehouden.",
     "menuKop": "Menu"
   },
+  "europaKaart": {
+    "ariaLabel": "Interactieve kaart van Europa met het aantal openstaande vacatures per land",
+    "vacatureEnkelvoud": "{{aantal}} openstaande vacature",
+    "vacatureMeervoud": "{{aantal}} openstaande vacatures"
+  },
   "breadcrumb": {
     "home": "Home"
   },
