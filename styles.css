@@ -648,7 +648,7 @@ section.content {
   border-radius: 3px;
   margin-bottom: 4px;
 }
-.section-head h2 { font-size: 40px; line-height: 1; margin-top: 10px; color: var(--og-orange-dark); }
+.section-head h1, .section-head h2 { font-size: 40px; line-height: 1; margin-top: 10px; color: var(--og-orange-dark); }
 
 .card-grid {
   display: grid;
@@ -867,7 +867,7 @@ section.content {
 }
 .recruiter-naam { font-style: italic; font-size: 14px; }
 .recruiter-tekst { flex: 1; min-width: 240px; }
-.recruiter-tekst h3 { color: var(--og-orange-dark); font-size: 20px; margin-bottom: 10px; }
+.recruiter-tekst h2 { color: var(--og-orange-dark); font-size: 20px; margin-bottom: 10px; }
 .recruiter-tekst p { font-size: 14.5px; color: #333; margin-bottom: 6px; }
 .recruiter-tekst a { color: var(--og-orange-dark); font-weight: 600; }
 .recruiter-bel-btn {
@@ -1023,7 +1023,7 @@ footer .logo-footer {
 
 .blok-intro-gecentreerd { text-align: center; max-width: 640px; margin-left: auto; margin-right: auto; }
 .blok-intro-gecentreerd .eyebrow { position: static; }
-.blok-intro-gecentreerd h3 { margin: 10px 0 14px; font-size: 24px; }
+.blok-intro-gecentreerd h2 { margin: 10px 0 14px; font-size: 24px; }
 
 .blok-intro-split {
   display: grid;
