@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Preview: vacature-tegels met thumbnail</title>
+<link rel="icon" href="/images/favicon-og.ico">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* Losse, niet-gelinkte previewpagina (zelfde opzet als eerder
+     europa-kaart-preview.html): alleen om 3 varianten naast elkaar te
+     kunnen beoordelen, geen onderdeel van de echte site. */
+  body { background: var(--og-cream); }
+  .preview-uitleg {
+    max-width: 900px;
+    margin: 0 auto 50px;
+    padding: 30px 6% 0;
+    text-align: center;
+  }
+  .preview-uitleg h1 { font-size: 28px; margin-bottom: 12px; }
+  .preview-variant {
+    max-width: 1300px;
+    margin: 0 auto 60px;
+    padding: 0 6%;
+  }
+  .preview-variant-kop {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .preview-variant-kop h2 { font-size: 22px; color: var(--og-orange-dark); margin: 0; }
+  .preview-variant-label {
+    background: var(--og-orange-dark);
+    color: var(--og-white);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .preview-variant-toelichting { color: #4a4a4a; font-size: 14.5px; margin-bottom: 24px; max-width: 700px; }
+
+  /* Placeholder voor vacatures zonder foto-header (video-header of geen
+     header): zelfde oranje verloop als elders op de site (bv. de
+     tijdlijn-placeholders), i.p.v. een lege/kapotte afbeelding. */
+  .tegel-thumb-fallback {
+    background-image: linear-gradient(135deg, var(--og-orange-dark), var(--og-orange));
+  }
+
+  /* ===== Variant A: volle-breedte banner bovenaan ===== */
+  .tegel-a.vacature-card { padding: 0; overflow: hidden; }
+  .tegel-a .tegel-thumb, .tegel-a .tegel-thumb-fallback {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+  }
+  .tegel-a .tegel-a-inhoud { padding: 24px 28px 28px; display: flex; flex-direction: column; flex-grow: 1; }
+
+  /* ===== Variant B: horizontale kaart, thumbnail links ===== */
+  .tegel-b.vacature-card { flex-direction: row; gap: 20px; }
+  .tegel-b .tegel-thumb, .tegel-b .tegel-thumb-fallback {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    object-fit: cover;
+    border-radius: 14px;
+  }
+  .tegel-b .tegel-b-inhoud { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; }
+  @media (max-width: 640px) {
+    .tegel-b.vacature-card { flex-direction: column; }
+    .tegel-b .tegel-thumb, .tegel-b .tegel-thumb-fallback { width: 100%; height: auto; aspect-ratio: 16 / 9; }
+  }
+
+  /* ===== Variant C: kleine ronde thumbnail naast de locatieregel ===== */
+  .tegel-c .kaart-meta { display: flex; align-items: center; gap: 10px; }
+  .tegel-c .tegel-thumb, .tegel-c .tegel-thumb-fallback {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--og-cream-2);
+  }
+</style>
+</head>
+<body>
+
+<div class="preview-uitleg">
+  <h1>Preview: vacature-tegels met thumbnail</h1>
+  <p>3 varianten met de headerfoto van de vacature als thumbnail, gevuld met de echte, live vacatures. Kies welke variant naar de echte vacatures-pagina mag.</p>
+</div>
+
+<section class="preview-variant">
+  <div class="preview-variant-kop"><span class="preview-variant-label">A</span><h2>Volle-breedte banner</h2></div>
+  <p class="preview-variant-toelichting">Foto beeldvullend bovenaan de tegel, tekst eronder. Meest visuele impact, doet het meest denken aan een "echt" vacatureplatform.</p>
+  <div class="card-grid" id="grid-a"></div>
+</section>
+
+<section class="preview-variant">
+  <div class="preview-variant-kop"><span class="preview-variant-label">B</span><h2>Horizontale kaart</h2></div>
+  <p class="preview-variant-toelichting">Vierkante thumbnail links, tekst ernaast. Compact en oogt rustiger dan A, maar de foto blijft goed zichtbaar. Stapelt op mobiel.</p>
+  <div class="card-grid" id="grid-b"></div>
+</section>
+
+<section class="preview-variant">
+  <div class="preview-variant-kop"><span class="preview-variant-label">C</span><h2>Kleine ronde thumbnail</h2></div>
+  <p class="preview-variant-toelichting">Minimale, ronde thumbnail naast de locatieregel. Blijft dicht bij de huidige tegel, de foto is een accent in plaats van het hoofdelement.</p>
+  <div class="card-grid" id="grid-c"></div>
+</section>
+
+<script>
+  // Zelfde databron en render-logica als vacatures.html (bewust
+  // gedupliceerd, dit is een losse previewpagina die niet meeloopt met
+  // de echte site-code).
+  function maakSlug(tekst) {
+    return (tekst || "")
+      .toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/&/g, " en ")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+  function maakSamenvatting(bodyBlokken, lengte = 100) {
+    const blok = (bodyBlokken || []).find(b => ["intro_gecentreerd", "intro_split", "tekst"].includes(b.type));
+    const ruweTekst = (blok && (blok.tekst || blok.inhoud) || "").replace(/\s+/g, " ").trim();
+    return ruweTekst.length > lengte ? ruweTekst.slice(0, lengte).trim() + "..." : ruweTekst;
+  }
+  function enTitelVoorSlug(vacature) {
+    return (vacature.translations && vacature.translations.en && vacature.translations.en.title) || vacature.titel;
+  }
+  function thumbnailHtml(vacature) {
+    const header = vacature.header;
+    const heeftFoto = header && header.type !== "video" && header.bron;
+    if (heeftFoto) {
+      return `<img class="tegel-thumb" src="${header.bron}" alt="">`;
+    }
+    return `<div class="tegel-thumb-fallback"></div>`;
+  }
+
+  function kaartHtml(vacature, variant) {
+    const vertaling = (vacature.translations && vacature.translations.en) || { title: vacature.titel, bodyBlocks: vacature.bodyBlokken };
+    const slug = maakSlug(enTitelVoorSlug(vacature));
+    const href = `/en/vacature/${slug}.html`;
+    const inhoud = `
+      <div class="kaart-meta">${thumbnailHtml(vacature)}<span>${vacature.locatie || ""}</span></div>
+      <h3>${vertaling.title || ""}</h3>
+      <div class="meta-row">
+        <span class="meta-pill">${vacature.dienstverband || ""}</span>
+        <span class="meta-pill">${vacature.afdeling || ""}</span>
+      </div>
+      <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
+      <span class="btn btn-secondary">Bekijk vacature</span>
+    `;
+
+    if (variant === "a") {
+      return `<a class="vacature-card tegel-a" href="${href}" style="text-decoration:none;color:inherit;">
+        ${thumbnailHtml(vacature)}
+        <div class="tegel-a-inhoud">
+          <div class="kaart-meta">${vacature.locatie || ""}</div>
+          <h3>${vertaling.title || ""}</h3>
+          <div class="meta-row">
+            <span class="meta-pill">${vacature.dienstverband || ""}</span>
+            <span class="meta-pill">${vacature.afdeling || ""}</span>
+          </div>
+          <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
+          <span class="btn btn-secondary">Bekijk vacature</span>
+        </div>
+      </a>`;
+    }
+    if (variant === "b") {
+      return `<a class="vacature-card tegel-b" href="${href}" style="text-decoration:none;color:inherit;">
+        ${thumbnailHtml(vacature)}
+        <div class="tegel-b-inhoud">
+          <div class="kaart-meta">${vacature.locatie || ""}</div>
+          <h3>${vertaling.title || ""}</h3>
+          <div class="meta-row">
+            <span class="meta-pill">${vacature.dienstverband || ""}</span>
+            <span class="meta-pill">${vacature.afdeling || ""}</span>
+          </div>
+          <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
+          <span class="btn btn-secondary">Bekijk vacature</span>
+        </div>
+      </a>`;
+    }
+    // variant c
+    return `<a class="vacature-card tegel-c" href="${href}" style="text-decoration:none;color:inherit;">
+      <div class="kaart-meta">${thumbnailHtml(vacature)}<span>${vacature.locatie || ""}</span></div>
+      <h3>${vertaling.title || ""}</h3>
+      <div class="meta-row">
+        <span class="meta-pill">${vacature.dienstverband || ""}</span>
+        <span class="meta-pill">${vacature.afdeling || ""}</span>
+      </div>
+      <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
+      <span class="btn btn-secondary">Bekijk vacature</span>
+    </a>`;
+  }
+
+  fetch("/api/GetVacatures")
+    .then(r => r.json())
+    .then(vacatures => {
+      const subset = vacatures.slice(0, 6);
+      ["a", "b", "c"].forEach(variant => {
+        document.getElementById(`grid-${variant}`).innerHTML =
+          subset.map(v => kaartHtml(v, variant)).join("");
+      });
+    })
+    .catch(err => {
+      ["a", "b", "c"].forEach(variant => {
+        document.getElementById(`grid-${variant}`).innerHTML = "<p>Kon vacatures niet laden.</p>";
+      });
+      console.error(err);
+    });
+</script>
+
+</body>
+</html>
