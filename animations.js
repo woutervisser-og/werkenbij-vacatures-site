@@ -31,51 +31,120 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", bijwerken, { passive: true });
 });
 
-// Tijdlijn "onze geschiedenis" (over-ons.html): full-screen sticky
-// foto-slider. Terwijl je de hoge #tijdlijn-slider-wrapper doorscrolt
-// blijft .tijdlijn-slider-sticky op zijn plek staan; hier berekenen we
-// aan de hand van de scrollpositie welk jaar daarbij hoort en kruisfaden
-// we de achtergrondfoto, tekst en actieve jaartal-knop. Klikken op een
-// jaartal in de nav scrollt (smooth) naar het bijbehorende punt in de
-// wrapper, wat via dezelfde logica de kruisfade triggert.
+// Tijdlijn "onze geschiedenis" (over-ons.html): horizontale, beeldvullende
+// foto-slider met een vaste hoogte (geen scroll-jacking: de sectie neemt
+// gewoon 1 vast blok in de paginaflow in, verticaal scrollen gaat er
+// gewoon doorheen). Navigeren tussen jaren gaat horizontaal: klik op een
+// jaartal of pijlknop, swipe/sleep, of de pijltjestoetsen. De actieve
+// foto schuift in vanaf links/rechts (afhankelijk van de richting, zie
+// .instapt-links/.instapt-rechts in styles.css), tekst en jaartal-knop
+// kruisfaden via .is-actief.
 document.addEventListener("DOMContentLoaded", () => {
   const wrapper = document.getElementById("tijdlijn-slider");
   if (!wrapper) return;
 
   const jaren = wrapper.dataset.jaren.split(",");
-  const achtergronden = wrapper.querySelectorAll(".tijdlijn-slider-achtergrond");
-  const teksten = wrapper.querySelectorAll(".tijdlijn-slider-inhoud p");
+  const achtergronden = Array.from(wrapper.querySelectorAll(".tijdlijn-slider-achtergrond"));
+  const teksten = Array.from(wrapper.querySelectorAll(".tijdlijn-slider-inhoud p"));
   const jaarLabel = document.getElementById("tijdlijn-slider-jaar");
-  const navKnoppen = wrapper.querySelectorAll(".tijdlijn-slider-nav-knop");
+  const navKnoppen = Array.from(wrapper.querySelectorAll(".tijdlijn-slider-nav-knop"));
+  const vorigeKnop = wrapper.querySelector(".tijdlijn-slider-pijl-vorige");
+  const volgendeKnop = wrapper.querySelector(".tijdlijn-slider-pijl-volgende");
 
-  let huidigeIndex = -1;
+  let huidigeIndex = 0;
 
-  const zetActief = (index) => {
-    if (index === huidigeIndex) return;
-    huidigeIndex = index;
-    achtergronden.forEach((el, i) => el.classList.toggle("is-actief", i === index));
-    teksten.forEach((el, i) => el.classList.toggle("is-actief", i === index));
-    navKnoppen.forEach((el, i) => el.classList.toggle("is-actief", i === index));
-    if (jaarLabel) jaarLabel.textContent = jaren[index];
+  // Zet een achtergrond direct (zonder transitie) op een startpositie,
+  // zodat de daaropvolgende overgang naar .is-actief altijd vanaf de
+  // juiste kant instapt, ook als deze foto nog nooit actief is geweest.
+  const zetPositieDirect = (el, kant) => {
+    el.classList.add("geen-transitie");
+    el.classList.remove("is-actief", "instapt-links", "instapt-rechts");
+    el.classList.add(kant);
+    void el.offsetWidth; // forceer reflow, anders wordt "geen-transitie" te laat verwijderd
+    el.classList.remove("geen-transitie");
   };
 
-  const totaalScrollbaar = () => wrapper.offsetHeight - window.innerHeight;
+  // Initiële opstelling: alle jaren op 1 na geparkeerd rechts (die komen
+  // pas "van rechts" in beeld bij vooruit-navigatie).
+  achtergronden.forEach((el, i) => {
+    if (i === 0) return;
+    zetPositieDirect(el, "instapt-rechts");
+  });
 
-  const bijwerken = () => {
-    const scrollbaar = totaalScrollbaar();
-    const voortgang = scrollbaar > 0 ? Math.min(1, Math.max(0, -wrapper.getBoundingClientRect().top / scrollbaar)) : 0;
-    zetActief(Math.round(voortgang * (jaren.length - 1)));
+  const werkKnoppenBij = () => {
+    if (vorigeKnop) vorigeKnop.disabled = huidigeIndex === 0;
+    if (volgendeKnop) volgendeKnop.disabled = huidigeIndex === jaren.length - 1;
   };
-  bijwerken();
-  window.addEventListener("scroll", bijwerken, { passive: true });
-  window.addEventListener("resize", bijwerken);
+  werkKnoppenBij();
 
-  navKnoppen.forEach((knop, i) => {
-    knop.addEventListener("click", () => {
-      const scrollbaar = totaalScrollbaar();
-      const doel = wrapper.offsetTop + (scrollbaar > 0 ? (i / (jaren.length - 1)) * scrollbaar : 0);
-      window.scrollTo({ top: doel, behavior: "smooth" });
+  const gaNaar = (nieuweIndex) => {
+    nieuweIndex = Math.max(0, Math.min(jaren.length - 1, nieuweIndex));
+    if (nieuweIndex === huidigeIndex) return;
+    const vooruit = nieuweIndex > huidigeIndex;
+
+    achtergronden[huidigeIndex].classList.remove("is-actief");
+    achtergronden[huidigeIndex].classList.add(vooruit ? "instapt-links" : "instapt-rechts");
+
+    zetPositieDirect(achtergronden[nieuweIndex], vooruit ? "instapt-rechts" : "instapt-links");
+    requestAnimationFrame(() => {
+      achtergronden[nieuweIndex].classList.remove("instapt-links", "instapt-rechts");
+      achtergronden[nieuweIndex].classList.add("is-actief");
     });
+
+    teksten.forEach((el, i) => el.classList.toggle("is-actief", i === nieuweIndex));
+    navKnoppen.forEach((el, i) => el.classList.toggle("is-actief", i === nieuweIndex));
+    if (jaarLabel) jaarLabel.textContent = jaren[nieuweIndex];
+
+    huidigeIndex = nieuweIndex;
+    werkKnoppenBij();
+  };
+
+  navKnoppen.forEach((knop, i) => knop.addEventListener("click", () => gaNaar(i)));
+  if (vorigeKnop) vorigeKnop.addEventListener("click", () => gaNaar(huidigeIndex - 1));
+  if (volgendeKnop) volgendeKnop.addEventListener("click", () => gaNaar(huidigeIndex + 1));
+
+  wrapper.setAttribute("tabindex", "0");
+  wrapper.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowRight") gaNaar(huidigeIndex + 1);
+    if (event.key === "ArrowLeft") gaNaar(huidigeIndex - 1);
+  });
+
+  // Swipe/sleep (touch + muis): alleen een overwegend horizontale
+  // uitslag telt als jaar-wissel. touch-action:pan-y (styles.css) laat
+  // een overwegend verticale sleep gewoon de pagina scrollen.
+  let startX = null;
+  let startY = null;
+  let sleept = false;
+
+  const sleepStart = (x, y) => {
+    startX = x;
+    startY = y;
+    sleept = true;
+  };
+  const sleepEind = (x, y) => {
+    if (!sleept) return;
+    sleept = false;
+    const dx = x - startX;
+    const dy = y - startY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      gaNaar(huidigeIndex + (dx < 0 ? 1 : -1));
+    }
+  };
+
+  wrapper.addEventListener("touchstart", (event) => {
+    const t = event.touches[0];
+    sleepStart(t.clientX, t.clientY);
+  }, { passive: true });
+  wrapper.addEventListener("touchend", (event) => {
+    const t = event.changedTouches[0];
+    sleepEind(t.clientX, t.clientY);
+  }, { passive: true });
+
+  wrapper.addEventListener("mousedown", (event) => {
+    sleepStart(event.clientX, event.clientY);
+  });
+  window.addEventListener("mouseup", (event) => {
+    if (sleept) sleepEind(event.clientX, event.clientY);
   });
 });
 

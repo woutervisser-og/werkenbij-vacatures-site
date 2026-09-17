@@ -1297,16 +1297,17 @@ footer .logo-footer {
 .betrokkenheid-kaart p { font-size: 14px; color: #4a4a4a; }
 .betrokkenheid-kaart p + p { margin-top: 10px; }
 
-/* ===== Tijdlijn "onze geschiedenis" (over-ons): full-screen sticky
-   foto-slider. De wrapper (.tijdlijn-slider) is een hoge kolom; de
-   binnenste .tijdlijn-slider-sticky blijft op zijn plek staan
-   (position:sticky) terwijl je 'm doorscrolt, en animations.js
-   berekent op basis van de scrollpositie welk jaar actief is (foto,
-   tekst en jaartal-knop kruisfaden mee via de .is-actief-klasse). De
-   jaartallen-balk is ook los klikbaar, met smooth scroll naar het
-   bijbehorende punt in de wrapper. Groen i.p.v. het gebruikelijke
-   oranje: onderscheidt dit geschiedenis-hoofdstuk visueel van de rest
-   van de pagina, --og-green stond al in de tokenlijst. ===== */
+/* ===== Tijdlijn "onze geschiedenis" (over-ons): horizontale,
+   beeldvullende foto-slider met een vaste hoogte (geen scroll-jacking
+   meer: de sectie neemt gewoon 1 vast blok in de paginaflow in, net als
+   elke andere sectie, dus pagina-scroll gaat er gewoon doorheen). Tussen
+   jaren navigeer je horizontaal: klik op een jaartal, de pijlknoppen,
+   swipe/sleep, of pijltjestoetsen. animations.js schuift de actieve foto
+   in vanaf links/rechts (transform:translateX) afhankelijk van de
+   richting, terwijl tekst en jaartal-knop kruisfaden via .is-actief.
+   Groen i.p.v. het gebruikelijke oranje: onderscheidt dit
+   geschiedenis-hoofdstuk visueel van de rest van de pagina, --og-green
+   stond al in de tokenlijst. ===== */
 .tijdlijn-slider-intro {
   max-width: 720px;
   margin: 0 auto 40px;
@@ -1334,7 +1335,9 @@ footer .logo-footer {
 
 .tijdlijn-slider {
   position: relative;
-  height: calc(11 * 70vh);
+  height: 82vh;
+  min-height: 480px;
+  max-height: 720px;
   margin-bottom: 40px;
   /* Breekt bewust uit de gecentreerde max-width:1100px van section.content
      (die de rest van de pagina begrenst): de foto moet echt 100% van het
@@ -1345,10 +1348,14 @@ footer .logo-footer {
   margin-right: calc(50% - 50vw);
 }
 .tijdlijn-slider-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  position: relative;
+  height: 100%;
   overflow: hidden;
+  /* Laat verticaal scrollen van de pagina gewoon door (geen scroll-
+     jacking meer); horizontaal slepen/swipen wordt door animations.js
+     afgehandeld op basis van pointer-uitslag, niet door native
+     touch-scroll-gedrag. */
+  touch-action: pan-y;
 }
 .tijdlijn-slider-achtergronden { position: absolute; inset: 0; }
 .tijdlijn-slider-achtergrond {
@@ -1356,10 +1363,13 @@ footer .logo-footer {
   inset: 0;
   background-size: cover;
   background-position: center;
-  opacity: 0;
-  transition: opacity 0.8s ease;
+  transform: translateX(100%);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.tijdlijn-slider-achtergrond.is-actief { opacity: 1; }
+.tijdlijn-slider-achtergrond.geen-transitie { transition: none; }
+.tijdlijn-slider-achtergrond.instapt-rechts { transform: translateX(100%); }
+.tijdlijn-slider-achtergrond.instapt-links { transform: translateX(-100%); }
+.tijdlijn-slider-achtergrond.is-actief { transform: translateX(0); }
 /* Placeholder voor jaren zonder foto (2012/2015/2022): een groen
    verloop met de spark als watermerk i.p.v. een lege of kapoate plek,
    duidelijk herkenbaar als "hier komt nog beeld" en makkelijk te
@@ -1381,11 +1391,38 @@ footer .logo-footer {
   position: absolute;
   inset: 0;
   background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.05) 70%);
+  pointer-events: none;
 }
 
+/* Pijlnavigatie: altijd zichtbaar (niet alleen bij hover) zodat meteen
+   duidelijk is dat je heen en weer door de jaren kunt bladeren. */
+.tijdlijn-slider-pijl {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.35);
+  color: var(--og-white);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.tijdlijn-slider-pijl:hover { background: rgba(0,0,0,0.55); }
+.tijdlijn-slider-pijl:disabled { opacity: 0.35; cursor: default; }
+.tijdlijn-slider-pijl-vorige { left: 16px; }
+.tijdlijn-slider-pijl-volgende { right: 16px; }
+
 /* Herstelt de gewone content-kolom (zelfde max-width/padding als
-   section.content) voor de tekst en jaartallen, terwijl de foto's
-   erachter gewoon 100vw blijven. */
+   section.content) voor de tekst, terwijl de foto's erachter gewoon
+   100vw blijven. */
 .tijdlijn-slider-binnen {
   position: absolute;
   inset: 0;
@@ -1399,7 +1436,7 @@ footer .logo-footer {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 40px 0 100px;
+  padding: 40px 0 130px;
   color: var(--og-white);
   pointer-events: auto;
 }
@@ -1420,35 +1457,44 @@ footer .logo-footer {
 }
 .tijdlijn-slider-inhoud p.is-actief { opacity: 1; position: relative; }
 
+/* Jaartallen-balk: altijd een horizontale, scrollbare balk onderaan
+   (edge-to-edge, dus buiten .tijdlijn-slider-binnen om), zowel op
+   desktop als mobiel — past bij het horizontale, klikbare karakter van
+   de slider en laat in 1 oogopslag alle jaren zien. */
 .tijdlijn-slider-nav {
   position: absolute;
-  right: -16px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 6%;
+  background: linear-gradient(0deg, rgba(0,0,0,0.55), transparent);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   pointer-events: auto;
 }
 /* Groter klikvlak (padding, niet alleen tekstgrootte) en een duidelijke
    hover/actief-achtergrond, zodat meteen zichtbaar is dat dit knoppen
    zijn i.p.v. platte jaartal-labels. */
 .tijdlijn-slider-nav-knop {
+  flex: 0 0 auto;
   background: none;
   border: none;
   color: rgba(255,255,255,0.6);
   font-family: 'Open Sans', sans-serif;
   font-weight: 700;
-  font-size: 17px;
+  font-size: 16px;
   padding: 10px 16px;
   border-radius: 24px;
   cursor: pointer;
-  text-align: right;
+  text-align: center;
   transition: color 0.2s ease, font-size 0.2s ease, background-color 0.2s ease;
 }
 .tijdlijn-slider-nav-knop:hover { color: var(--og-white); background: rgba(255,255,255,0.15); }
-.tijdlijn-slider-nav-knop.is-actief { color: var(--og-white); font-size: 24px; background: rgba(255,255,255,0.2); }
+.tijdlijn-slider-nav-knop.is-actief { color: var(--og-white); font-size: 20px; background: rgba(255,255,255,0.2); }
 
 .tijdlijn-outro {
   max-width: 720px;
@@ -1459,30 +1505,15 @@ footer .logo-footer {
 .tijdlijn-outro p { font-size: 15px; color: #4a4a4a; line-height: 1.7; }
 
 @media (max-width: 720px) {
-  .tijdlijn-slider { height: calc(11 * 60vh); }
-  .tijdlijn-slider-inhoud { padding: 30px 0 90px; }
+  .tijdlijn-slider { height: 78vh; min-height: 420px; }
+  .tijdlijn-slider-inhoud { padding: 30px 0 110px; }
   .tijdlijn-slider-jaar { font-size: 40px; }
-  /* Zijbalk met jaartallen past niet op een smal scherm: wordt een
-     horizontale, scrollbare balk onderaan i.p.v. een verticale lijst
-     rechts, zelfde sticky-scroll-effect blijft verder ongewijzigd. De
-     negatieve margin heft de padding van .tijdlijn-slider-binnen op,
-     zodat de balk (net als de foto) echt edge-to-edge loopt. */
-  .tijdlijn-slider-nav {
-    right: 0;
-    left: 0;
-    top: auto;
-    bottom: 0;
-    transform: none;
-    flex-direction: row;
-    gap: 18px;
-    margin: 0 -6%;
-    padding: 14px 6%;
-    background: linear-gradient(0deg, rgba(0,0,0,0.55), transparent);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .tijdlijn-slider-nav-knop { flex: 0 0 auto; text-align: center; padding: 10px 14px; }
-  .tijdlijn-slider-inhoud { padding-bottom: 130px; }
+  .tijdlijn-slider-pijl { width: 40px; height: 40px; font-size: 22px; }
+  .tijdlijn-slider-pijl-vorige { left: 8px; }
+  .tijdlijn-slider-pijl-volgende { right: 8px; }
+  .tijdlijn-slider-nav { padding: 12px 6%; }
+  .tijdlijn-slider-nav-knop { padding: 8px 12px; font-size: 14px; }
+  .tijdlijn-slider-nav-knop.is-actief { font-size: 17px; }
 }
 
 .blok-afbeelding-tekst { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
