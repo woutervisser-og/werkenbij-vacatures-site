@@ -1619,3 +1619,19 @@ sticky-gedrag) en na 1 klik buiten beeld raakten. Opgelost door ze naar
 een niet-scrollende wrapper-laag te verplaatsen.
 
 Gemerged via [PR #83](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/83).
+
+## Afgerond: "Ontdek alle OG Heroes"-link in de Sponsoring-kaart + witruimte betrokkenheid-galerij
+
+Vervolg op de betrokkenheid-galerij hierboven, 2 kleine fixes van
+Wouter:
+
+- De "Ontdek alle OG Heroes ↗"-link (NL-only) stond los onder de hele
+  galerij; nu in de Sponsoring/OG Heroes-kaart zelf, in wit i.p.v.
+  oranje (leest beter op de donkere foto-overlay).
+  `.betrokkenheid-frame-inhoud` heeft bewust geen `pointer-events:auto`
+  (zou de dots kunnen onderscheppen), dus dat is nu specifiek voor
+  deze link hersteld.
+- 40px witruimte toegevoegd tussen de intro-tekst en de galerij: die
+  begon er vrijwel direct onder.
+
+Gemerged via [PR #84](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/84).
