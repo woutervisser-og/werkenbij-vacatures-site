@@ -1461,3 +1461,28 @@ landfilter linkt in 1 klik naar de ongefilterde Engelse lijst. Ook een
 nieuwe "Meer filters"-knop die Dienstverband en Niveau openklapt,
 dezelfde vaste opties als in `/beheer/vacature.html`. Gemerged via
 [PR #74](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/74).
+
+## Afgerond: over ons, uitgebreidere tekst "Maatschappelijke betrokkenheid"
+
+Wouter deelde de bijbehorende sectie van de corporate site als
+referentie. Koptekst aangescherpt naar "...zit in ons DNA", introtekst
+uitgebreid naar 2 alinea's, OG Heroes-kaart uitgebreid naar 2 alinea's,
+goede-doelen-kaart noemt nu ook Omrin Estafette naast het Beatrix
+Kinderziekenhuis, sportclubs-kaart kreeg de generieke tekst uit de bron
+(titel/foto blijven OG Capitals als concreet voorbeeld). Gemerged via
+[PR #75](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/75).
+
+## Afgerond: over ons, tijdlijn bedrijfsgeschiedenis (2008-2024)
+
+Nieuwe sectie tussen de hero en "Wat we belangrijk vinden": een
+verticale tijdlijn met een groene lijn (--og-green/--og-green-dark,
+stonden al in de tokenlijst maar werden nog nergens gebruikt), 10
+mijlpalen (2008 t/m 2024) alternerend links/rechts, groot Komu-jaartal
++ korte alinea per mijlpaal, en een gecentreerd vooruitblik-blok
+("Hoe wij onze reis voortzetten", ambitie 2030). Een 🚚-emoji is
+absoluut gepositioneerd op de lijn en schuift met de scroll mee
+(nieuwe listener in animations.js, voortgang = hoe ver het midden van
+het scherm door de tijdlijn-track gezakt is). Bewust geen foto's per
+mijlpaal: wel gedeeld als screenshot, maar geen brondbestanden
+beschikbaar — grote jaartal-typografie i.p.v. placeholders, zelfde
+aanpak als de afdelingen-index. Gemerged via [PR #76](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/76).
