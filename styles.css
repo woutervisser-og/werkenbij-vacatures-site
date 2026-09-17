@@ -1294,6 +1294,7 @@ footer .logo-footer {
   height: 82vh;
   min-height: 480px;
   max-height: 720px;
+  margin-top: 40px;
   margin-bottom: 12px;
   width: 100vw;
   margin-left: calc(50% - 50vw);
