@@ -1714,3 +1714,25 @@ op het live `/api/GetVacaturesPerLand`-endpoint of `niet_gematcht` nog
 Locatie-waardes bevat die niet automatisch matchen, en meld die dan
 zodat de lookup-tabel in `api/GetVacaturesPerLand/index.js` aangevuld
 kan worden.
+
+## Afgerond: thumbnail op de vacature-tegels
+
+Nieuwe wens van Wouter: de vacature-tegels op het overzicht optimaliseren
+met een thumbnail, dezelfde afbeelding als de headerfoto op de
+vacature-detailpagina. Eerst 3 varianten als preview gebouwd
+(`vacature-tegel-preview.html`, `noindex`, met de echte live vacatures):
+
+- A: volle-breedte banner bovenaan de tegel
+- B: horizontale kaart, vierkante thumbnail links (stapelt op mobiel)
+- C: kleine ronde thumbnail naast de locatieregel
+
+Gemerged via [PR #90](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/90).
+Wouter koos **variant A**. Verwerkt in de echte `vacatures.html` +
+`styles.css`: `.vacature-card` kreeg `overflow:hidden` i.p.v. padding,
+de foto zit nu als volle-breedte `<img>` bovenaan (afgeronde
+bovenhoeken via de card's eigen border-radius), de rest van de inhoud
+zit in een nieuwe `.vacature-card-inhoud`-wrapper die de oude padding
+overnam. Een video-header (embed-URL, geen losse thumbnail/poster) of
+helemaal geen header krijgt een oranje verloop-placeholder i.p.v. een
+kapotte afbeelding. Previewpagina weer verwijderd, taak is klaar.
+Gemerged via [PR #91](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/91).
