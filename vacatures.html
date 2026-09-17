@@ -136,6 +136,19 @@
     return ruweTekst.length > lengte ? ruweTekst.slice(0, lengte).trim() + "..." : ruweTekst;
   }
 
+  // Thumbnail op de tegel: dezelfde headerfoto als op de vacature-
+  // detailpagina. Een video-header heeft geen los thumbnail/poster-veld
+  // (bron is een embed-URL, geen afbeelding), dus die en vacatures zonder
+  // header krijgen een oranje verloop-placeholder i.p.v. een kapotte img.
+  function maakThumbnailHtml(vacature) {
+    const header = vacature.header;
+    const heeftFoto = header && header.type !== "video" && header.bron;
+    if (heeftFoto) {
+      return `<img class="vacature-card-thumb" src="${header.bron}" alt="">`;
+    }
+    return `<div class="vacature-card-thumb vacature-card-thumb-fallback"></div>`;
+  }
+
   // Kiest de vertaling voor de huidige taal, met terugval op EN als deze
   // vacature (nog) geen vertaling heeft voor die taal — de kaart linkt dan
   // ook naar de EN-detailpagina, niet naar een niet-bestaande taalversie.
@@ -312,15 +325,18 @@
       kaart.style.textDecoration = "none";
       kaart.style.color = "inherit";
       kaart.innerHTML = `
-        <div class="kaart-meta">${vacature.locatie || ""}</div>
-        <h3>${vertaling.title || ""}</h3>
-        <div class="meta-row">
-          <span class="meta-pill">${vacature.dienstverband || ""}</span>
-          <span class="meta-pill">${vacature.afdeling || ""}</span>
-          ${vacature.opleidingsniveau ? `<span class="meta-pill">${vacature.opleidingsniveau}</span>` : ""}
+        ${maakThumbnailHtml(vacature)}
+        <div class="vacature-card-inhoud">
+          <div class="kaart-meta">${vacature.locatie || ""}</div>
+          <h3>${vertaling.title || ""}</h3>
+          <div class="meta-row">
+            <span class="meta-pill">${vacature.dienstverband || ""}</span>
+            <span class="meta-pill">${vacature.afdeling || ""}</span>
+            ${vacature.opleidingsniveau ? `<span class="meta-pill">${vacature.opleidingsniveau}</span>` : ""}
+          </div>
+          <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
+          <span class="btn btn-secondary">${window.t("common.leesMeerSolliciteer")}</span>
         </div>
-        <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
-        <span class="btn btn-secondary">${window.t("common.leesMeerSolliciteer")}</span>
       `;
       container.appendChild(kaart);
     });
