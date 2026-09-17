@@ -1388,3 +1388,17 @@ regel. 2 kolommen op desktop, 1 op mobiel. Elke afdeling heeft een
 eigen specifieke eenregelige tekst in de bestaande merkstem, geen lege
 vulzinnen. Alleen NL/EN vertaald (FR/DE/IT/SE vallen terug op EN,
 bestaand patroon). Gemerged via [PR #67](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/67).
+
+## Afgerond: footer-fixes
+
+- Footer-achtergrond van `--og-orange-dark` naar `--og-orange` (de
+  primaire merkkleur).
+- Footer-logo van 40px naar 64px, zelfde hoogte als het logo in de
+  header.
+- Sticky-footer fix: op een pagina die korter is dan het scherm bleef
+  er onderaan witruimte staan omdat de footer niet naar de onderkant
+  van de viewport werd geduwd. `body` is nu een flex-column op
+  volledige hoogte, en `footer` krijgt `margin-top:auto` zodat hij
+  altijd naar de onderkant van het scherm zakt.
+
+Gemerged via [PR #68](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/68).
