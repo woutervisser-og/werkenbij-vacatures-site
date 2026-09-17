@@ -1642,3 +1642,36 @@ Laatste restant van het oude groene accent (vóór PR #83) over het
 hoofd gezien: de placeholder-achtergrond voor jaren zonder foto
 gebruikte nog het groene verloop. Nu oranje, consistent met de rest
 van de pagina. Gemerged via [PR #85](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/85).
+
+## Bezig: interactieve Europa-vacaturekaart — fase 1 (dummy data) afgerond
+
+Nieuwe wens van Wouter: een Europa-kaart die per land toont hoeveel
+vacatures er openstaan (choropleth, geen losse pins), gebouwd in
+fases. Fase 1 nu gemerged: `europa-kaart.js` + `europa-kaart-preview.html`
+(losse, niet-gelinkte previewpagina, `noindex`) met dummy data.
+
+- **Dataset**: `world-atlas` (npm), afgeleid van Natural Earth's
+  landsgrenzen (1:50m) — publiek domein, ISC-licentie, licentievrij
+  voor commercieel gebruik. Zelf gehost (`data/europa-landen.geo.json`,
+  ~186KB) i.p.v. een CDN-afhankelijkheid tijdens runtime, zelfde
+  afweging als eerder bij de huisstijl-fonts. Gefilterd tot de 46
+  Europese landen, coördinaten afgerond op 2 decimalen.
+- **Datafout gevonden en gefixt**: Frankrijk, Spanje, Portugal,
+  Noorwegen en Nederland bevatten in de brondata hun overzeese
+  gebieden (Frans-Guyana, Canarische eilanden, Svalbard, ...) als
+  polygonen binnen dezelfde landfeature, wat D3's automatische
+  `fitSize`-projectie helemaal scheeftrok. Gefilterd op een ruime
+  Europa-bounding-box.
+- Choropleth (grijs bij 0, groentint schalend naar `--og-green-dark`),
+  tooltip, klik navigeert naar `vacatures.html?land=...` (bestaand
+  filtermechanisme, geen wijziging nodig), toetsenbordtoegankelijk,
+  GSAP-fade/scale-in bij eerste keer in beeld (`prefers-reduced-motion`
+  gerespecteerd), mobiele lijstweergave onder de kaart (micro-staten
+  zijn op geen enkel schermformaat precies aan te tikken op de kaart
+  zelf).
+
+**Nog te doen**: de Azure Function die vacatures per land aggregeert
+uit Table Storage (Locatie-veld parsen, landnaam-lookup, response
+`niet_gematcht`-array voor onherkende Locatie-waardes). Wacht op
+Wouters akkoord over de visuele stijl, net binnen via PR #86.
+Gemerged via [PR #86](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/86).
