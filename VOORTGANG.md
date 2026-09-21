@@ -1748,3 +1748,34 @@ breedte (standaard 800px, WebP kwaliteit 75), met een jaar lang cachebaar
 meteen voor alle bestaande vacatures, geen herupload nodig. Thumbnails
 gingen van 2+ MB naar 21-34 KB, plus `loading="lazy"` op de tegel-
 afbeelding. Gemerged via [PR #92](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/92).
+
+## Afgerond: SEO-scan + ontbrekende FR/DE/IT/SE-vertalingen
+
+Op verzoek van Wouter een volledige SEO-scan gedaan van alle
+marketingpagina's. Belangrijkste bevindingen (nog niet opgelost, staat
+uit): geen sitemap.xml/robots.txt, duplicate content tussen
+taalversies (client-side vertaling levert per taalprefix identieke
+HTML-broncode op), statische/niet-vertaalde `<title>`-tags, missende
+meta description op `index.html`/`vacatures.html`/`over-ons.html`,
+302 i.p.v. 301 op de taalprefix-redirects, en 4x `<h1>` op de homepage
+(1 echte + 3 puur voor styling van de statistieken). Vacature-
+detailpagina's zijn wel al goed gebouwd (JobPosting structured data,
+hreflang, Open Graph, meta description) — alleen een canonical-tag
+ontbreekt daar nog.
+
+Tijdens die scan meldde Wouter dat de Franse over-ons-pagina nog veel
+Engelse tekst toonde. Oorzaak: `fr/de/it/se.json` waren niet meer
+bijgewerkt sinds de tijdlijn-sectie, de "17 afdelingen"-sectie op
+werken-bij-og.html en de Europa-kaart zijn toegevoegd — i18n.js valt
+per ontbrekende sleutel terug op Engels. Alle 4 talen misten exact
+dezelfde 78 sleutels. Aangevuld met professionele vertalingen (tijdlijn
+2008-2026, de 17 functieomschrijvingen, Europa-kaart-teksten,
+filterlabels); functienamen zelf blijven bewust Engels, zelfde
+conventie als NL. Geverifieerd: alle 4 taalbestanden hebben nu exact
+dezelfde 261 sleutels als en.json, en alle taalversies van alle 4
+marketingpagina's zijn met Playwright gecontroleerd op Engelse
+restjes (alleen de bewust ongewijzigde merk-taglines staan nog in het
+Engels, in alle talen). Gemerged via [PR #93](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/93).
+
+**Nog te doen**: de SEO-bevindingen hierboven zelf oplossen, in overleg
+met Wouter over de volgorde/aanpak.
