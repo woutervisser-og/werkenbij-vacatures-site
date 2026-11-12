@@ -9,6 +9,13 @@
       "statusCode": 404
     },
     {
+      "route": "/beheer",
+      "rewrite": "/beheer/index.html",
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
       "route": "/beheer/*",
       "allowedRoles": [
         "authenticated"
