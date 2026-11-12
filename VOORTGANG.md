@@ -146,6 +146,20 @@ De 4 stappen uit de vorige sectie zijn alle afgerond (PR #96, gemerged
 
 Resultaat: alleen leden van `HR-Portaal-Toegang` komen nog bij
 `/beheer` en de beveiligde API's, niet meer iedereen binnen de tenant.
+
+**Vervolg (PR #97, gemerged 12 november 2026):** een ingelogde
+gebruiker zonder de `hrbeheer`-rol kreeg op `/beheer/*` een kale 404
+(standaard platformgedrag van Azure Static Web Apps bij een rol-
+mismatch op een statische route). Opgelost door `/beheer/*` terug naar
+`allowedRoles: ["authenticated"]` te zetten (de paginaschil laadt dus
+weer voor iedereen in de tenant), en de echte rol-check clientside te
+doen via een nieuw gedeeld script `beheer/beheer-auth.js` op alle 4
+beheerpagina's: zonder de `hrbeheer`-rol zie je een "Geen toegang"-
+melding in plaats van de echte inhoud. De 3 API-routes blijven
+ongewijzigd hard op `allowedRoles: ["hrbeheer"]`, dat blijft de echte
+beveiliging van de data. Daarnaast rewrite `/beheer` (zonder slash)
+nu ook naar `/beheer/index.html`.
+
 Nog te checken: een echte eerste login door een HR-collega, als
 praktijktest van de volledige `GetRoles`-keten.
 
