@@ -191,6 +191,27 @@ table.beheer-tabel th.sorteer-actief { color: var(--og-orange-dark); }
 
 .beheer-leeg { padding: 60px 20px; text-align: center; color: #767672; }
 
+/* ===== Geen toegang (ingelogd, maar niet in de hrbeheer-rol) ===== */
+.beheer-geen-toegang {
+  display: none;
+  max-width: 480px;
+  margin: 70px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+body.geen-toegang main { display: none; }
+body.geen-toegang .beheer-geen-toegang { display: block; }
+.beheer-geen-toegang h1 {
+  font-family: 'Komu', sans-serif;
+  color: var(--og-orange-dark);
+  margin-bottom: 12px;
+}
+.beheer-geen-toegang p {
+  font-family: 'Open Sans', sans-serif;
+  color: #4a4a4a;
+  line-height: 1.5;
+}
+
 /* ===== Formulier ===== */
 .beheer-form {
   background: var(--og-white);

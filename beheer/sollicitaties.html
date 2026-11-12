@@ -22,6 +22,11 @@
   <span class="beheer-gebruiker" id="gebruiker-info"></span>
 </div>
 
+<div class="beheer-geen-toegang">
+  <h1>Geen toegang</h1>
+  <p>Je bent ingelogd, maar hebt geen toegang tot het beheerportaal. Vraag de beheerder van het portaal om je toe te voegen aan de groep die hiervoor toegang geeft.</p>
+</div>
+
 <main class="beheer-main beheer-main-breed">
   <div class="beheer-header-rij">
     <div>
@@ -99,6 +104,7 @@
   <div class="beheer-leeg" id="leeg-status">Sollicitaties laden...</div>
 </main>
 
+<script src="/beheer/beheer-auth.js"></script>
 <script>
   // Zelfde 8 statussen als ALLOWED_STATUSSEN in api/shared/sollicitatiesTable.js:
   // 6 fases op volgorde (het kanban-bord) + 2 exit-statussen (afgewezen/
@@ -138,17 +144,6 @@
       `<a href="/beheer/sollicitaties.html">alle sollicitaties tonen</a>`;
     el.hidden = false;
   }
-
-  fetch("/.auth/me")
-    .then(r => r.json())
-    .then(data => {
-      const principal = data.clientPrincipal;
-      if (principal) {
-        document.getElementById("gebruiker-info").innerHTML =
-          `Ingelogd als ${principal.userDetails} <a href="/.auth/logout?post_logout_redirect_uri=/">Uitloggen</a>`;
-      }
-    })
-    .catch(() => {});
 
   function toonMelding(tekst, type) {
     const meldingEl = document.getElementById("melding");

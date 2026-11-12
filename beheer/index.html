@@ -22,6 +22,11 @@
   <span class="beheer-gebruiker" id="gebruiker-info"></span>
 </div>
 
+<div class="beheer-geen-toegang">
+  <h1>Geen toegang</h1>
+  <p>Je bent ingelogd, maar hebt geen toegang tot het beheerportaal. Vraag de beheerder van het portaal om je toe te voegen aan de groep die hiervoor toegang geeft.</p>
+</div>
+
 <main class="beheer-main">
   <div class="beheer-header-rij">
     <h1>Vacatures</h1>
@@ -37,18 +42,8 @@
   <div class="beheer-leeg" id="leeg-status">Vacatures laden...</div>
 </main>
 
+<script src="/beheer/beheer-auth.js"></script>
 <script>
-  fetch("/.auth/me")
-    .then(r => r.json())
-    .then(data => {
-      const principal = data.clientPrincipal;
-      if (principal) {
-        document.getElementById("gebruiker-info").innerHTML =
-          `Ingelogd als ${principal.userDetails} <a href="/.auth/logout?post_logout_redirect_uri=/">Uitloggen</a>`;
-      }
-    })
-    .catch(() => {});
-
   function formatteerDatum(isoDatum) {
     if (!isoDatum) return "—";
     const datum = new Date(isoDatum);
