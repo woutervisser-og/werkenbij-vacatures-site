@@ -1779,3 +1779,46 @@ Engels, in alle talen). Gemerged via [PR #93](https://github.com/woutervisser-og
 
 **Nog te doen**: de SEO-bevindingen hierboven zelf oplossen, in overleg
 met Wouter over de volgorde/aanpak.
+
+## Afgerond: volledige technische documentatie
+
+Op verzoek van Wouter: niet alleen documentatie van de 3 net gebouwde
+features, maar een compleet technisch naslagwerk van de hele repo.
+`TECHNISCHE-DOCUMENTATIE.md` uitgebreid met architectuuroverzicht,
+publieke-sitestructuur, volledig datamodel Vacatures + Sollicitaties,
+media-/bestandsopslag, een tabel met alle 18 Azure Functions,
+authenticatie/autorisatie (incl. het gat tussen het architectuurdocument
+en de werkelijkheid rond rolgebaseerde toegang), het beheerportaal,
+de build/deploy-pipeline, en bekende aandachtspunten. Onderzocht met 2
+parallelle Explore-agents plus eigen verificatie van kernbestanden.
+Gemerged via [PR #94](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/94).
+
+## Afgerond: security-review door Speak, acuut auth-lek gedicht
+
+Wouter liet het webbureau (Speak) een gerichte security-review doen op
+basis van read-only GitHub-toegang + `TECHNISCHE-DOCUMENTATIE.md`. Hun
+belangrijkste vondst, ernstiger dan wat uit mijn eigen eerdere review
+naar voren kwam: Azure Static Web Apps heeft standaard meerdere
+ingebouwde inlogproviders (`aad`, `github`, `twitter`), en de rol
+`"authenticated"` in `staticwebapp.config.json` werd toegekend ongeacht
+welke provider gebruikt was. De bedoelde tenant-restrictie (alleen OG
+Clean Fuels-accounts) geldt namelijk alleen voor de `aad`-inlogflow —
+hierdoor kon **iedereen met een gratis GitHub-account**, zonder enige
+band met OG, inloggen op `/beheer/*` en vacatures bewerken/verwijderen,
+plus via dezelfde regel ook bij de sollicitatie-beheer-API's. Gedicht
+door `/.auth/login/github` en `/.auth/login/twitter` expliciet op 404
+te zetten (Microsofts eigen standaardpatroon hiervoor), zodat alleen
+`aad` nog werkt. Gemerged via [PR #95](https://github.com/woutervisser-og/werkenbij-vacatures-site/pull/95).
+
+Overige bevindingen van Speak (bewaartermijn sollicitatiegegevens,
+geen malware-scan/rate-limiting op de publieke upload-/sollicitatie-
+endpoints, Azure-instellingen die niet vanuit de code zichtbaar zijn)
+staan nog open — zie het gesprek met Wouter voor de volledige
+afweging. De eerder al bekende, nog niet actieve rolgebaseerde
+restrictie (`hrbeheer` via `GetRoles`, wacht op een Standard-SKU-
+upgrade) is een apart, lichter punt dat na deze fix overblijft: elk
+tenant-account kan nog bij het portaal, niet alleen de HR-groep.
+
+**Nog te doen**: bewaartermijn/opschoning voor sollicitaties instellen,
+rate-limiting/bestandscontrole op de publieke endpoints, en op termijn
+de Standard-SKU-upgrade + rolgebaseerde toegang activeren.
