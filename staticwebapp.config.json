@@ -11,25 +11,25 @@
     {
       "route": "/beheer/*",
       "allowedRoles": [
-        "authenticated"
+        "hrbeheer"
       ]
     },
     {
       "route": "/api/vacatures*",
       "allowedRoles": [
-        "authenticated"
+        "hrbeheer"
       ]
     },
     {
       "route": "/api/media*",
       "allowedRoles": [
-        "authenticated"
+        "hrbeheer"
       ]
     },
     {
       "route": "/api/sollicitatiebeheer/*",
       "allowedRoles": [
-        "authenticated"
+        "hrbeheer"
       ]
     },
     {
@@ -188,5 +188,8 @@
       "redirect": "/.auth/login/aad?post_login_redirect_uri=.referrer",
       "statusCode": 302
     }
+  },
+  "auth": {
+    "rolesSource": "/api/GetRoles"
   }
 }
