@@ -56,28 +56,31 @@ module.exports = async function (context, req) {
     }
 
     // Check of de ingelogde gebruiker lid is van de beveiligingsgroep
-    // HR-Portaal-Toegang.
+    // HR-Portaal-Toegang. Gevraagd vanuit de groep zelf (in plaats van
+    // "in welke groepen zit deze gebruiker") zodat alleen GroupMember.Read.All
+    // nodig is, zonder apart leesrecht op het gebruikersobject.
     const checkResponse = await fetch(
-      `https://graph.microsoft.com/v1.0/users/${userId}/checkMemberGroups`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tokenData.access_token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ groupIds: [GROUP_ID] })
-      }
+      `https://graph.microsoft.com/v1.0/groups/${GROUP_ID}/members/${userId}/$ref`,
+      { headers: { Authorization: `Bearer ${tokenData.access_token}` } }
     );
-    const checkData = await checkResponse.json();
-    // TIJDELIJK: altijd loggen, ook bij een geslaagde (niet-foutieve) aanroep,
-    // want een non-200 van Graph geeft hier anders stilletjes "geen lid".
-    context.log("checkMemberGroups resultaat", {
-      status: checkResponse.status,
-      checkData,
-      GROUP_ID
-    });
 
-    const isMember = Array.isArray(checkData.value) && checkData.value.includes(GROUP_ID);
+    let isMember;
+    if (checkResponse.status === 204) {
+      isMember = true;
+    } else if (checkResponse.status === 404) {
+      isMember = false;
+    } else {
+      // TIJDELIJK: onverwachte status loggen, want zonder dit geeft een
+      // fout hier stilletjes "geen lid" in plaats van een zichtbare reden.
+      const errorBody = await checkResponse.text();
+      context.log.error("Onverwachte respons bij groepscheck", {
+        status: checkResponse.status,
+        errorBody
+      });
+      isMember = false;
+    }
+    // TIJDELIJK (diagnose toegangsprobleem, te verwijderen zodra opgelost):
+    context.log("Groepscheck resultaat", { status: checkResponse.status, isMember });
 
     context.res = {
       status: 200,
