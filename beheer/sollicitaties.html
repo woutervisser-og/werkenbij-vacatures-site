@@ -598,6 +598,24 @@
     rij.appendChild(datumCel);
 
     const actiesCel = document.createElement("td");
+    actiesCel.className = "acties";
+
+    const statusSelect = document.createElement("select");
+    statusSelect.className = "exit-status-select";
+    Object.keys(FASE_LABELS).forEach(status => {
+      const optie = document.createElement("option");
+      optie.value = status;
+      optie.textContent = FASE_LABELS[status];
+      optie.selected = status === sollicitatie.status;
+      statusSelect.appendChild(optie);
+    });
+    statusSelect.addEventListener("click", event => event.stopPropagation());
+    statusSelect.addEventListener("change", event => {
+      event.stopPropagation();
+      wijzigStatus(sollicitatie.id, event.target.value);
+    });
+    actiesCel.appendChild(statusSelect);
+
     const verwijderKnop = document.createElement("button");
     verwijderKnop.className = "btn btn-klein btn-gevaar";
     verwijderKnop.textContent = "Verwijderen";
