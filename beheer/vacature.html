@@ -206,6 +206,7 @@
 <script>
   const zoekParams = new URLSearchParams(location.search);
   const vacatureId = zoekParams.get("id");
+  const kopieerVan = zoekParams.get("kopieerVan");
   let headerBron = "";
 
   function toonMelding(tekst, type) {
@@ -843,6 +844,46 @@
   renderTaalTabbladen();
   renderBlokken();
 
+  // Vult het formulier met de velden van een (bestaande of te kopiëren)
+  // vacature. Gedeeld tussen "bewerken" en "dupliceren", zodat beide
+  // paden niet uit elkaar kunnen lopen.
+  function vulFormulier(vacature) {
+    document.getElementById("veld-afdeling").value = vacature.afdeling || "";
+    document.getElementById("veld-locatie").value = vacature.locatie || "";
+    const gekozenWerkgebieden = (vacature.werkgebied || "").split("/").filter(Boolean);
+    document.querySelectorAll("#veld-werkgebied input[type=checkbox]").forEach(checkbox => {
+      checkbox.checked = gekozenWerkgebieden.includes(checkbox.value);
+    });
+    document.getElementById("veld-dienstverband").value = vacature.dienstverband || "";
+    document.getElementById("veld-opleidingsniveau").value = vacature.opleidingsniveau || "";
+    document.getElementById("veld-salaris-overleg").checked = Boolean(vacature.salarisInOverleg);
+    document.getElementById("veld-salaris-min").value = vacature.salarisMin ?? "";
+    document.getElementById("veld-salaris-max").value = vacature.salarisMax ?? "";
+    document.getElementById("veld-salaris-min").disabled = Boolean(vacature.salarisInOverleg);
+    document.getElementById("veld-salaris-max").disabled = Boolean(vacature.salarisInOverleg);
+    document.getElementById("veld-publicatiedatum").value = (vacature.publicatiedatum || "").slice(0, 10);
+    document.getElementById("veld-sluitingsdatum").value = (vacature.sluitingsdatum || "").slice(0, 10);
+    document.getElementById("veld-status").value = vacature.status || "concept";
+
+    if (vacature.header && vacature.header.type === "video") {
+      stelHeaderTypeIn("video");
+      document.getElementById("veld-video-url").value = vacature.header.bron || "";
+    } else if (vacature.header) {
+      stelHeaderTypeIn("foto");
+      headerBron = vacature.header.bron || "";
+      toonHeaderPreview(headerBron);
+    }
+
+    TALEN.forEach(taal => {
+      const vertaling = (vacature.translations && vacature.translations[taal]) || legeVertaling();
+      vertalingen[taal] = {
+        title: vertaling.title || "",
+        bodyBlocks: Array.isArray(vertaling.bodyBlocks) ? vertaling.bodyBlocks : []
+      };
+    });
+    wisselTaalTabblad("en");
+  }
+
   // ===== Bestaande vacature laden (bewerken) =====
   if (vacatureId) {
     document.getElementById("pagina-titel").textContent = "Vacature bewerken";
@@ -853,44 +894,34 @@
         if (!response.ok) throw new Error("Status: " + response.status);
         return response.json();
       })
-      .then(vacature => {
-        document.getElementById("veld-afdeling").value = vacature.afdeling || "";
-        document.getElementById("veld-locatie").value = vacature.locatie || "";
-        const gekozenWerkgebieden = (vacature.werkgebied || "").split("/").filter(Boolean);
-        document.querySelectorAll("#veld-werkgebied input[type=checkbox]").forEach(checkbox => {
-          checkbox.checked = gekozenWerkgebieden.includes(checkbox.value);
-        });
-        document.getElementById("veld-dienstverband").value = vacature.dienstverband || "";
-        document.getElementById("veld-opleidingsniveau").value = vacature.opleidingsniveau || "";
-        document.getElementById("veld-salaris-overleg").checked = Boolean(vacature.salarisInOverleg);
-        document.getElementById("veld-salaris-min").value = vacature.salarisMin ?? "";
-        document.getElementById("veld-salaris-max").value = vacature.salarisMax ?? "";
-        document.getElementById("veld-salaris-min").disabled = Boolean(vacature.salarisInOverleg);
-        document.getElementById("veld-salaris-max").disabled = Boolean(vacature.salarisInOverleg);
-        document.getElementById("veld-publicatiedatum").value = (vacature.publicatiedatum || "").slice(0, 10);
-        document.getElementById("veld-sluitingsdatum").value = (vacature.sluitingsdatum || "").slice(0, 10);
-        document.getElementById("veld-status").value = vacature.status || "concept";
-
-        if (vacature.header && vacature.header.type === "video") {
-          stelHeaderTypeIn("video");
-          document.getElementById("veld-video-url").value = vacature.header.bron || "";
-        } else if (vacature.header) {
-          stelHeaderTypeIn("foto");
-          headerBron = vacature.header.bron || "";
-          toonHeaderPreview(headerBron);
-        }
-
-        TALEN.forEach(taal => {
-          const vertaling = (vacature.translations && vacature.translations[taal]) || legeVertaling();
-          vertalingen[taal] = {
-            title: vertaling.title || "",
-            bodyBlocks: Array.isArray(vertaling.bodyBlocks) ? vertaling.bodyBlocks : []
-          };
-        });
-        wisselTaalTabblad("en");
-      })
+      .then(vulFormulier)
       .catch(error => {
         toonMelding("Kon de vacature niet laden.", "fout");
+        console.error(error);
+      });
+  }
+
+  // ===== Vacature dupliceren (nieuwe, nog niet opgeslagen kopie) =====
+  if (kopieerVan) {
+    document.getElementById("pagina-titel").textContent = "Vacature dupliceren";
+
+    fetch("/api/vacatures/" + encodeURIComponent(kopieerVan))
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(vacature => {
+        // Nooit de brondocument-status overnemen: een kopie start altijd
+        // als concept, zodat 'ie niet per ongeluk meteen live staat.
+        vacature.status = "concept";
+        TALEN.forEach(taal => {
+          const vertaling = vacature.translations && vacature.translations[taal];
+          if (vertaling && vertaling.title) vertaling.title += " (kopie)";
+        });
+        vulFormulier(vacature);
+      })
+      .catch(error => {
+        toonMelding("Kon de vacature om te dupliceren niet laden.", "fout");
         console.error(error);
       });
   }

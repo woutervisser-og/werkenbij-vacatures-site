@@ -232,6 +232,12 @@
     bewerkLink.textContent = "Bewerken";
     actiesCel.appendChild(bewerkLink);
 
+    const dupliceerLink = document.createElement("a");
+    dupliceerLink.className = "btn btn-klein btn-secundair";
+    dupliceerLink.href = "/beheer/vacature.html?kopieerVan=" + encodeURIComponent(vacature.id);
+    dupliceerLink.textContent = "Dupliceren";
+    actiesCel.appendChild(dupliceerLink);
+
     const verwijderKnop = document.createElement("button");
     verwijderKnop.className = "btn btn-klein btn-gevaar";
     verwijderKnop.textContent = "Verwijderen";
