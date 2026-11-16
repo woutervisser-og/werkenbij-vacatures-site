@@ -526,8 +526,6 @@ ${bouwJsonLd(vacature)}
   </a>
   <nav>
     <a href="${padVoorAlgemenePagina(taalcode, "vacatures.html")}" class="active">${t("nav.vacatures")}</a>
-    <a href="${padVoorAlgemenePagina(taalcode, "werken-bij-og.html")}">${t("nav.werkenBijOg")}</a>
-    <a href="${padVoorAlgemenePagina(taalcode, "over-ons.html")}">${t("nav.overOns")}</a>
   </nav>
   <div class="header-rechts">${renderTaalNavSelector(taalcode, beschikbareTalen, slug)}
     <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}" class="header-rechts-link">${t("nav.contact")}</a>
@@ -609,8 +607,6 @@ ${renderBroodkruimel(vacature, taalcode, t)}
       <span class="footer-kop">${t("footer.menuKop")}</span>
       <nav class="footer-nav">
         <a href="${padVoorAlgemenePagina(taalcode, "vacatures.html")}">${t("nav.vacatures")}</a>
-        <a href="${padVoorAlgemenePagina(taalcode, "werken-bij-og.html")}">${t("nav.werkenBijOg")}</a>
-        <a href="${padVoorAlgemenePagina(taalcode, "over-ons.html")}">${t("nav.overOns")}</a>
         <a href="${padVoorAlgemenePagina(taalcode, "contact.html")}">${t("nav.contact")}</a>
       </nav>
     </div>

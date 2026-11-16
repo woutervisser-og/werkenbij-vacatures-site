@@ -32,7 +32,7 @@
   // welke taalversie er voor die specifieke vacature bestaat, en dat
   // regelt vacatures.html zelf (het kent de beschikbare vertalingen per
   // vacature al uit de API-respons).
-  const SITE_PAGINAS = ["index.html", "vacatures.html", "werken-bij-og.html", "over-ons.html", "contact.html"];
+  const SITE_PAGINAS = ["index.html", "vacatures.html", "contact.html"];
 
   function zoekOp(dict, key) {
     return key.split(".").reduce((acc, deel) => (acc && typeof acc === "object" ? acc[deel] : undefined), dict);

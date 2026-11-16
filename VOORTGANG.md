@@ -1885,3 +1885,25 @@ tenant-account kan nog bij het portaal, niet alleen de HR-groep.
 **Nog te doen**: bewaartermijn/opschoning voor sollicitaties instellen,
 rate-limiting/bestandscontrole op de publieke endpoints, en op termijn
 de Standard-SKU-upgrade + rolgebaseerde toegang activeren.
+
+## Afgerond: "Working at OG" en "About us" verwijderd (focus op ATS)
+
+Op verzoek van Wouter, na afstemming met Iska (HR-opdrachtgever): de
+publieke site richt zich voorlopig uitsluitend op het vacature-/
+sollicitatieproces, de inhoud van deze 2 contentpagina's was nooit
+gecontroleerd en zou toch niet als zodanig live gaan. `contact.html`
+en de homepage (`index.html`, nu zonder "Over ons"-knop, met
+"Bekijk vacatures" als enige call-to-action) blijven gewoon staan.
+
+Verwijderd: `werken-bij-og.html`, `over-ons.html`,
+`over-ons-animaties.js`. Overal opgeschoond: navigatie/footer-links in
+`index.html`, `contact.html`, `vacatures.html` en
+`scripts/generate-vacatures/generate.js` (alle gegenereerde
+vacature-detailpagina's), de taal-routes in
+`staticwebapp.config.json` (14 routes weg), en de paginalijst in
+`i18n/i18n.js`. Bewust niet aangepakt: de losse, nu ongebruikte
+i18n-teksten voor deze 2 pagina's (onschuldige dode data) en 2
+verwijzingen in code-comments (`animations.js`, `europa-kaart.js`)
+die naar de verwijderde pagina wijzen, puur cosmetisch.
+
+Later weer aan te vullen zodra er wel gecontroleerde content is.
