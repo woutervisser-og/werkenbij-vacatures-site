@@ -160,8 +160,47 @@ ongewijzigd hard op `allowedRoles: ["hrbeheer"]`, dat blijft de echte
 beveiliging van de data. Daarnaast rewrite `/beheer` (zonder slash)
 nu ook naar `/beheer/index.html`.
 
-Nog te checken: een echte eerste login door een HR-collega, als
-praktijktest van de volledige `GetRoles`-keten.
+## Afgerond: eerste echte HR-login werkt (na flinke speurtocht)
+
+De eerste praktijktest van de volledige `GetRoles`-keten liep tegen 3
+losse, opeenvolgende problemen aan, alle 3 pas zichtbaar geworden
+doordat Application Insights (zie hieronder) aanstond:
+
+1. **Inloggen zelf werkte niet.** Het toevoegen van `rolesSource` dwingt
+   Azure Static Web Apps automatisch in de modus "Aangepast", die een
+   eigen geregistreerde identity provider vereist (eigen client-id +
+   clientgeheim), in plaats van de gratis ingebouwde Microsoft-login
+   die hiervoor zonder enige configuratie werkte. Opgelost door bij
+   Werkenbij-OG → Verificatie een Entra ID-provider te registreren
+   (hergebruik van de App Registration `Werkenbij-HR-Portaal`), een
+   redirect-URI (`/.auth/login/aad/callback`) toe te voegen aan die
+   App Registration, en "Id-tokens" aan te zetten bij "Stromen voor
+   impliciete toekenning" (Static Web Apps vraagt bij het inloggen een
+   hybride `code+id_token`-respons op, dat vereist deze instelling).
+2. **`GetRoles` kon geen Graph-token ophalen.** De `HR_CLIENT_SECRET`
+   Application Setting (gebruikt door de Function zelf voor de
+   Graph-aanroep, een ander geheim dan dat van de login-provider
+   hierboven) was verlopen. Opgelost met een nieuw clientgeheim op
+   dezelfde App Registration.
+3. **De groepscheck zelf gaf een 403.** `checkMemberGroups` op
+   `/users/{id}` liep vast op "Insufficient privileges", ondanks
+   correct geconsenteerde `GroupMember.Read.All`. Opgelost door de
+   aanroep om te draaien: in plaats van "in welke groepen zit deze
+   gebruiker" nu "is deze gebruiker lid van déze groep"
+   (`/groups/{GROUP_ID}/members/{userId}/$ref`), wat volledig binnen
+   `GroupMember.Read.All` blijft. Daarbij nog 1 addertje: Graph geeft
+   bij een gevonden lid status 200 terug (niet 204 zoals
+   gedocumenteerd), dat moest de code ook herkennen.
+
+**Application Insights** stond bij dit alles uit; zonder monitoring
+hadden deze 3 problemen niet herleid kunnen worden tot een exacte
+oorzaak (foutcodes zoals `AADSTS7000215` en `AADSTS50196`, en de
+uiteindelijke Graph-responsestatus). Nu aangezet op de Static Web App,
+blijft (beperkte) kosten met zich meebrengen zolang het aanstaat.
+
+Resultaat: Wouter kan nu daadwerkelijk inloggen op `/beheer` met zijn
+HR-Portaal-Toegang-lidmaatschap. De `GetRoles`-functie is opgeschoond
+(tijdelijke diagnostische logregels verwijderd na bevestigde werking).
 
 ## Afgerond: Azure Storage Account
 

@@ -9,23 +9,16 @@ const GROUP_ID = process.env.HR_GROUP_ID;
 
 const HR_ROLE = "hrbeheer";
 
-// Static Web Apps roept deze Function aan na elke login, met de
-// geverifieerde claims van de gebruiker. Wat hier wordt teruggegeven
-// bepaalt de rollen van die gebruiker voor de rest van de sessie.
-//
-// Nog niet gekoppeld: rolesSource ("auth" config in staticwebapp.config.json)
-// vereist de Standard SKU van Azure Static Web Apps, die nu (bewust, om
-// kosten) nog niet actief is. Zodra die upgrade er is, hier "rolesSource":
-// "/api/GetRoles" weer toevoegen aan staticwebapp.config.json.
+// Static Web Apps roept deze Function aan na elke login (gekoppeld via
+// "auth.rolesSource" in staticwebapp.config.json), met de geverifieerde
+// claims van de gebruiker. Wat hier wordt teruggegeven bepaalt de rollen
+// van die gebruiker voor de rest van de sessie.
 module.exports = async function (context, req) {
   const { identityProvider, userId } = req.body || {};
-  // TIJDELIJK (diagnose toegangsprobleem, te verwijderen zodra opgelost):
-  context.log("GetRoles aangeroepen", { identityProvider, userId });
 
   // Alleen Microsoft-logins (Entra ID) komen in aanmerking, geen andere
   // providers.
   if (identityProvider !== "aad" || !userId) {
-    context.log("GetRoles: afgewezen vóór groepscheck (provider/userId)");
     context.res = { status: 200, body: { roles: [] } };
     return;
   }
@@ -72,8 +65,9 @@ module.exports = async function (context, req) {
     } else if (checkResponse.status === 404) {
       isMember = false;
     } else {
-      // TIJDELIJK: onverwachte status loggen, want zonder dit geeft een
-      // fout hier stilletjes "geen lid" in plaats van een zichtbare reden.
+      // Onverwachte status (bijv. een permissieprobleem): loggen, want
+      // zonder dit geeft dit stilletjes "geen lid" i.p.v. een zichtbare
+      // reden.
       const errorBody = await checkResponse.text();
       context.log.error("Onverwachte respons bij groepscheck", {
         status: checkResponse.status,
@@ -81,8 +75,6 @@ module.exports = async function (context, req) {
       });
       isMember = false;
     }
-    // TIJDELIJK (diagnose toegangsprobleem, te verwijderen zodra opgelost):
-    context.log("Groepscheck resultaat", { status: checkResponse.status, isMember });
 
     context.res = {
       status: 200,
