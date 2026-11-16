@@ -32,7 +32,7 @@ te lezen zonder los in de data te duiken.
 | ~~Doorklikken vanuit vacature naar bijbehorende sollicitaties~~ ✅ | Afgerond: aantal sollicitaties als link, filtert door naar `/beheer/sollicitaties.html?vacatureId=...` | Must | S |
 | Filteren/zoeken in sollicitatie-overzicht (op vacature, status, naam, periode) | Geen enkel filter of zoekveld aanwezig, alles staat in 1 lange tabel | Must | S |
 | ~~Bulk-export van sollicitaties (CSV/Excel)~~ ✅ | Afgerond: "Exporteren (CSV)"-knop, respecteert actieve filters (vacature/zoekterm), puntkomma-gescheiden voor Excel NL | Must | S |
-| Sollicitatie-detailweergave (motivatietekst, CV-voorbeeld, contactgegevens in 1 overzicht) | De motivatietekst wordt nergens getoond in de UI, alleen opgeslagen; CV/motivatiebrief zijn alleen als download-link te openen | Must | M |
+| CV-voorbeeld direct in het dossier (i.p.v. alleen downloaden) | `/beheer/sollicitatie-dossier.html` toont naam, contactgegevens en motivatietekst al; CV/motivatiebrief zijn nog alleen als downloadlink te openen, geen voorvertoning in de browser zelf | Must | M |
 | Interne notities per sollicitatie (bv. interviewaantekeningen, indruk collega) | Geen notitieveld in het datamodel of de UI | Should | S |
 | Bulk-acties (meerdere sollicitaties tegelijk van status wijzigen of verwijderen) | Status wijzigen/verwijderen kan nu alleen 1-voor-1 | Should | M |
 | Paginering in het sollicitatie-overzicht | Alle sollicitaties worden in 1 keer geladen en getoond; wordt onwerkbaar bij groei | Should | S |
