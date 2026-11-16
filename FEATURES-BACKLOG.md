@@ -65,7 +65,7 @@ te lezen zonder los in de data te duiken.
 | Filteren/zoeken op de vacatures-pagina (afdeling, locatie, dienstverband) | `vacatures.html` toont alle vacatures onder elkaar, geen filter | Should | M |
 | Toestemmingsvinkje bij het sollicitatieformulier (AVG) | Geen consent-checkbox, terwijl er wel persoonsgegevens en CV/motivatiebrief worden verwerkt | Must | S |
 | Vacature delen (kopieer-link/social-knop) | Geen deelknop op de detailpagina | Could | S |
-| E-mail- en telefoonnummer-validatie in het sollicitatieformulier | Beide velden accepteren nu elke tekst, geen formaatcontrole. Genoemd door Iska | **Must** | S |
+| ~~E-mail- en telefoonnummer-validatie in het sollicitatieformulier~~ ✅ | Afgerond: internationaal telefoonformaat (optionele landcode + 7-15 cijfers), client- én server-side, in alle 6 talen | Must | S |
 | "Vergelijkbare vacatures" onderaan een detailpagina | Geen suggesties, kandidaat moet zelf terug naar het overzicht | Could | M |
 | Job-alert (e-mail bij nieuwe vacature in gekozen categorie) | Bestaat niet | Could | L |
 
