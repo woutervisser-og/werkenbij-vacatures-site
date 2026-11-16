@@ -47,7 +47,7 @@ te lezen zonder los in de data te duiken.
 
 | Feature | Wat ontbreekt nu | Prioriteit | Inschatting |
 |---|---|---|---|
-| Vacature dupliceren als snelkoppeling | Staat al als bewust uitgesteld genoemd in het architectuurdocument; elke vacature moet nu vanaf nul opgebouwd worden, ook als 90% overeenkomt met een bestaande. Expliciet bevestigd door Iska (HR-opdrachtgever) | **Must** | S |
+| ~~Vacature dupliceren als snelkoppeling~~ ✅ | Afgerond: "Dupliceren"-knop in het overzicht, opent een vooringevulde, nog niet opgeslagen kopie (status altijd concept, titel met " (kopie)") | Must | S |
 | Vaste keuzelijst voor afdeling/locatie i.p.v. vrije tekst | Nu vrije tekstvelden (bewust, zie `VOORTGANG.md`); risico op typo's/duplicaten ("Sales" vs. "sales") die filtering en rapportage bemoeilijken | Should | S |
 | Zoekbalk in het vacature-overzicht (beheer) | Alleen een platte tabel, geen zoekfunctie; wordt onwerkbaar bij veel vacatures | Should | S |
 | Preview van een vacature vóór publiceren | Er is een "concept"-status, maar geen rechtstreekse voorvertoning vanuit het beheerscherm zelf | Should | S |
