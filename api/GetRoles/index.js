@@ -65,7 +65,9 @@ module.exports = async function (context, req) {
     );
 
     let isMember;
-    if (checkResponse.status === 204) {
+    if (checkResponse.status === 200 || checkResponse.status === 204) {
+      // Graph geeft bij een gevonden lid 200 (met de referentie in de
+      // body) terug, niet 204 zoals de documentatie voor $ref suggereert.
       isMember = true;
     } else if (checkResponse.status === 404) {
       isMember = false;
