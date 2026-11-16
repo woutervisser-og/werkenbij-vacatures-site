@@ -31,7 +31,7 @@ te lezen zonder los in de data te duiken.
 |---|---|---|---|
 | ~~Doorklikken vanuit vacature naar bijbehorende sollicitaties~~ ✅ | Afgerond: aantal sollicitaties als link, filtert door naar `/beheer/sollicitaties.html?vacatureId=...` | Must | S |
 | Filteren/zoeken in sollicitatie-overzicht (op vacature, status, naam, periode) | Geen enkel filter of zoekveld aanwezig, alles staat in 1 lange tabel | Must | S |
-| Bulk-export van sollicitaties (CSV/Excel) | Geen exportfunctie; data is alleen rij-voor-rij in de UI te bekijken | Must | S |
+| ~~Bulk-export van sollicitaties (CSV/Excel)~~ ✅ | Afgerond: "Exporteren (CSV)"-knop, respecteert actieve filters (vacature/zoekterm), puntkomma-gescheiden voor Excel NL | Must | S |
 | Sollicitatie-detailweergave (motivatietekst, CV-voorbeeld, contactgegevens in 1 overzicht) | De motivatietekst wordt nergens getoond in de UI, alleen opgeslagen; CV/motivatiebrief zijn alleen als download-link te openen | Must | M |
 | Interne notities per sollicitatie (bv. interviewaantekeningen, indruk collega) | Geen notitieveld in het datamodel of de UI | Should | S |
 | Bulk-acties (meerdere sollicitaties tegelijk van status wijzigen of verwijderen) | Status wijzigen/verwijderen kan nu alleen 1-voor-1 | Should | M |
@@ -41,7 +41,7 @@ te lezen zonder los in de data te duiken.
 | Beoordeling/score per sollicitant (bv. 1-5 sterren) | Geen scoreveld | Could | S |
 | Kanban/pipeline-weergave (slepen tussen statussen) i.p.v. alleen een tabel | Status wijzigen kan alleen via een dropdown per rij | Could | L |
 | Zelf-configureerbare kolommen in het sollicitatie-overzicht (beheren + toevoegen) | Alleen de vaste, hardcoded kolommen bestaan nu; "toevoegen" betekent in de praktijk een uitbreidbaar datamodel, niet alleen een ander UI-laagje. Genoemd door Iska | Should | L |
-| Handmatig een sollicitatie toevoegen (knop in het beheerportaal) | Kan nu alleen via het publieke formulier; nodig zodra kandidaten ook via Indeed/LinkedIn/telefoon binnenkomen zonder automatische koppeling. Genoemd door Iska, als expliciete terugvaloptie als de kanaalkoppelingen (zie categorie 8) niet lukken. Kleine, op zichzelf staande winst, los van of de grotere koppelingen er ooit komen | **Must** | S |
+| ~~Handmatig een sollicitatie toevoegen (knop in het beheerportaal)~~ ✅ | Afgerond: `/beheer/sollicitatie-toevoegen.html`, CV/motivatiebrief optioneel (in tegenstelling tot het publieke formulier) | Must | S |
 
 ## 2. Vacaturebeheer
 
@@ -114,7 +114,7 @@ PowerUs) aan hun kant toestaan, niet alleen van onze eigen bouwtijd.
 |---|---|---|---|
 | LinkedIn-koppeling: sollicitanten automatisch in dit systeem krijgen | Bestaat niet. **Let op**: LinkedIn's publieke API's ondersteunen dit niet zomaar; het soort koppeling dat Iska bedoelt (binnenkomende sollicitaties) loopt normaliter via LinkedIn's Talent Solutions/"Apply Connect"-programma, wat een los commercieel partnerschap met LinkedIn is, geen kwestie van een API-key aanvragen. Eerst uitzoeken of OG daar toegang toe heeft/kan krijgen, vóór dit als bouwwerk wordt ingepland | Could | L (en mogelijk niet puur een bouwkwestie) |
 | Indeed- en PowerUs-koppeling: vacature daarheen, reacties terug | Bestaat niet. Zelfde soort afhankelijkheid als LinkedIn: moet uitgezocht worden of deze partijen een geschikte API/feed aanbieden (vaak wel haalbaarder dan LinkedIn, Indeed heeft een bekende XML-feed-aanpak voor vacatures) | Could | L |
-| Terugvaloptie als een koppeling niet lukt: zelf sollicitaties toevoegen | Zie categorie 1, "Handmatig een sollicitatie toevoegen" — dat ene punt is de concrete, direct bouwbare eerste stap, ongeacht of de koppelingen hierboven er ooit komen | **Must** | S |
+| ~~Terugvaloptie als een koppeling niet lukt: zelf sollicitaties toevoegen~~ ✅ | Afgerond, zie categorie 1 "Handmatig een sollicitatie toevoegen" | Must | S |
 
 ## Kort overzicht: wat is al goed geregeld
 
