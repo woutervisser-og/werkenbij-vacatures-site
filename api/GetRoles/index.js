@@ -19,10 +19,13 @@ const HR_ROLE = "hrbeheer";
 // "/api/GetRoles" weer toevoegen aan staticwebapp.config.json.
 module.exports = async function (context, req) {
   const { identityProvider, userId } = req.body || {};
+  // TIJDELIJK (diagnose toegangsprobleem, te verwijderen zodra opgelost):
+  context.log("GetRoles aangeroepen", { identityProvider, userId });
 
   // Alleen Microsoft-logins (Entra ID) komen in aanmerking, geen andere
   // providers.
   if (identityProvider !== "aad" || !userId) {
+    context.log("GetRoles: afgewezen vóór groepscheck (provider/userId)");
     context.res = { status: 200, body: { roles: [] } };
     return;
   }
@@ -44,7 +47,10 @@ module.exports = async function (context, req) {
     const tokenData = await tokenResponse.json();
 
     if (!tokenData.access_token) {
-      context.log.error("Kon geen Graph-token ophalen voor rollen-check", tokenData);
+      context.log.error("Kon geen Graph-token ophalen voor rollen-check", {
+        status: tokenResponse.status,
+        tokenData
+      });
       context.res = { status: 200, body: { roles: [] } };
       return;
     }
@@ -63,6 +69,14 @@ module.exports = async function (context, req) {
       }
     );
     const checkData = await checkResponse.json();
+    // TIJDELIJK: altijd loggen, ook bij een geslaagde (niet-foutieve) aanroep,
+    // want een non-200 van Graph geeft hier anders stilletjes "geen lid".
+    context.log("checkMemberGroups resultaat", {
+      status: checkResponse.status,
+      checkData,
+      GROUP_ID
+    });
+
     const isMember = Array.isArray(checkData.value) && checkData.value.includes(GROUP_ID);
 
     context.res = {
