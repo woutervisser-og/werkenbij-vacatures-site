@@ -286,6 +286,8 @@
     "fout": "Une erreur s'est produite lors de l'envoi. Veuillez réessayer ou nous contacter.",
     "cvVerplicht": "Veuillez télécharger votre CV.",
     "bestandTypeFout": "{{veld}} : seuls les fichiers PDF ou Word sont autorisés.",
-    "bestandGrootteFout": "{{veld}} : le fichier dépasse 5 Mo."
+    "bestandGrootteFout": "{{veld}} : le fichier dépasse 5 Mo.",
+    "emailOngeldig": "Veuillez saisir une adresse e-mail valide.",
+    "telefoonOngeldig": "Veuillez saisir un numéro de téléphone valide, avec l'indicatif du pays (ex. +31)."
   }
 }

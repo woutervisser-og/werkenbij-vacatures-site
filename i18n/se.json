@@ -286,6 +286,8 @@
     "fout": "Något gick fel vid skickandet. Försök igen eller kontakta oss.",
     "cvVerplicht": "Ladda upp ditt CV.",
     "bestandTypeFout": "{{veld}}: endast PDF- eller Word-filer är tillåtna.",
-    "bestandGrootteFout": "{{veld}}: filen är större än 5 MB."
+    "bestandGrootteFout": "{{veld}}: filen är större än 5 MB.",
+    "emailOngeldig": "Ange en giltig e-postadress.",
+    "telefoonOngeldig": "Ange ett giltigt telefonnummer, inklusive landskod (t.ex. +31)."
   }
 }

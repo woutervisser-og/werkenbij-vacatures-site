@@ -286,6 +286,8 @@
     "fout": "Something went wrong while submitting. Please try again or get in touch.",
     "cvVerplicht": "Please upload your CV.",
     "bestandTypeFout": "{{veld}}: only PDF or Word files are allowed.",
-    "bestandGrootteFout": "{{veld}}: file is larger than 5MB."
+    "bestandGrootteFout": "{{veld}}: file is larger than 5MB.",
+    "emailOngeldig": "Please enter a valid email address.",
+    "telefoonOngeldig": "Please enter a valid phone number, including country code (e.g. +31)."
   }
 }

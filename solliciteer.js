@@ -19,6 +19,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const TOEGESTANE_EXTENSIES = [".pdf", ".doc", ".docx"];
   const MAX_BESTANDSGROOTTE = 5 * 1024 * 1024; // 5MB
 
+  // Zelfde patronen als de server (api/SollicitatieCreate): internationaal
+  // bedoeld, dus geen land-specifiek formaat. Telefoon is optioneel, wordt
+  // alleen gecheckt als er iets is ingevuld.
+  const EMAIL_REGEX = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/;
+  const TELEFOON_REGEX = /^\+?[0-9]{7,15}$/;
+
+  function isGeldigeEmail(waarde) {
+    return EMAIL_REGEX.test(waarde);
+  }
+
+  function isGeldigTelefoonnummer(waarde) {
+    const opgeschoond = waarde.replace(/[\s\-().]/g, "");
+    return TELEFOON_REGEX.test(opgeschoond);
+  }
+
   function vulIn(sjabloon, veld) {
     return (sjabloon || "").replace(/\{\{veld\}\}/g, veld);
   }
@@ -51,6 +66,15 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", event => {
     event.preventDefault();
     toonStatus("", null);
+
+    if (!isGeldigeEmail(form.email.value)) {
+      toonStatus(teksten.emailOngeldig, "fout");
+      return;
+    }
+    if (form.tel.value.trim() && !isGeldigTelefoonnummer(form.tel.value)) {
+      toonStatus(teksten.telefoonOngeldig, "fout");
+      return;
+    }
 
     const cvBestand = document.getElementById("cv").files[0];
     const motivatiebriefBestand = document.getElementById("motivation_letter").files[0];

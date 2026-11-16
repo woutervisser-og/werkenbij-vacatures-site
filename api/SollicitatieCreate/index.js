@@ -7,6 +7,11 @@ const { getSollicitatiesTableClient, toEntity, toSollicitatieDto } = require("..
 // niet geldig te zijn, los van hoe de weergavecode ermee omgaat.
 const EMAIL_REGEX = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/;
 
+// Internationaal bedoeld (OG opereert in meerdere landen): alleen cijfers
+// en een optionele voorloop-"+", geen land-specifiek formaat. Telefoon is
+// optioneel, deze check geldt alleen als het veld is ingevuld.
+const TELEFOON_REGEX = /^\+?[0-9]{7,15}$/;
+
 // Publiek endpoint: een kandidaat is niet ingelogd. Het CV zelf is al apart
 // geupload via CvUpload (net als een headerfoto eerst apart via
 // MediaUpload gaat), dit endpoint slaat alleen de sollicitatie zelf op met
@@ -24,6 +29,10 @@ module.exports = async function (context, req) {
   }
   if (!input.email || !EMAIL_REGEX.test(input.email)) {
     context.res = { status: 400, body: { error: "Een geldig e-mailadres is verplicht" } };
+    return;
+  }
+  if (input.telefoon && !TELEFOON_REGEX.test(input.telefoon.replace(/[\s\-().]/g, ""))) {
+    context.res = { status: 400, body: { error: "Telefoonnummer is ongeldig" } };
     return;
   }
   if (!input.cv || !input.cv.naam) {

@@ -286,6 +286,8 @@
     "fout": "Er ging iets mis bij het versturen. Probeer het nogmaals of neem contact op.",
     "cvVerplicht": "Upload je CV.",
     "bestandTypeFout": "{{veld}}: alleen PDF of Word-bestanden zijn toegestaan.",
-    "bestandGrootteFout": "{{veld}}: bestand is groter dan 5MB."
+    "bestandGrootteFout": "{{veld}}: bestand is groter dan 5MB.",
+    "emailOngeldig": "Vul een geldig e-mailadres in.",
+    "telefoonOngeldig": "Vul een geldig telefoonnummer in, inclusief landcode (bijv. +31)."
   }
 }

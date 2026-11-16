@@ -286,6 +286,8 @@
     "fout": "Beim Absenden ist etwas schiefgelaufen. Bitte versuche es erneut oder kontaktiere uns.",
     "cvVerplicht": "Bitte lade deinen Lebenslauf hoch.",
     "bestandTypeFout": "{{veld}}: nur PDF- oder Word-Dateien sind erlaubt.",
-    "bestandGrootteFout": "{{veld}}: Datei ist größer als 5 MB."
+    "bestandGrootteFout": "{{veld}}: Datei ist größer als 5 MB.",
+    "emailOngeldig": "Bitte gib eine gültige E-Mail-Adresse ein.",
+    "telefoonOngeldig": "Bitte gib eine gültige Telefonnummer inklusive Ländervorwahl ein (z. B. +31)."
   }
 }

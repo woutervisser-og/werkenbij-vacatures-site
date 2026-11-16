@@ -578,7 +578,7 @@ ${renderBroodkruimel(vacature, taalcode, t)}
       </div>
       <div class="form-veld">
         <label for="tel">${t("form.telefoon")}</label>
-        <input type="tel" id="tel" name="tel">
+        <input type="tel" id="tel" name="tel" placeholder="+31 6 12345678">
       </div>
       <div class="form-veld">
         <label for="motivation">${t("form.motivatieLabel")}</label>
@@ -633,6 +633,8 @@ ${renderBroodkruimel(vacature, taalcode, t)}
     cvVerplicht: t("form.cvVerplicht"),
     bestandTypeFout: t("form.bestandTypeFout"),
     bestandGrootteFout: t("form.bestandGrootteFout"),
+    emailOngeldig: t("form.emailOngeldig"),
+    telefoonOngeldig: t("form.telefoonOngeldig"),
     versturen: t("form.versturen"),
     bezigMetVersturen: t("form.bezigMetVersturen"),
     succes: t("form.succes"),

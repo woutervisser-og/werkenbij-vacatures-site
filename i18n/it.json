@@ -286,6 +286,8 @@
     "fout": "Si è verificato un errore durante l'invio. Riprova o contattaci.",
     "cvVerplicht": "Carica il tuo CV.",
     "bestandTypeFout": "{{veld}}: sono ammessi solo file PDF o Word.",
-    "bestandGrootteFout": "{{veld}}: il file supera i 5MB."
+    "bestandGrootteFout": "{{veld}}: il file supera i 5MB.",
+    "emailOngeldig": "Inserisci un indirizzo e-mail valido.",
+    "telefoonOngeldig": "Inserisci un numero di telefono valido, incluso il prefisso internazionale (es. +31)."
   }
 }
