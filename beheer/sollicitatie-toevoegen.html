@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sollicitatie toevoegen | OG Clean Fuels</title>
+<link rel="icon" href="/images/favicon-og.ico">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/beheer/beheer.css">
+</head>
+<body>
+
+<div class="beheer-topbar">
+  <div class="beheer-topbar-merk">
+    <a href="/beheer/index.html" class="logo" aria-label="OG Clean Fuels beheer, naar het overzicht">
+      <span class="logo-afbeelding-wrap">
+        <img class="logo-afbeelding logo-afbeelding-kleur" src="/images/logo/og-logo-kleur.png" alt="OG Clean Fuels">
+      </span>
+    </a>
+    <span class="beheer-portal-naam">Working at OG portal</span>
+  </div>
+  <span class="beheer-gebruiker" id="gebruiker-info"></span>
+</div>
+
+<div class="beheer-geen-toegang">
+  <h1>Geen toegang</h1>
+  <p>Je bent ingelogd, maar hebt geen toegang tot het beheerportaal. Vraag de beheerder van het portaal om je toe te voegen aan de groep die hiervoor toegang geeft.</p>
+</div>
+
+<main class="beheer-main">
+  <div class="beheer-header-rij">
+    <h1>Sollicitatie toevoegen</h1>
+    <a href="/beheer/sollicitaties.html" class="btn btn-klein btn-secundair">&larr; Terug naar sollicitaties</a>
+  </div>
+  <p class="beheer-subtitel">Voor kandidaten die buiten het sollicitatieformulier om binnenkomen, bijvoorbeeld via LinkedIn, Indeed of telefoon. Een CV is hier niet verplicht, die kun je later alsnog toevoegen via het dossier.</p>
+
+  <div id="melding"></div>
+
+  <form class="beheer-form" id="toevoegen-form">
+    <div class="form-rij">
+      <div class="form-veld">
+        <label for="veld-vacature">Vacature</label>
+        <select id="veld-vacature" required>
+          <option value="">Vacature laden...</option>
+        </select>
+      </div>
+      <div class="form-veld">
+        <label for="veld-status">Status</label>
+        <select id="veld-status">
+          <option value="nieuw">Nieuw</option>
+          <option value="screening">Screening</option>
+          <option value="eerste_gesprek">Eerste gesprek</option>
+          <option value="tweede_gesprek">Tweede gesprek</option>
+          <option value="aanbod">Aanbod</option>
+          <option value="aangenomen">Aangenomen</option>
+          <option value="afgewezen">Afgewezen</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <div class="form-veld">
+        <label for="veld-voornaam">Voornaam</label>
+        <input type="text" id="veld-voornaam" required>
+      </div>
+      <div class="form-veld">
+        <label for="veld-achternaam">Achternaam</label>
+        <input type="text" id="veld-achternaam" required>
+      </div>
+      <div class="form-veld">
+        <label for="veld-email">E-mailadres</label>
+        <input type="email" id="veld-email" required>
+      </div>
+      <div class="form-veld">
+        <label for="veld-telefoon">Telefoonnummer (optioneel)</label>
+        <input type="tel" id="veld-telefoon" placeholder="+31 6 12345678">
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <div class="form-veld">
+        <label for="veld-notitie">Notitie (optioneel)</label>
+        <textarea id="veld-notitie" placeholder="Bijv. hoe deze kandidaat is binnengekomen"></textarea>
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <div class="form-veld">
+        <label for="veld-cv">CV (optioneel, PDF of Word, max 5MB)</label>
+        <input type="file" id="veld-cv" accept=".pdf,.doc,.docx">
+      </div>
+      <div class="form-veld">
+        <label for="veld-motivatiebrief">Motivatiebrief (optioneel, PDF of Word, max 5MB)</label>
+        <input type="file" id="veld-motivatiebrief" accept=".pdf,.doc,.docx">
+      </div>
+    </div>
+
+    <button type="submit" class="btn" id="opslaan-knop">Sollicitatie toevoegen</button>
+  </form>
+</main>
+
+<script src="/beheer/beheer-auth.js"></script>
+<script>
+  const EMAIL_REGEX = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/;
+  const TELEFOON_REGEX = /^\+?[0-9]{7,15}$/;
+  const TOEGESTANE_EXTENSIES = [".pdf", ".doc", ".docx"];
+  const MAX_BESTANDSGROOTTE = 5 * 1024 * 1024; // 5MB
+
+  function toonMelding(tekst, type) {
+    const meldingEl = document.getElementById("melding");
+    meldingEl.innerHTML = "";
+    if (!tekst) return;
+    const el = document.createElement("div");
+    el.className = "melding melding-" + type;
+    el.textContent = tekst;
+    meldingEl.appendChild(el);
+  }
+
+  fetch("/api/vacatures")
+    .then(response => response.json())
+    .then(vacatures => {
+      const select = document.getElementById("veld-vacature");
+      select.innerHTML = '<option value="">Kies een vacature...</option>';
+      vacatures
+        .slice()
+        .sort((a, b) => (a.titel || "").localeCompare(b.titel || ""))
+        .forEach(vacature => {
+          const optie = document.createElement("option");
+          optie.value = vacature.id;
+          optie.textContent = vacature.titel || "(zonder titel)";
+          select.appendChild(optie);
+        });
+    })
+    .catch(error => {
+      toonMelding("Kon de vacaturelijst niet laden.", "fout");
+      console.error(error);
+    });
+
+  function valideerBestand(file) {
+    if (!file) return null;
+    const naam = file.name.toLowerCase();
+    const geldigeExtensie = TOEGESTANE_EXTENSIES.some(ext => naam.endsWith(ext));
+    if (!geldigeExtensie) return "Alleen PDF of Word-bestanden zijn toegestaan.";
+    if (file.size > MAX_BESTANDSGROOTTE) return "Bestand is groter dan 5MB.";
+    return null;
+  }
+
+  function uploadBestand(file) {
+    return fetch("/api/cv?bestandsnaam=" + encodeURIComponent(file.name), {
+      method: "POST",
+      headers: { "Content-Type": "application/octet-stream" },
+      body: file
+    }).then(response => {
+      if (!response.ok) throw new Error("Uploaden is mislukt (status " + response.status + ")");
+      return response.json();
+    });
+  }
+
+  document.getElementById("toevoegen-form").addEventListener("submit", event => {
+    event.preventDefault();
+    toonMelding("", null);
+
+    const vacatureId = document.getElementById("veld-vacature").value;
+    const email = document.getElementById("veld-email").value;
+    const telefoon = document.getElementById("veld-telefoon").value;
+    const cvBestand = document.getElementById("veld-cv").files[0];
+    const motivatiebriefBestand = document.getElementById("veld-motivatiebrief").files[0];
+
+    if (!vacatureId) {
+      toonMelding("Kies een vacature.", "fout");
+      return;
+    }
+    if (!EMAIL_REGEX.test(email)) {
+      toonMelding("Vul een geldig e-mailadres in.", "fout");
+      return;
+    }
+    if (telefoon.trim() && !TELEFOON_REGEX.test(telefoon.replace(/[\s\-().]/g, ""))) {
+      toonMelding("Vul een geldig telefoonnummer in, inclusief landcode (bijv. +31).", "fout");
+      return;
+    }
+    const cvFout = valideerBestand(cvBestand);
+    if (cvFout) {
+      toonMelding("CV: " + cvFout, "fout");
+      return;
+    }
+    const motivatiebriefFout = valideerBestand(motivatiebriefBestand);
+    if (motivatiebriefFout) {
+      toonMelding("Motivatiebrief: " + motivatiebriefFout, "fout");
+      return;
+    }
+
+    const opslaanKnop = document.getElementById("opslaan-knop");
+    opslaanKnop.disabled = true;
+
+    Promise.all([
+      cvBestand ? uploadBestand(cvBestand) : Promise.resolve(null),
+      motivatiebriefBestand ? uploadBestand(motivatiebriefBestand) : Promise.resolve(null)
+    ])
+      .then(([cv, motivatiebrief]) => {
+        return fetch("/api/sollicitatiebeheer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            vacatureId,
+            voornaam: document.getElementById("veld-voornaam").value,
+            achternaam: document.getElementById("veld-achternaam").value,
+            email,
+            telefoon,
+            motivatie: document.getElementById("veld-notitie").value,
+            status: document.getElementById("veld-status").value,
+            cv,
+            motivatiebrief
+          })
+        });
+      })
+      .then(response => {
+        if (!response.ok) return response.json().then(body => { throw new Error(body.error || "Opslaan is mislukt"); });
+        return response.json();
+      })
+      .then(sollicitatie => {
+        location.href = "/beheer/sollicitatie-dossier.html?id=" + encodeURIComponent(sollicitatie.id);
+      })
+      .catch(error => {
+        opslaanKnop.disabled = false;
+        toonMelding(error.message || "Opslaan is mislukt.", "fout");
+        console.error(error);
+      });
+  });
+</script>
+
+</body>
+</html>

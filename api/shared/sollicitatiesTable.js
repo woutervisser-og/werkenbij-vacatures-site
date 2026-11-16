@@ -61,7 +61,11 @@ function getSollicitatiesTableClient() {
 // from/to/timestamp/user. Table Storage kent geen geneste arrays, dus
 // net als bij vacatures' "translationsJson" wordt dit als JSON-string
 // opgeslagen ("statusHistoryJson").
-function toEntity(id, sollicitatie, { ingediendOp }) {
+// toegevoegdDoor is alleen gezet als HR deze sollicitatie zelf heeft
+// aangemaakt (zie SollicitatieCreateIntern, voor kandidaten die buiten
+// het publieke formulier om binnenkomen); bij een normale sollicitatie
+// blijft dit leeg en is de audit trail-gebruiker gewoon "kandidaat".
+function toEntity(id, sollicitatie, { ingediendOp, toegevoegdDoor }) {
   const status = sollicitatie.status || "nieuw";
   return {
     partitionKey: PARTITION_KEY,
@@ -79,9 +83,10 @@ function toEntity(id, sollicitatie, { ingediendOp }) {
     motivatiebriefOorspronkelijkeNaam: sollicitatie.motivatiebriefOorspronkelijkeNaam || "",
     status,
     statusHistoryJson: JSON.stringify([
-      { from: null, to: status, timestamp: ingediendOp, user: "kandidaat" }
+      { from: null, to: status, timestamp: ingediendOp, user: toegevoegdDoor || "kandidaat" }
     ]),
     notities: "",
+    handmatigToegevoegdDoor: toegevoegdDoor || "",
     ingediendOp
   };
 }
@@ -116,6 +121,7 @@ function toSollicitatieDto(entity) {
     status: entity.status,
     statusHistory: JSON.parse(entity.statusHistoryJson || "[]"),
     notities: entity.notities || "",
+    handmatigToegevoegdDoor: entity.handmatigToegevoegdDoor || "",
     ingediendOp: entity.ingediendOp
   };
 }

@@ -33,7 +33,11 @@
       <h1>Sollicitaties</h1>
       <p class="beheer-subtitel" id="filter-context" hidden></p>
     </div>
-    <a href="/beheer/index.html" class="btn btn-klein btn-secundair">&larr; Terug naar vacatures</a>
+    <div style="display:flex; gap:10px;">
+      <a href="/beheer/index.html" class="btn btn-klein btn-secundair">&larr; Terug naar vacatures</a>
+      <button type="button" class="btn btn-klein btn-secundair" id="exporteer-knop">Exporteren (CSV)</button>
+      <a href="/beheer/sollicitatie-toevoegen.html" class="btn btn-klein">+ Sollicitatie toevoegen</a>
+    </div>
   </div>
 
   <div id="melding"></div>
@@ -282,6 +286,47 @@
         return dagen !== null && dagen >= Number(filters.minDagen);
       });
   }
+
+  // CSV-export respecteert de basisfilters (vacature + zoekterm, die in
+  // elke weergave gelden), niet de weergave-specifieke filters (fase/
+  // minDagen op het bord): "exporteer wat ik aan het filteren ben",
+  // ongeacht welk tabblad er net open staat.
+  function csvVeld(waarde) {
+    const tekst = String(waarde == null ? "" : waarde).replace(/<[^>]+>/g, " ").replace(/\r?\n/g, " ").trim();
+    return /[";]/.test(tekst) ? '"' + tekst.replace(/"/g, '""') + '"' : tekst;
+  }
+
+  document.getElementById("exporteer-knop").addEventListener("click", () => {
+    const rijen = alleSollicitaties.filter(voldoetAanBasisFilters);
+    if (rijen.length === 0) {
+      toonMelding("Niets om te exporteren met de huidige filter.", "fout");
+      return;
+    }
+    const kolommen = ["Voornaam", "Achternaam", "E-mail", "Telefoon", "Vacature", "Status", "Ingediend op", "Notitie", "CV-bestand"];
+    const regels = [kolommen.join(";")].concat(
+      rijen.map(s => [
+        csvVeld(s.voornaam),
+        csvVeld(s.achternaam),
+        csvVeld(s.email),
+        csvVeld(s.telefoon),
+        csvVeld(s.vacatureTitel),
+        csvVeld(FASE_LABELS[s.status] || s.status),
+        csvVeld(formatteerDatum(s.ingediendOp)),
+        csvVeld(s.notities),
+        csvVeld(s.cvOorspronkelijkeNaam)
+      ].join(";"))
+    );
+    // BOM vooraan zodat Excel de accenten (é, ë, ü) correct leest.
+    const blob = new Blob(["﻿" + regels.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "sollicitaties-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
 
   // "Afgewezen" en "Archief" zijn nu 2 losse lijsten (1 per exit-status),
   // i.p.v. 1 gecombineerde archiefweergave.
