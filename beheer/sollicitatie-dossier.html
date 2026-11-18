@@ -90,6 +90,11 @@
           <div class="bijlagen-links" id="dossier-bijlagen"></div>
         </section>
 
+        <section class="dossier-sectie" id="afdelingshoofd-reacties-sectie" hidden>
+          <h2 class="dossier-sectie-kop">Reacties van afdelingshoofden</h2>
+          <div id="afdelingshoofd-reacties"></div>
+        </section>
+
         <section class="dossier-sectie">
           <button type="button" class="btn btn-klein btn-gevaar" id="verwijder-knop">Sollicitatie verwijderen</button>
         </section>
@@ -258,9 +263,40 @@
     document.getElementById("notities-veld").innerHTML = sollicitatie.notities || "";
     document.getElementById("notities-opslaan-knop").onclick = () => opslaanNotities(sollicitatie.id);
 
+    renderAfdelingshoofdReacties(sollicitatie.afdelingshoofdReacties || []);
     renderTijdlijn(history, sollicitatie.ingediendOp);
 
     document.getElementById("verwijder-knop").onclick = () => verwijderSollicitatie(sollicitatie.id, volledigeNaam);
+  }
+
+  function renderAfdelingshoofdReacties(reacties) {
+    const sectie = document.getElementById("afdelingshoofd-reacties-sectie");
+    const container = document.getElementById("afdelingshoofd-reacties");
+    sectie.hidden = reacties.length === 0;
+    if (reacties.length === 0) return;
+
+    container.innerHTML = "";
+    reacties.forEach(reactie => {
+      const item = document.createElement("div");
+      item.className = "tijdlijn-item";
+
+      const stip = document.createElement("span");
+      stip.className = "tijdlijn-stip";
+      item.appendChild(stip);
+
+      const inhoud = document.createElement("div");
+      inhoud.className = "tijdlijn-inhoud";
+      const tekstEl = document.createElement("p");
+      tekstEl.textContent = reactie.tekst;
+      inhoud.appendChild(tekstEl);
+      const metaEl = document.createElement("span");
+      metaEl.className = "tijdlijn-meta";
+      metaEl.textContent = `${formatteerDatum(reactie.timestamp)} · door ${reactie.auteur || "onbekend"}`;
+      inhoud.appendChild(metaEl);
+      item.appendChild(inhoud);
+
+      container.appendChild(item);
+    });
   }
 
   function renderTijdlijn(history, ingediendOp) {

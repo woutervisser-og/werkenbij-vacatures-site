@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kandidaatdossier | OG Clean Fuels</title>
+<link rel="icon" href="/images/favicon-og.ico">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/beheer/beheer.css">
+</head>
+<body>
+
+<div class="beheer-topbar">
+  <div class="beheer-topbar-merk">
+    <a href="/afdelingshoofd/sollicitaties.html" class="logo" aria-label="OG Clean Fuels, naar het overzicht">
+      <span class="logo-afbeelding-wrap">
+        <img class="logo-afbeelding logo-afbeelding-kleur" src="/images/logo/og-logo-kleur.png" alt="OG Clean Fuels">
+      </span>
+    </a>
+    <span class="beheer-portal-naam">Working at OG portal</span>
+  </div>
+  <span class="beheer-gebruiker" id="gebruiker-info"></span>
+</div>
+
+<div class="beheer-geen-toegang">
+  <h1>Geen toegang</h1>
+  <p>Je bent ingelogd, maar hebt geen toegang tot dit dossier. Vraag HR om je als afdelingshoofd te koppelen aan je afdeling.</p>
+</div>
+
+<main class="beheer-main">
+  <div class="beheer-header-rij">
+    <div>
+      <h1 id="dossier-naam">Kandidaatdossier</h1>
+      <p class="beheer-subtitel" id="dossier-vacature"></p>
+    </div>
+    <a href="/afdelingshoofd/sollicitaties.html" class="btn btn-klein btn-secundair">&larr; Terug naar sollicitaties</a>
+  </div>
+
+  <div id="melding"></div>
+
+  <div id="dossier-inhoud" hidden>
+    <div class="dossier-grid">
+      <div class="dossier-kolom-hoofd">
+        <section class="dossier-sectie">
+          <h2 class="dossier-sectie-kop">Status</h2>
+          <p id="dossier-status"></p>
+        </section>
+
+        <section class="dossier-sectie">
+          <h2 class="dossier-sectie-kop">Jouw reacties</h2>
+          <div id="reacties-lijst"></div>
+          <textarea id="reactie-tekst" class="rte-veld" rows="3" placeholder="Bijvoorbeeld: gesproken op 18 november, goede indruk, graag een vervolggesprek..." style="margin-top:12px;"></textarea>
+          <button type="button" class="btn btn-klein" id="reactie-opslaan-knop" style="margin-top:8px;">Reactie plaatsen</button>
+        </section>
+      </div>
+
+      <div class="dossier-kolom-zijkant">
+        <section class="dossier-sectie">
+          <h2 class="dossier-sectie-kop">Contact</h2>
+          <p id="dossier-email"></p>
+          <p id="dossier-telefoon"></p>
+        </section>
+
+        <section class="dossier-sectie">
+          <h2 class="dossier-sectie-kop">Motivatie</h2>
+          <p id="dossier-motivatie" class="dossier-motivatie"></p>
+        </section>
+
+        <section class="dossier-sectie">
+          <h2 class="dossier-sectie-kop">Documenten</h2>
+          <div class="bijlagen-links" id="dossier-bijlagen"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="beheer-leeg" id="leeg-status">Dossier laden...</div>
+</main>
+
+<script src="/afdelingshoofd/afdelingshoofd-auth.js"></script>
+<script>
+  const FASE_LABELS = {
+    nieuw: "Nieuw",
+    screening: "Screening",
+    eerste_gesprek: "Eerste gesprek",
+    tweede_gesprek: "Tweede gesprek",
+    aanbod: "Aanbod",
+    aangenomen: "Aangenomen",
+    afgewezen: "Afgewezen",
+    ingetrokken: "Ingetrokken door kandidaat"
+  };
+
+  const zoekParams = new URLSearchParams(location.search);
+  const sollicitatieId = zoekParams.get("id");
+
+  function toonMelding(tekst, type) {
+    const meldingEl = document.getElementById("melding");
+    meldingEl.innerHTML = "";
+    if (!tekst) return;
+    const el = document.createElement("div");
+    el.className = "melding melding-" + type;
+    el.textContent = tekst;
+    meldingEl.appendChild(el);
+  }
+
+  function formatteerDatum(isoDatum) {
+    if (!isoDatum) return "—";
+    const datum = new Date(isoDatum);
+    if (isNaN(datum)) return "—";
+    return datum.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  }
+
+  if (!sollicitatieId) {
+    document.getElementById("leeg-status").textContent = "Geen kandidaat opgegeven.";
+  } else {
+    laadDossier();
+  }
+
+  function laadDossier() {
+    fetch("/api/afdelingshoofd/sollicitaties")
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(sollicitaties => {
+        const sollicitatie = sollicitaties.find(s => s.id === sollicitatieId);
+        if (!sollicitatie) {
+          document.getElementById("leeg-status").textContent = "Dit dossier is niet gevonden, of valt niet binnen jouw afdeling(en).";
+          return;
+        }
+        toonDossier(sollicitatie);
+      })
+      .catch(error => {
+        document.getElementById("leeg-status").textContent = "Er ging iets mis bij het laden van dit dossier.";
+        console.error(error);
+      });
+  }
+
+  function toonDossier(sollicitatie) {
+    document.getElementById("leeg-status").hidden = true;
+    document.getElementById("dossier-inhoud").hidden = false;
+
+    document.getElementById("dossier-naam").textContent =
+      `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
+    document.getElementById("dossier-vacature").textContent = sollicitatie.vacatureTitel
+      ? `Sollicitatie voor: ${sollicitatie.vacatureTitel}`
+      : "Vacature onbekend";
+
+    document.getElementById("dossier-status").textContent = FASE_LABELS[sollicitatie.status] || sollicitatie.status;
+
+    const dossierEmailEl = document.getElementById("dossier-email");
+    dossierEmailEl.textContent = "✉ ";
+    if (sollicitatie.email) {
+      const emailLink = document.createElement("a");
+      emailLink.href = "mailto:" + sollicitatie.email;
+      emailLink.textContent = sollicitatie.email;
+      dossierEmailEl.appendChild(emailLink);
+    } else {
+      dossierEmailEl.append("—");
+    }
+    document.getElementById("dossier-telefoon").textContent = sollicitatie.telefoon
+      ? `☎ ${sollicitatie.telefoon}`
+      : "Geen telefoonnummer opgegeven";
+
+    document.getElementById("dossier-motivatie").textContent = sollicitatie.motivatie || "Geen motivatie meegegeven.";
+
+    const bijlagenWrap = document.getElementById("dossier-bijlagen");
+    bijlagenWrap.innerHTML = "";
+    if (sollicitatie.cvNaam) {
+      const cvLink = document.createElement("a");
+      cvLink.className = "btn btn-klein btn-secundair";
+      cvLink.href = "/api/afdelingshoofd/sollicitaties/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=cv";
+      cvLink.textContent = "CV downloaden";
+      bijlagenWrap.appendChild(cvLink);
+    }
+    if (sollicitatie.motivatiebriefNaam) {
+      const briefLink = document.createElement("a");
+      briefLink.className = "btn btn-klein btn-secundair";
+      briefLink.href = "/api/afdelingshoofd/sollicitaties/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=motivatiebrief";
+      briefLink.textContent = "Motivatiebrief downloaden";
+      bijlagenWrap.appendChild(briefLink);
+    }
+    if (!bijlagenWrap.children.length) {
+      bijlagenWrap.textContent = "Geen documenten aanwezig.";
+    }
+
+    renderReacties(sollicitatie.afdelingshoofdReacties || []);
+
+    document.getElementById("reactie-opslaan-knop").onclick = () => plaatsReactie(sollicitatie.id);
+  }
+
+  function renderReacties(reacties) {
+    const container = document.getElementById("reacties-lijst");
+    container.innerHTML = "";
+    if (reacties.length === 0) {
+      container.innerHTML = `<p class="blokken-leeg">Nog geen reacties geplaatst.</p>`;
+      return;
+    }
+    reacties.forEach(reactie => {
+      const item = document.createElement("div");
+      item.className = "tijdlijn-item";
+
+      const stip = document.createElement("span");
+      stip.className = "tijdlijn-stip";
+      item.appendChild(stip);
+
+      const inhoud = document.createElement("div");
+      inhoud.className = "tijdlijn-inhoud";
+      const tekstEl = document.createElement("p");
+      tekstEl.textContent = reactie.tekst;
+      inhoud.appendChild(tekstEl);
+      const metaEl = document.createElement("span");
+      metaEl.className = "tijdlijn-meta";
+      metaEl.textContent = `${formatteerDatum(reactie.timestamp)} · door ${reactie.auteur || "onbekend"}`;
+      inhoud.appendChild(metaEl);
+      item.appendChild(inhoud);
+
+      container.appendChild(item);
+    });
+  }
+
+  function plaatsReactie(id) {
+    const tekstVeld = document.getElementById("reactie-tekst");
+    const tekst = tekstVeld.value.trim();
+    if (!tekst) {
+      toonMelding("Vul eerst een reactie in.", "fout");
+      return;
+    }
+
+    const knop = document.getElementById("reactie-opslaan-knop");
+    knop.disabled = true;
+
+    fetch("/api/afdelingshoofd/sollicitaties/" + encodeURIComponent(id) + "/reactie", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tekst })
+    })
+      .then(response => {
+        if (!response.ok) throw new Error("Status: " + response.status);
+        return response.json();
+      })
+      .then(sollicitatie => {
+        tekstVeld.value = "";
+        toonMelding("Reactie geplaatst.", "ok");
+        renderReacties(sollicitatie.afdelingshoofdReacties || []);
+      })
+      .catch(error => {
+        toonMelding("Reactie plaatsen is mislukt.", "fout");
+        console.error(error);
+      })
+      .finally(() => {
+        knop.disabled = false;
+      });
+  }
+</script>
+
+</body>
+</html>

@@ -104,6 +104,20 @@ function metNieuweStatusHistory(entity, { van, naar, gebruiker }) {
   return JSON.stringify(nieuweHistory);
 }
 
+// Zelfde aanpak als metNieuweStatusHistory, maar voor de reacties die
+// afdelingshoofden achterlaten ("inlezen op een kandidaat, maar ook
+// reactie achterlaten na een gesprek"). Bewust een apart veld, niet
+// toegevoegd aan HR's eigen "notities": die blijft HR-only, dit is juist
+// bedoeld om door HR gelezen te worden.
+function metNieuweAfdelingshoofdReactie(entity, { tekst, auteur }) {
+  const bestaandeReacties = JSON.parse(entity.afdelingshoofdReactiesJson || "[]");
+  const nieuweReacties = [
+    ...bestaandeReacties,
+    { tekst, auteur, timestamp: new Date().toISOString() }
+  ];
+  return JSON.stringify(nieuweReacties);
+}
+
 function toSollicitatieDto(entity) {
   return {
     id: entity.rowKey,
@@ -122,6 +136,7 @@ function toSollicitatieDto(entity) {
     statusHistory: JSON.parse(entity.statusHistoryJson || "[]"),
     notities: entity.notities || "",
     handmatigToegevoegdDoor: entity.handmatigToegevoegdDoor || "",
+    afdelingshoofdReacties: JSON.parse(entity.afdelingshoofdReactiesJson || "[]"),
     ingediendOp: entity.ingediendOp
   };
 }
@@ -129,6 +144,8 @@ function toSollicitatieDto(entity) {
 // Afdelingshoofden lezen mee ("inlezen op een kandidaat"), maar krijgen
 // niet HR's interne notities en niet wie dit eventueel handmatig heeft
 // toegevoegd te zien — dat is bewust HR-only, los van de afdelingsscope.
+// afdelingshoofdReacties blijft wel staan: dat is juist voor HR én het
+// afdelingshoofd zelf bedoeld.
 function toSollicitatieDtoVoorAfdelingshoofd(entity) {
   const dto = toSollicitatieDto(entity);
   delete dto.notities;
@@ -145,5 +162,6 @@ module.exports = {
   toEntity,
   toSollicitatieDto,
   toSollicitatieDtoVoorAfdelingshoofd,
-  metNieuweStatusHistory
+  metNieuweStatusHistory,
+  metNieuweAfdelingshoofdReactie
 };

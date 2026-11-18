@@ -22,6 +22,19 @@
       ]
     },
     {
+      "route": "/afdelingshoofd",
+      "rewrite": "/afdelingshoofd/sollicitaties.html",
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
+      "route": "/afdelingshoofd/*",
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
       "route": "/api/afdelingshoofd*",
       "allowedRoles": [
         "afdelingshoofd"

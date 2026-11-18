@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sollicitaties van mijn afdeling | OG Clean Fuels</title>
+<link rel="icon" href="/images/favicon-og.ico">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/beheer/beheer.css">
+</head>
+<body>
+
+<div class="beheer-topbar">
+  <div class="beheer-topbar-merk">
+    <a href="/afdelingshoofd/sollicitaties.html" class="logo" aria-label="OG Clean Fuels, naar het overzicht">
+      <span class="logo-afbeelding-wrap">
+        <img class="logo-afbeelding logo-afbeelding-kleur" src="/images/logo/og-logo-kleur.png" alt="OG Clean Fuels">
+      </span>
+    </a>
+    <span class="beheer-portal-naam">Working at OG portal</span>
+  </div>
+  <span class="beheer-gebruiker" id="gebruiker-info"></span>
+</div>
+
+<div class="beheer-geen-toegang">
+  <h1>Geen toegang</h1>
+  <p>Je bent ingelogd, maar hebt geen toegang tot dit overzicht. Vraag HR om je als afdelingshoofd te koppelen aan je afdeling.</p>
+</div>
+
+<main class="beheer-main">
+  <div class="beheer-header-rij">
+    <h1>Sollicitaties</h1>
+  </div>
+  <p class="beheer-subtitel">Je ziet hier alleen de sollicitaties op vacatures binnen jouw eigen afdeling(en). Alleen bekijken en reageren, de status wordt door HR beheerd.</p>
+
+  <div id="melding"></div>
+
+  <div class="table-wrap" style="margin-top:20px;">
+    <table class="beheer-tabel">
+      <thead><tr><th>Naam</th><th>Vacature</th><th>Status</th><th>Ingediend op</th><th></th></tr></thead>
+      <tbody id="lijst-body"></tbody>
+    </table>
+  </div>
+  <div class="beheer-leeg" id="leeg-status" hidden>Geen sollicitaties gevonden binnen jouw afdeling(en).</div>
+</main>
+
+<script src="/afdelingshoofd/afdelingshoofd-auth.js"></script>
+<script>
+  const FASE_LABELS = {
+    nieuw: "Nieuw",
+    screening: "Screening",
+    eerste_gesprek: "Eerste gesprek",
+    tweede_gesprek: "Tweede gesprek",
+    aanbod: "Aanbod",
+    aangenomen: "Aangenomen",
+    afgewezen: "Afgewezen",
+    ingetrokken: "Ingetrokken door kandidaat"
+  };
+
+  function formatteerDatum(isoDatum) {
+    if (!isoDatum) return "—";
+    const datum = new Date(isoDatum);
+    if (isNaN(datum)) return "—";
+    return datum.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" });
+  }
+
+  fetch("/api/afdelingshoofd/sollicitaties")
+    .then(response => {
+      if (!response.ok) throw new Error("Status: " + response.status);
+      return response.json();
+    })
+    .then(sollicitaties => {
+      const body = document.getElementById("lijst-body");
+      body.innerHTML = "";
+      document.getElementById("leeg-status").hidden = sollicitaties.length > 0;
+
+      sollicitaties
+        .slice()
+        .sort((a, b) => new Date(b.ingediendOp) - new Date(a.ingediendOp))
+        .forEach(sollicitatie => {
+          const rij = document.createElement("tr");
+
+          const naamCel = document.createElement("td");
+          naamCel.textContent = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
+          rij.appendChild(naamCel);
+
+          const vacatureCel = document.createElement("td");
+          vacatureCel.textContent = sollicitatie.vacatureTitel || "—";
+          rij.appendChild(vacatureCel);
+
+          const statusCel = document.createElement("td");
+          statusCel.textContent = FASE_LABELS[sollicitatie.status] || sollicitatie.status;
+          rij.appendChild(statusCel);
+
+          const datumCel = document.createElement("td");
+          datumCel.textContent = formatteerDatum(sollicitatie.ingediendOp);
+          rij.appendChild(datumCel);
+
+          const actiesCel = document.createElement("td");
+          actiesCel.className = "acties";
+          const bekijkLink = document.createElement("a");
+          bekijkLink.className = "btn btn-klein btn-secundair";
+          bekijkLink.href = "/afdelingshoofd/dossier.html?id=" + encodeURIComponent(sollicitatie.id);
+          bekijkLink.textContent = "Bekijken";
+          actiesCel.appendChild(bekijkLink);
+          rij.appendChild(actiesCel);
+
+          body.appendChild(rij);
+        });
+    })
+    .catch(error => {
+      document.getElementById("melding").innerHTML = `<div class="melding melding-fout">Kon de lijst niet laden.</div>`;
+      console.error(error);
+    });
+</script>
+
+</body>
+</html>
