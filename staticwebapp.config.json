@@ -22,6 +22,12 @@
       ]
     },
     {
+      "route": "/api/afdelingshoofd*",
+      "allowedRoles": [
+        "afdelingshoofd"
+      ]
+    },
+    {
       "route": "/api/vacatures*",
       "allowedRoles": [
         "hrbeheer"

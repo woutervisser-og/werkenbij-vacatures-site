@@ -126,6 +126,16 @@ function toSollicitatieDto(entity) {
   };
 }
 
+// Afdelingshoofden lezen mee ("inlezen op een kandidaat"), maar krijgen
+// niet HR's interne notities en niet wie dit eventueel handmatig heeft
+// toegevoegd te zien — dat is bewust HR-only, los van de afdelingsscope.
+function toSollicitatieDtoVoorAfdelingshoofd(entity) {
+  const dto = toSollicitatieDto(entity);
+  delete dto.notities;
+  delete dto.handmatigToegevoegdDoor;
+  return dto;
+}
+
 module.exports = {
   PARTITION_KEY,
   ALLOWED_STATUSSEN,
@@ -134,5 +144,6 @@ module.exports = {
   getSollicitatiesTableClient,
   toEntity,
   toSollicitatieDto,
+  toSollicitatieDtoVoorAfdelingshoofd,
   metNieuweStatusHistory
 };

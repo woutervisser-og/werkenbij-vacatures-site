@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afdelingshoofden beheren | OG Clean Fuels</title>
+<link rel="icon" href="/images/favicon-og.ico">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/beheer/beheer.css">
+</head>
+<body>
+
+<div class="beheer-topbar">
+  <div class="beheer-topbar-merk">
+    <a href="/beheer/index.html" class="logo" aria-label="OG Clean Fuels beheer, naar het overzicht">
+      <span class="logo-afbeelding-wrap">
+        <img class="logo-afbeelding logo-afbeelding-kleur" src="/images/logo/og-logo-kleur.png" alt="OG Clean Fuels">
+      </span>
+    </a>
+    <span class="beheer-portal-naam">Working at OG portal</span>
+  </div>
+  <span class="beheer-gebruiker" id="gebruiker-info"></span>
+</div>
+
+<div class="beheer-geen-toegang">
+  <h1>Geen toegang</h1>
+  <p>Je bent ingelogd, maar hebt geen toegang tot het beheerportaal. Vraag de beheerder van het portaal om je toe te voegen aan de groep die hiervoor toegang geeft.</p>
+</div>
+
+<main class="beheer-main">
+  <div class="beheer-header-rij">
+    <h1>Afdelingshoofden</h1>
+    <a href="/beheer/index.html" class="btn btn-klein btn-secundair">&larr; Terug naar vacatures</a>
+  </div>
+  <p class="beheer-subtitel">Bepaalt welke afdeling(en) iemand ziet, zodra die persoon ook lid is van de Entra-groep "Afdelingshoofden-Toegang" (dat laatste regel je in Entra ID zelf, niet hier).</p>
+
+  <div id="melding"></div>
+
+  <form class="beheer-form" id="toevoegen-form">
+    <div class="form-rij">
+      <div class="form-veld">
+        <label for="veld-email">E-mailadres</label>
+        <input type="email" id="veld-email" required>
+      </div>
+      <div class="form-veld">
+        <span>Afdeling(en)</span>
+        <div class="werkgebied-keuzes" id="veld-afdelingen"></div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-klein" id="opslaan-knop">Opslaan</button>
+  </form>
+
+  <div class="table-wrap" style="margin-top:28px;">
+    <table class="beheer-tabel">
+      <thead><tr><th>E-mailadres</th><th>Afdeling(en)</th><th></th></tr></thead>
+      <tbody id="lijst-body"></tbody>
+    </table>
+  </div>
+  <div class="beheer-leeg" id="leeg-status" hidden>Nog geen afdelingshoofden toegevoegd.</div>
+</main>
+
+<script src="/beheer/beheer-auth.js"></script>
+<script>
+  // Zelfde vaste afdelingslijst als bij vacatures (veld-afdeling in
+  // beheer/vacature.html), hier als aanvinkbare lijst omdat 1 persoon
+  // hoofd van meerdere afdelingen kan zijn.
+  const AFDELINGEN = [
+    "Business Development", "Cybersecurity", "Directory", "Energy & Wholesale",
+    "Facility", "Finance", "HR", "Legal", "Management", "Marketing",
+    "Office Management", "Operations", "Project Management", "Public Affairs",
+    "QHSE", "Sales", "Sustainability Advisory"
+  ];
+
+  const afdelingenWrap = document.getElementById("veld-afdelingen");
+  AFDELINGEN.forEach(afdeling => {
+    const label = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = afdeling;
+    label.appendChild(checkbox);
+    label.append(" " + afdeling);
+    afdelingenWrap.appendChild(label);
+  });
+
+  function toonMelding(tekst, type) {
+    const meldingEl = document.getElementById("melding");
+    meldingEl.innerHTML = "";
+    if (!tekst) return;
+    const el = document.createElement("div");
+    el.className = "melding melding-" + type;
+    el.textContent = tekst;
+    meldingEl.appendChild(el);
+  }
+
+  function laadLijst() {
+    fetch("/api/sollicitatiebeheer/afdelingshoofden")
+      .then(response => response.json())
+      .then(afdelingshoofden => {
+        const body = document.getElementById("lijst-body");
+        body.innerHTML = "";
+        document.getElementById("leeg-status").hidden = afdelingshoofden.length > 0;
+
+        afdelingshoofden.forEach(afdelingshoofd => {
+          const rij = document.createElement("tr");
+
+          const emailCel = document.createElement("td");
+          emailCel.textContent = afdelingshoofd.email;
+          rij.appendChild(emailCel);
+
+          const afdelingenCel = document.createElement("td");
+          afdelingenCel.textContent = afdelingshoofd.afdelingen.join(", ") || "—";
+          rij.appendChild(afdelingenCel);
+
+          const actiesCel = document.createElement("td");
+          actiesCel.className = "acties";
+          const verwijderKnop = document.createElement("button");
+          verwijderKnop.className = "btn btn-klein btn-gevaar";
+          verwijderKnop.textContent = "Verwijderen";
+          verwijderKnop.addEventListener("click", () => {
+            if (!confirm(`"${afdelingshoofd.email}" verwijderen als afdelingshoofd?`)) return;
+            fetch("/api/sollicitatiebeheer/afdelingshoofden/" + encodeURIComponent(afdelingshoofd.email), { method: "DELETE" })
+              .then(response => {
+                if (!response.ok && response.status !== 204) throw new Error("Status: " + response.status);
+                laadLijst();
+              })
+              .catch(error => {
+                toonMelding("Verwijderen is mislukt.", "fout");
+                console.error(error);
+              });
+          });
+          actiesCel.appendChild(verwijderKnop);
+          rij.appendChild(actiesCel);
+
+          body.appendChild(rij);
+        });
+      })
+      .catch(error => {
+        toonMelding("Kon de lijst niet laden.", "fout");
+        console.error(error);
+      });
+  }
+  laadLijst();
+
+  document.getElementById("toevoegen-form").addEventListener("submit", event => {
+    event.preventDefault();
+    toonMelding("", null);
+
+    const email = document.getElementById("veld-email").value;
+    const afdelingen = Array.from(afdelingenWrap.querySelectorAll("input:checked")).map(c => c.value);
+
+    if (afdelingen.length === 0) {
+      toonMelding("Kies minstens 1 afdeling.", "fout");
+      return;
+    }
+
+    const opslaanKnop = document.getElementById("opslaan-knop");
+    opslaanKnop.disabled = true;
+
+    fetch("/api/sollicitatiebeheer/afdelingshoofden", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, afdelingen })
+    })
+      .then(response => {
+        if (!response.ok) return response.json().then(body => { throw new Error(body.error || "Opslaan is mislukt"); });
+        return response.json();
+      })
+      .then(() => {
+        document.getElementById("toevoegen-form").reset();
+        toonMelding("Opgeslagen.", "ok");
+        laadLijst();
+      })
+      .catch(error => {
+        toonMelding(error.message || "Opslaan is mislukt.", "fout");
+        console.error(error);
+      })
+      .finally(() => {
+        opslaanKnop.disabled = false;
+      });
+  });
+</script>
+
+</body>
+</html>
