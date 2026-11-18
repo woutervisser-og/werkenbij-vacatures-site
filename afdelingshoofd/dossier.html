@@ -33,7 +33,7 @@
       <h1 id="dossier-naam">Kandidaatdossier</h1>
       <p class="beheer-subtitel" id="dossier-vacature"></p>
     </div>
-    <a href="/afdelingshoofd/sollicitaties.html" class="btn btn-klein btn-secundair">&larr; Terug naar sollicitaties</a>
+    <a href="/afdelingshoofd/sollicitaties.html" class="btn btn-klein btn-secundair"><svg class="icoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Terug naar sollicitaties</a>
   </div>
 
   <div id="melding"></div>
@@ -42,21 +42,21 @@
     <div class="dossier-grid">
       <div class="dossier-kolom-hoofd">
         <section class="dossier-sectie">
-          <h2 class="dossier-sectie-kop">Status</h2>
+          <h2 class="dossier-sectie-kop"><svg class="icoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Status</h2>
           <p id="dossier-status"></p>
         </section>
 
         <section class="dossier-sectie">
-          <h2 class="dossier-sectie-kop">Gesprek met HR</h2>
+          <h2 class="dossier-sectie-kop"><svg class="icoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg>Gesprek met HR</h2>
           <div id="reacties-lijst" class="chat-log"></div>
-          <textarea id="reactie-tekst" class="rte-veld" rows="3" placeholder="Bijvoorbeeld: gesproken op 18 november, goede indruk, graag een vervolggesprek..." style="margin-top:12px;"></textarea>
-          <button type="button" class="btn btn-klein" id="reactie-opslaan-knop" style="margin-top:8px;">Reactie plaatsen</button>
+          <textarea id="reactie-tekst" class="rte-veld" rows="3" placeholder="Reageren..." style="margin-top:12px;"></textarea>
+          <button type="button" class="btn btn-klein" id="reactie-opslaan-knop" style="margin-top:8px;"><svg class="icoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9z"/></svg>Reactie plaatsen</button>
         </section>
       </div>
 
       <div class="dossier-kolom-zijkant">
         <section class="dossier-sectie">
-          <h2 class="dossier-sectie-kop">Contact</h2>
+          <h2 class="dossier-sectie-kop"><svg class="icoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>Contact</h2>
           <p id="dossier-email"></p>
           <p id="dossier-telefoon"></p>
         </section>
@@ -67,7 +67,7 @@
         </section>
 
         <section class="dossier-sectie">
-          <h2 class="dossier-sectie-kop">Documenten</h2>
+          <h2 class="dossier-sectie-kop"><svg class="icoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Documenten</h2>
           <div class="bijlagen-links" id="dossier-bijlagen"></div>
         </section>
       </div>
@@ -77,6 +77,7 @@
   <div class="beheer-leeg" id="leeg-status">Dossier laden...</div>
 </main>
 
+<script src="/beheer/iconen.js"></script>
 <script src="/afdelingshoofd/afdelingshoofd-auth.js"></script>
 <script>
   const FASE_LABELS = {
@@ -149,7 +150,7 @@
     document.getElementById("dossier-status").textContent = FASE_LABELS[sollicitatie.status] || sollicitatie.status;
 
     const dossierEmailEl = document.getElementById("dossier-email");
-    dossierEmailEl.textContent = "✉ ";
+    dossierEmailEl.innerHTML = icoonSvg("mail") + " ";
     if (sollicitatie.email) {
       const emailLink = document.createElement("a");
       emailLink.href = "mailto:" + sollicitatie.email;
@@ -158,8 +159,8 @@
     } else {
       dossierEmailEl.append("—");
     }
-    document.getElementById("dossier-telefoon").textContent = sollicitatie.telefoon
-      ? `☎ ${sollicitatie.telefoon}`
+    document.getElementById("dossier-telefoon").innerHTML = sollicitatie.telefoon
+      ? icoonSvg("telefoon") + " " + sollicitatie.telefoon
       : "Geen telefoonnummer opgegeven";
 
     document.getElementById("dossier-motivatie").textContent = sollicitatie.motivatie || "Geen motivatie meegegeven.";
@@ -170,14 +171,14 @@
       const cvLink = document.createElement("a");
       cvLink.className = "btn btn-klein btn-secundair";
       cvLink.href = "/api/afdelingshoofd/sollicitaties/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=cv";
-      cvLink.textContent = "CV downloaden";
+      cvLink.innerHTML = icoonSvg("download") + "CV downloaden";
       bijlagenWrap.appendChild(cvLink);
     }
     if (sollicitatie.motivatiebriefNaam) {
       const briefLink = document.createElement("a");
       briefLink.className = "btn btn-klein btn-secundair";
       briefLink.href = "/api/afdelingshoofd/sollicitaties/" + encodeURIComponent(sollicitatie.id) + "/bijlage?veld=motivatiebrief";
-      briefLink.textContent = "Motivatiebrief downloaden";
+      briefLink.innerHTML = icoonSvg("download") + "Motivatiebrief downloaden";
       bijlagenWrap.appendChild(briefLink);
     }
     if (!bijlagenWrap.children.length) {

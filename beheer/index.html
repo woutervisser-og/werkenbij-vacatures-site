@@ -29,11 +29,11 @@
 
 <main class="beheer-main">
   <div class="beheer-header-rij">
-    <h1>Vacatures</h1>
+    <h1><svg class="icoon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Vacatures</h1>
     <div style="display:flex; gap:10px;">
-      <a href="/beheer/sollicitaties.html" class="btn btn-klein btn-secundair">Sollicitaties</a>
-      <a href="/beheer/afdelingshoofden.html" class="btn btn-klein btn-secundair">Leidinggevenden</a>
-      <a href="/beheer/vacature.html" class="btn btn-klein">+ Nieuwe vacature</a>
+      <a href="/beheer/sollicitaties.html" class="btn btn-klein btn-secundair"><svg class="icoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Sollicitaties</a>
+      <a href="/beheer/afdelingshoofden.html" class="btn btn-klein btn-secundair"><svg class="icoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Leidinggevenden</a>
+      <a href="/beheer/vacature.html" class="btn btn-klein"><svg class="icoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nieuwe vacature</a>
     </div>
   </div>
 
@@ -43,6 +43,7 @@
   <div class="beheer-leeg" id="leeg-status">Vacatures laden...</div>
 </main>
 
+<script src="/beheer/iconen.js"></script>
 <script src="/beheer/beheer-auth.js"></script>
 <script>
   function formatteerDatum(isoDatum) {
@@ -230,18 +231,18 @@
     const bewerkLink = document.createElement("a");
     bewerkLink.className = "btn btn-klein btn-secundair";
     bewerkLink.href = "/beheer/vacature.html?id=" + encodeURIComponent(vacature.id);
-    bewerkLink.textContent = "Bewerken";
+    bewerkLink.innerHTML = icoonSvg("potlood") + "Bewerken";
     actiesCel.appendChild(bewerkLink);
 
     const dupliceerLink = document.createElement("a");
     dupliceerLink.className = "btn btn-klein btn-secundair";
     dupliceerLink.href = "/beheer/vacature.html?kopieerVan=" + encodeURIComponent(vacature.id);
-    dupliceerLink.textContent = "Dupliceren";
+    dupliceerLink.innerHTML = icoonSvg("kopieren") + "Dupliceren";
     actiesCel.appendChild(dupliceerLink);
 
     const verwijderKnop = document.createElement("button");
     verwijderKnop.className = "btn btn-klein btn-gevaar";
-    verwijderKnop.textContent = "Verwijderen";
+    verwijderKnop.innerHTML = icoonSvg("prullenbak") + "Verwijderen";
     verwijderKnop.addEventListener("click", () => verwijderVacature(vacature.id, vacature.titel));
     actiesCel.appendChild(verwijderKnop);
 

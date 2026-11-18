@@ -18,7 +18,7 @@
         gebruikerInfoEl.textContent = `Ingelogd als ${principal.userDetails} `;
         const uitlogLink = document.createElement("a");
         uitlogLink.href = "/.auth/logout?post_logout_redirect_uri=/";
-        uitlogLink.textContent = "Uitloggen";
+        uitlogLink.innerHTML = (typeof icoonSvg === "function" ? icoonSvg("uitloggen", 14) : "") + "Uitloggen";
         gebruikerInfoEl.appendChild(uitlogLink);
       }
 

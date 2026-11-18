@@ -29,8 +29,8 @@
 
 <main class="beheer-main">
   <div class="beheer-header-rij">
-    <h1>Sollicitatie toevoegen</h1>
-    <a href="/beheer/sollicitaties.html" class="btn btn-klein btn-secundair">&larr; Terug naar sollicitaties</a>
+    <h1><svg class="icoon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Sollicitatie toevoegen</h1>
+    <a href="/beheer/sollicitaties.html" class="btn btn-klein btn-secundair"><svg class="icoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Terug naar sollicitaties</a>
   </div>
   <p class="beheer-subtitel">Voor kandidaten die buiten het sollicitatieformulier om binnenkomen, bijvoorbeeld via LinkedIn, Indeed of telefoon. Een CV is hier niet verplicht, die kun je later alsnog toevoegen via het dossier.</p>
 
@@ -95,10 +95,11 @@
       </div>
     </div>
 
-    <button type="submit" class="btn" id="opslaan-knop">Sollicitatie toevoegen</button>
+    <button type="submit" class="btn" id="opslaan-knop"><svg class="icoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Sollicitatie toevoegen</button>
   </form>
 </main>
 
+<script src="/beheer/iconen.js"></script>
 <script src="/beheer/beheer-auth.js"></script>
 <script>
   const EMAIL_REGEX = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/;
