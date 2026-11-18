@@ -29,7 +29,7 @@
 
 <main class="beheer-main">
   <div class="beheer-header-rij">
-    <h1 id="pagina-titel"><svg class="icoon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Nieuwe vacature</h1>
+    <h1 id="pagina-titel">Nieuwe vacature</h1>
     <a href="/beheer/index.html" class="btn btn-klein btn-secundair"><svg class="icoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Terug naar overzicht</a>
   </div>
 
@@ -887,7 +887,7 @@
 
   // ===== Bestaande vacature laden (bewerken) =====
   if (vacatureId) {
-    document.getElementById("pagina-titel").innerHTML = icoonSvg("koffer", 20) + "Vacature bewerken";
+    document.getElementById("pagina-titel").textContent = "Vacature bewerken";
     document.getElementById("verwijder-knop").hidden = false;
 
     fetch("/api/vacatures/" + encodeURIComponent(vacatureId))
@@ -904,7 +904,7 @@
 
   // ===== Vacature dupliceren (nieuwe, nog niet opgeslagen kopie) =====
   if (kopieerVan) {
-    document.getElementById("pagina-titel").innerHTML = icoonSvg("koffer", 20) + "Vacature dupliceren";
+    document.getElementById("pagina-titel").textContent = "Vacature dupliceren";
 
     fetch("/api/vacatures/" + encodeURIComponent(kopieerVan))
       .then(response => {

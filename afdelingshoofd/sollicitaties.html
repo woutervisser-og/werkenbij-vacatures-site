@@ -29,7 +29,7 @@
 
 <main class="beheer-main">
   <div class="beheer-header-rij">
-    <h1><svg class="icoon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Sollicitaties</h1>
+    <h1>Sollicitaties</h1>
   </div>
   <p class="beheer-subtitel">Je ziet hier alleen de sollicitaties op vacatures binnen jouw eigen afdeling(en). Alleen bekijken en reageren, de status wordt door HR beheerd.</p>
 
@@ -100,9 +100,11 @@
           const actiesCel = document.createElement("td");
           actiesCel.className = "acties";
           const bekijkLink = document.createElement("a");
-          bekijkLink.className = "btn btn-klein btn-secundair";
+          bekijkLink.className = "btn btn-klein btn-secundair btn-icoon";
           bekijkLink.href = "/afdelingshoofd/dossier.html?id=" + encodeURIComponent(sollicitatie.id);
-          bekijkLink.innerHTML = icoonSvg("oog", 14) + "Bekijken";
+          bekijkLink.title = "Bekijken";
+          bekijkLink.setAttribute("aria-label", "Bekijken");
+          bekijkLink.innerHTML = icoonSvg("oog", 14);
           actiesCel.appendChild(bekijkLink);
           rij.appendChild(actiesCel);
 

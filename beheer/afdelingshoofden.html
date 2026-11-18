@@ -29,7 +29,7 @@
 
 <main class="beheer-main">
   <div class="beheer-header-rij">
-    <h1><svg class="icoon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Leidinggevenden</h1>
+    <h1>Leidinggevenden</h1>
     <a href="/beheer/index.html" class="btn btn-klein btn-secundair"><svg class="icoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Terug naar vacatures</a>
   </div>
   <p class="beheer-subtitel">Bepaalt welke afdeling(en) iemand ziet, zodra die persoon ook lid is van de Entra-groep "Afdelingshoofden-Toegang" (dat laatste regel je in Entra ID zelf, niet hier).</p>
@@ -115,8 +115,10 @@
           const actiesCel = document.createElement("td");
           actiesCel.className = "acties";
           const verwijderKnop = document.createElement("button");
-          verwijderKnop.className = "btn btn-klein btn-gevaar";
-          verwijderKnop.innerHTML = icoonSvg("prullenbak", 14) + "Verwijderen";
+          verwijderKnop.className = "btn btn-klein btn-gevaar btn-icoon";
+          verwijderKnop.title = "Verwijderen";
+          verwijderKnop.setAttribute("aria-label", "Verwijderen");
+          verwijderKnop.innerHTML = icoonSvg("prullenbak", 14);
           verwijderKnop.addEventListener("click", () => {
             if (!confirm(`"${afdelingshoofd.email}" verwijderen als leidinggevende?`)) return;
             fetch("/api/sollicitatiebeheer/afdelingshoofden/" + encodeURIComponent(afdelingshoofd.email), { method: "DELETE" })

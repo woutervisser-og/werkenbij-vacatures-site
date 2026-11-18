@@ -30,7 +30,7 @@
 <main class="beheer-main beheer-main-breed">
   <div class="beheer-header-rij">
     <div>
-      <h1><svg class="icoon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Sollicitaties</h1>
+      <h1>Sollicitaties</h1>
       <p class="beheer-subtitel" id="filter-context" hidden></p>
     </div>
     <div style="display:flex; gap:10px;">
@@ -411,8 +411,10 @@
 
     const afwijzenKnop = document.createElement("button");
     afwijzenKnop.type = "button";
-    afwijzenKnop.className = "kaart-actie-knop";
-    afwijzenKnop.innerHTML = icoonSvg("kruis", 14) + "Afwijzen";
+    afwijzenKnop.className = "kaart-actie-knop kaart-actie-knop-icoon";
+    afwijzenKnop.title = "Afwijzen";
+    afwijzenKnop.setAttribute("aria-label", "Afwijzen");
+    afwijzenKnop.innerHTML = icoonSvg("kruis", 14);
     afwijzenKnop.addEventListener("click", event => {
       event.stopPropagation();
       wijzigStatus(id, "afgewezen");
@@ -421,8 +423,10 @@
 
     const archiveerKnop = document.createElement("button");
     archiveerKnop.type = "button";
-    archiveerKnop.className = "kaart-actie-knop";
-    archiveerKnop.innerHTML = icoonSvg("archief", 14) + "Archiveren";
+    archiveerKnop.className = "kaart-actie-knop kaart-actie-knop-icoon";
+    archiveerKnop.title = "Archiveren";
+    archiveerKnop.setAttribute("aria-label", "Archiveren");
+    archiveerKnop.innerHTML = icoonSvg("archief", 14);
     archiveerKnop.addEventListener("click", event => {
       event.stopPropagation();
       wijzigStatus(id, "ingetrokken");
@@ -618,8 +622,10 @@
     actiesCel.appendChild(statusSelect);
 
     const verwijderKnop = document.createElement("button");
-    verwijderKnop.className = "btn btn-klein btn-gevaar";
-    verwijderKnop.innerHTML = icoonSvg("prullenbak", 14) + "Verwijderen";
+    verwijderKnop.className = "btn btn-klein btn-gevaar btn-icoon";
+    verwijderKnop.title = "Verwijderen";
+    verwijderKnop.setAttribute("aria-label", "Verwijderen");
+    verwijderKnop.innerHTML = icoonSvg("prullenbak", 14);
     verwijderKnop.addEventListener("click", event => {
       event.stopPropagation();
       verwijderSollicitatie(sollicitatie.id, naamCel.textContent);

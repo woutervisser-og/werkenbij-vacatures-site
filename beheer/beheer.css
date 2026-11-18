@@ -73,6 +73,13 @@ body { background: var(--og-grey); }
 }
 .btn-gevaar:hover { background: #fbeceb; transform: none; box-shadow: none; }
 
+/* Icoon-only knop (geen tekst): vierkant i.p.v. de tekst-breedte van
+   .btn-klein, voor rijen met meerdere herhaalde acties (bewerken/
+   dupliceren/verwijderen per rij) waar tekst op elke knop onrustig
+   oogt. title-attribuut op de knop zelf geeft de naam als tooltip. */
+.btn-icoon { padding: 8px; width: 34px; height: 34px; justify-content: center; }
+.btn-icoon .icoon { margin-right: 0; }
+
 /* ===== Vacaturetabel ===== */
 .beheer-tabel-wrap {
   background: var(--og-white);
@@ -507,6 +514,8 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
   white-space: nowrap;
 }
 .kaart-actie-knop:hover { border-color: var(--og-orange-light); color: var(--og-orange-dark); }
+.kaart-actie-knop-icoon { padding: 5px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; }
+.kaart-actie-knop-icoon .icoon { margin-right: 0; }
 
 /* Aging-indicator: groen <3 dagen, oranje 3-7 dagen, rood >7 dagen sinds
    de laatste statuswijziging (of het indienen, als er nog geen wijziging
