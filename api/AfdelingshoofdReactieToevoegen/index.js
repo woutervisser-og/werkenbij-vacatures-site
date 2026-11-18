@@ -1,8 +1,8 @@
 const {
   getSollicitatiesTableClient,
   PARTITION_KEY,
-  metNieuweReactie,
-  toSollicitatieDtoVoorAfdelingshoofd
+  toSollicitatieDtoVoorAfdelingshoofd,
+  metNieuweReactie
 } = require("../shared/sollicitatiesTable");
 const { toegestaneVacatureIds } = require("../shared/afdelingshoofdToegang");
 const { huidigeGebruiker } = require("../shared/huidigeGebruiker");
@@ -31,13 +31,10 @@ module.exports = async function (context, req) {
       return;
     }
 
-    const reactiesJson = metNieuweReactie(sollicitatie, { tekst, auteur: email, rol: "afdelingshoofd" });
-    await tableClient.updateEntity(
-      { partitionKey: PARTITION_KEY, rowKey: id, reactiesJson },
-      "Merge"
-    );
+    const bijgewerkt = { ...sollicitatie };
+    bijgewerkt.reactiesJson = metNieuweReactie(sollicitatie, { tekst, auteur: email, rol: "afdelingshoofd" });
+    await tableClient.updateEntity(bijgewerkt, "Replace");
 
-    const bijgewerkt = await tableClient.getEntity(PARTITION_KEY, id);
     context.res = {
       status: 200,
       headers: { "Content-Type": "application/json" },

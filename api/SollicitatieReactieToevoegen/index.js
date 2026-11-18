@@ -23,13 +23,10 @@ module.exports = async function (context, req) {
     const tableClient = await getSollicitatiesTableClient();
     const sollicitatie = await tableClient.getEntity(PARTITION_KEY, id);
 
-    const reactiesJson = metNieuweReactie(sollicitatie, { tekst, auteur: email, rol: "hr" });
-    await tableClient.updateEntity(
-      { partitionKey: PARTITION_KEY, rowKey: id, reactiesJson },
-      "Merge"
-    );
+    const bijgewerkt = { ...sollicitatie };
+    bijgewerkt.reactiesJson = metNieuweReactie(sollicitatie, { tekst, auteur: email, rol: "hr" });
+    await tableClient.updateEntity(bijgewerkt, "Replace");
 
-    const bijgewerkt = await tableClient.getEntity(PARTITION_KEY, id);
     context.res = {
       status: 200,
       headers: { "Content-Type": "application/json" },
