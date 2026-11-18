@@ -609,3 +609,15 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 .tijdlijn-stip { width: 9px; height: 9px; border-radius: 50%; background: var(--og-orange); flex-shrink: 0; margin-top: 4px; }
 .tijdlijn-inhoud { font-size: 14px; }
 .tijdlijn-meta { font-size: 12.5px; color: #767672; }
+
+/* Chatlog tussen HR en een afdelingshoofd over 1 kandidaat. Elke kant
+   (rol "hr" of "afdelingshoofd") krijgt zijn eigen kant/kleur, zodat het
+   scherm van beide partijen meteen laat zien wie wat zei, ook al tonen
+   beide schermen (/beheer en /afdelingshoofd) dezelfde data. */
+.chat-log { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.chat-leeg { color: #767672; font-size: 14px; }
+.chat-bericht { max-width: 85%; padding: 10px 14px; border-radius: 10px; font-size: 14px; line-height: 1.5; }
+.chat-bericht p { margin: 0; white-space: pre-wrap; }
+.chat-bericht-meta { display: block; font-size: 11.5px; color: #767672; margin-top: 6px; }
+.chat-bericht-afdelingshoofd { background: #E8F4EA; align-self: flex-start; border: 1px solid rgba(19, 165, 56, 0.25); }
+.chat-bericht-hr { background: var(--og-cream-2); align-self: flex-end; border: 1px solid rgba(241, 135, 0, 0.25); }

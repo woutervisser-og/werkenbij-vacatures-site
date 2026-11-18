@@ -47,8 +47,8 @@
         </section>
 
         <section class="dossier-sectie">
-          <h2 class="dossier-sectie-kop">Jouw reacties</h2>
-          <div id="reacties-lijst"></div>
+          <h2 class="dossier-sectie-kop">Gesprek met HR</h2>
+          <div id="reacties-lijst" class="chat-log"></div>
           <textarea id="reactie-tekst" class="rte-veld" rows="3" placeholder="Bijvoorbeeld: gesproken op 18 november, goede indruk, graag een vervolggesprek..." style="margin-top:12px;"></textarea>
           <button type="button" class="btn btn-klein" id="reactie-opslaan-knop" style="margin-top:8px;">Reactie plaatsen</button>
         </section>
@@ -184,7 +184,7 @@
       bijlagenWrap.textContent = "Geen documenten aanwezig.";
     }
 
-    renderReacties(sollicitatie.afdelingshoofdReacties || []);
+    renderReacties(sollicitatie.reacties || []);
 
     document.getElementById("reactie-opslaan-knop").onclick = () => plaatsReactie(sollicitatie.id);
   }
@@ -193,29 +193,23 @@
     const container = document.getElementById("reacties-lijst");
     container.innerHTML = "";
     if (reacties.length === 0) {
-      container.innerHTML = `<p class="blokken-leeg">Nog geen reacties geplaatst.</p>`;
+      container.innerHTML = `<p class="chat-leeg">Nog geen gesprek, plaats hieronder de eerste reactie.</p>`;
       return;
     }
     reacties.forEach(reactie => {
-      const item = document.createElement("div");
-      item.className = "tijdlijn-item";
+      const bericht = document.createElement("div");
+      bericht.className = "chat-bericht chat-bericht-" + (reactie.rol === "hr" ? "hr" : "afdelingshoofd");
 
-      const stip = document.createElement("span");
-      stip.className = "tijdlijn-stip";
-      item.appendChild(stip);
-
-      const inhoud = document.createElement("div");
-      inhoud.className = "tijdlijn-inhoud";
       const tekstEl = document.createElement("p");
       tekstEl.textContent = reactie.tekst;
-      inhoud.appendChild(tekstEl);
-      const metaEl = document.createElement("span");
-      metaEl.className = "tijdlijn-meta";
-      metaEl.textContent = `${formatteerDatum(reactie.timestamp)} · door ${reactie.auteur || "onbekend"}`;
-      inhoud.appendChild(metaEl);
-      item.appendChild(inhoud);
+      bericht.appendChild(tekstEl);
 
-      container.appendChild(item);
+      const metaEl = document.createElement("span");
+      metaEl.className = "chat-bericht-meta";
+      metaEl.textContent = `${formatteerDatum(reactie.timestamp)} · door ${reactie.auteur || "onbekend"}`;
+      bericht.appendChild(metaEl);
+
+      container.appendChild(bericht);
     });
   }
 
