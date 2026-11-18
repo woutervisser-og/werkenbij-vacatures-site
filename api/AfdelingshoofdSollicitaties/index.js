@@ -1,4 +1,4 @@
-const { getVacaturesTableClient } = require("../shared/vacaturesTable");
+const { getVacaturesTableClient, toVacatureDto } = require("../shared/vacaturesTable");
 const { getSollicitatiesTableClient, toSollicitatieDtoVoorAfdelingshoofd } = require("../shared/sollicitatiesTable");
 const { getAfdelingshoofdenTableClient, normaliseerEmail, naarAfdelingenArray, PARTITION_KEY } = require("../shared/afdelingshoofdenTable");
 const { huidigeGebruiker } = require("../shared/huidigeGebruiker");
@@ -33,7 +33,11 @@ module.exports = async function (context, req) {
     const vacaturesTableClient = await getVacaturesTableClient();
     const toegestaneVacatureIds = new Set();
     for await (const vacatureEntity of vacaturesTableClient.listEntities()) {
-      if (afdelingen.includes(vacatureEntity.department)) {
+      // Niet rechtstreeks vacatureEntity.department lezen: oudere rijen
+      // hebben dit nog onder de Nederlandse kolomnaam "afdeling" staan
+      // (zie VELD_ALIASSEN in vacaturesTable.js). toVacatureDto() kent
+      // die terugval al, dus die hergebruiken i.p.v. zelf dupliceren.
+      if (afdelingen.includes(toVacatureDto(vacatureEntity).department)) {
         toegestaneVacatureIds.add(vacatureEntity.rowKey);
       }
     }
