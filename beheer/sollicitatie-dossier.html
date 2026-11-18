@@ -91,9 +91,9 @@
         </section>
 
         <section class="dossier-sectie" id="afdelingshoofd-reacties-sectie">
-          <h2 class="dossier-sectie-kop">Gesprek met afdelingshoofd</h2>
+          <h2 class="dossier-sectie-kop">Gesprek met leidinggevende</h2>
           <div id="afdelingshoofd-reacties" class="chat-log"></div>
-          <textarea id="reactie-tekst" class="rte-veld" rows="3" placeholder="Reageer op het afdelingshoofd..." style="margin-top:12px;"></textarea>
+          <textarea id="reactie-tekst" class="rte-veld" rows="3" placeholder="Reageer op de leidinggevende..." style="margin-top:12px;"></textarea>
           <button type="button" class="btn btn-klein" id="reactie-opslaan-knop" style="margin-top:8px;">Reactie plaatsen</button>
         </section>
 
@@ -276,7 +276,7 @@
     const container = document.getElementById("afdelingshoofd-reacties");
     container.innerHTML = "";
     if (reacties.length === 0) {
-      container.innerHTML = `<p class="chat-leeg">Nog geen gesprek met een afdelingshoofd over deze kandidaat.</p>`;
+      container.innerHTML = `<p class="chat-leeg">Nog geen gesprek met een leidinggevende over deze kandidaat.</p>`;
       return;
     }
     reacties.forEach(reactie => {

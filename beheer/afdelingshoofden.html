@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Afdelingshoofden beheren | OG Clean Fuels</title>
+<title>Leidinggevenden beheren | OG Clean Fuels</title>
 <link rel="icon" href="/images/favicon-og.ico">
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/beheer/beheer.css">
@@ -29,7 +29,7 @@
 
 <main class="beheer-main">
   <div class="beheer-header-rij">
-    <h1>Afdelingshoofden</h1>
+    <h1>Leidinggevenden</h1>
     <a href="/beheer/index.html" class="btn btn-klein btn-secundair">&larr; Terug naar vacatures</a>
   </div>
   <p class="beheer-subtitel">Bepaalt welke afdeling(en) iemand ziet, zodra die persoon ook lid is van de Entra-groep "Afdelingshoofden-Toegang" (dat laatste regel je in Entra ID zelf, niet hier).</p>
@@ -56,7 +56,7 @@
       <tbody id="lijst-body"></tbody>
     </table>
   </div>
-  <div class="beheer-leeg" id="leeg-status" hidden>Nog geen afdelingshoofden toegevoegd.</div>
+  <div class="beheer-leeg" id="leeg-status" hidden>Nog geen leidinggevenden toegevoegd.</div>
 </main>
 
 <script src="/beheer/beheer-auth.js"></script>
@@ -117,7 +117,7 @@
           verwijderKnop.className = "btn btn-klein btn-gevaar";
           verwijderKnop.textContent = "Verwijderen";
           verwijderKnop.addEventListener("click", () => {
-            if (!confirm(`"${afdelingshoofd.email}" verwijderen als afdelingshoofd?`)) return;
+            if (!confirm(`"${afdelingshoofd.email}" verwijderen als leidinggevende?`)) return;
             fetch("/api/sollicitatiebeheer/afdelingshoofden/" + encodeURIComponent(afdelingshoofd.email), { method: "DELETE" })
               .then(response => {
                 if (!response.ok && response.status !== 204) throw new Error("Status: " + response.status);
