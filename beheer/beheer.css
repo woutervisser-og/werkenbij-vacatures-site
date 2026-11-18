@@ -621,10 +621,51 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 .chat-bericht-meta { display: block; font-size: 11.5px; color: #767672; margin-top: 6px; }
 .chat-bericht-afdelingshoofd { background: #E8F4EA; align-self: flex-start; border: 1px solid rgba(19, 165, 56, 0.25); }
 
+/* Chat-composer: smalle, afgeronde invoerbalk + rond verzend-icoon
+   ernaast, i.p.v. een los grote textarea met een knop eronder. */
+.chat-composer { display: flex; align-items: flex-end; gap: 8px; margin-top: 12px; max-width: 480px; }
+.chat-composer-veld {
+  flex: 1 1 auto;
+  min-width: 0;
+  resize: none;
+  overflow-y: auto;
+  max-height: 120px;
+  padding: 9px 16px;
+  border: 1px solid #d8d8d4;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  background: var(--og-white);
+}
+.chat-composer-veld:focus { outline: 2px solid var(--og-orange-light); outline-offset: -1px; }
+.chat-composer-verzend {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--og-orange);
+  color: var(--og-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.chat-composer-verzend:hover { background: var(--og-orange-dark); }
+.chat-composer-verzend:disabled { opacity: 0.5; cursor: default; }
+.chat-composer-verzend .icoon { margin: 0; }
+
 /* Gedeelde iconenset, zie /beheer/iconen.js. vertical-align houdt het
    icoon in lijn met de tekst ernaast in knoppen en koppen. */
-.icoon { vertical-align: -3px; flex-shrink: 0; }
-.btn .icoon { margin-right: 6px; }
-.dossier-sectie-kop .icoon { margin-right: 7px; vertical-align: -2px; }
-.beheer-header-rij h1 .icoon { margin-right: 10px; vertical-align: -4px; }
+/* Standaard altijd wat ruimte tussen icoon en tekst erna, ongeacht in
+   welke knop/kop/link het icoon staat (anders moet dit per nieuwe
+   plek weer apart geregeld worden, en wordt een plek zo makkelijk
+   vergeten — zie kaart-actie-knop/uitloggen-link, die eerst geen eigen
+   regel hadden). Een icoon-only knop (chat-composer-verzend) zet dit
+   terug naar 0.
+*/
+.icoon { vertical-align: -3px; flex-shrink: 0; margin-right: 6px; }
+.dossier-sectie-kop .icoon { margin-right: 8px; vertical-align: -2px; }
+.beheer-header-rij h1 .icoon { margin-right: 11px; vertical-align: -4px; }
 .chat-bericht-hr { background: var(--og-cream-2); align-self: flex-end; border: 1px solid rgba(241, 135, 0, 0.25); }
