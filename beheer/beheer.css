@@ -676,5 +676,42 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 */
 .icoon { vertical-align: -3px; flex-shrink: 0; margin-right: 6px; }
 .dossier-sectie-kop .icoon { margin-right: 8px; vertical-align: -2px; }
-.beheer-header-rij h1 .icoon { margin-right: 11px; vertical-align: -4px; }
 .chat-bericht-hr { background: var(--og-cream-2); align-self: flex-end; border: 1px solid rgba(241, 135, 0, 0.25); }
+
+.dossier-header-knoppen { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Kandidaatdossier exporteren: de browser-printfunctie ("Opslaan als
+   PDF") met een eigen printstijl, i.p.v. een losse PDF-library.
+   .print-only is normaal verborgen en verschijnt alleen in de
+   afdruk-preview (zie exporteer-knop in sollicitatie-dossier.html/
+   afdelingshoofd/dossier.html). */
+.print-only, .print-only-kop { display: none; }
+
+@media print {
+  .beheer-topbar,
+  .beheer-geen-toegang,
+  .dossier-header-knoppen,
+  #melding,
+  .dossier-status-rij,
+  .dossier-archiveer-rij,
+  .rte-werkbalk,
+  #notities-opslaan-knop,
+  .chat-composer,
+  #verwijder-knop {
+    display: none !important;
+  }
+  .print-only { display: block !important; }
+  .print-only-kop {
+    display: block !important;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #767672;
+    border-bottom: 1px solid #d8d8d4;
+    padding-bottom: 10px;
+  }
+  .dossier-grid { display: block !important; }
+  .dossier-kolom-hoofd, .dossier-kolom-zijkant { display: block !important; }
+  .dossier-sectie { border: none !important; box-shadow: none !important; padding: 0 0 18px !important; break-inside: avoid; }
+  body { background: var(--og-white) !important; }
+  .beheer-main { padding: 0 !important; max-width: none !important; }
+}
