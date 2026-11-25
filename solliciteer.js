@@ -55,7 +55,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function uploadBestand(file) {
     return fetch("/api/cv?bestandsnaam=" + encodeURIComponent(file.name), {
       method: "POST",
-      headers: { "Content-Type": "application/octet-stream" },
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "x-upload-token": window.OG_UPLOAD_TOKEN || ""
+      },
       body: file
     }).then(response => {
       if (!response.ok) throw new Error("Uploaden is mislukt (status " + response.status + ")");
