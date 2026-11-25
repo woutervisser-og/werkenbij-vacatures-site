@@ -101,6 +101,7 @@ function toEntity(id, sollicitatie, { ingediendOp, toegevoegdDoor, toestemmingGe
     notities: "",
     handmatigToegevoegdDoor: toegevoegdDoor || "",
     toestemmingGegevenOp: toestemmingGegevenOp || "",
+    gelezenOp: "",
     ingediendOp
   };
 }
@@ -151,6 +152,7 @@ function toSollicitatieDto(entity) {
     notities: entity.notities || "",
     handmatigToegevoegdDoor: entity.handmatigToegevoegdDoor || "",
     toestemmingGegevenOp: entity.toestemmingGegevenOp || "",
+    gelezenOp: entity.gelezenOp || "",
     reacties: JSON.parse(entity.reactiesJson || "[]"),
     ingediendOp: entity.ingediendOp
   };
