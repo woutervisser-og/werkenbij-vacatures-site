@@ -203,7 +203,11 @@
     const rij = document.createElement("tr");
 
     const titelCel = document.createElement("td");
-    titelCel.textContent = vacature.titel || "(zonder titel)";
+    const titelLink = document.createElement("a");
+    titelLink.className = "beheer-titel-link";
+    titelLink.href = "/beheer/vacature.html?id=" + encodeURIComponent(vacature.id);
+    titelLink.textContent = vacature.titel || "(zonder titel)";
+    titelCel.appendChild(titelLink);
     rij.appendChild(titelCel);
 
     const afdelingCel = document.createElement("td");

@@ -220,11 +220,24 @@
           return;
         }
         toonDossier(sollicitatie);
+        if (!sollicitatie.gelezenOp) markeerGelezen(sollicitatie.id);
       })
       .catch(error => {
         document.getElementById("leeg-status").textContent = "Er ging iets mis bij het laden van dit dossier.";
         console.error(error);
       });
+  }
+
+  // Zet gelezenOp zodra het dossier voor het eerst geopend wordt, zodat de
+  // "Nieuw"-badge in het sollicitatie-overzicht verdwijnt. Stil op de
+  // achtergrond, geen melding en geen her-render nodig: dit scherm toont de
+  // badge zelf niet.
+  function markeerGelezen(id) {
+    fetch("/api/sollicitatiebeheer/" + encodeURIComponent(id), {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ markeerGelezen: true })
+    }).catch(error => console.error(error));
   }
 
   function toonDossier(sollicitatie) {

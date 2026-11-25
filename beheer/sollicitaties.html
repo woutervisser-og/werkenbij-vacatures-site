@@ -197,6 +197,18 @@
     if (dagen === 1) return "1 dag geleden";
     return `${dagen} dagen geleden`;
   }
+  // "Nieuw": deze sollicitatie is nog nooit geopend geweest in het
+  // dossierscherm (zie gelezenOp, gezet door SollicitatieUpdate zodra het
+  // dossier wordt geladen). null als die er al is, zodat aanroepers
+  // zonder extra check kunnen appenden.
+  function maakNieuwBadge(sollicitatie) {
+    if (sollicitatie.gelezenOp) return null;
+    const badge = document.createElement("span");
+    badge.className = "badge-nieuw";
+    badge.textContent = "Nieuw";
+    return badge;
+  }
+
   function maakAgingEl(sollicitatie) {
     const dagen = dagenSinds(laatsteWijzigingTijdstip(sollicitatie));
     const wrap = document.createElement("span");
@@ -460,6 +472,8 @@
     const naam = document.createElement("div");
     naam.className = "kanban-kaart-naam";
     naam.textContent = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
+    const kaartBadge = maakNieuwBadge(sollicitatie);
+    if (kaartBadge) naam.appendChild(kaartBadge);
     kaart.appendChild(naam);
 
     const vacature = document.createElement("div");
@@ -536,6 +550,8 @@
 
     const naamCel = document.createElement("td");
     naamCel.textContent = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
+    const lijstBadge = maakNieuwBadge(sollicitatie);
+    if (lijstBadge) naamCel.appendChild(lijstBadge);
     rij.appendChild(naamCel);
 
     const vacatureCel = document.createElement("td");
@@ -597,6 +613,8 @@
 
     const naamCel = document.createElement("td");
     naamCel.textContent = `${sollicitatie.voornaam || ""} ${sollicitatie.achternaam || ""}`.trim() || "(onbekend)";
+    const exitBadge = maakNieuwBadge(sollicitatie);
+    if (exitBadge) naamCel.appendChild(exitBadge);
     rij.appendChild(naamCel);
 
     const vacatureCel = document.createElement("td");
