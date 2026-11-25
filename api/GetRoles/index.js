@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const { heeftAfdelingskoppeling } = require("../shared/afdelingshoofdenTable");
 
 // Deze waarden komen NIET hier in de code, maar staan als Application
 // Settings in de Azure Static Web App (Configuratie).
@@ -6,7 +7,6 @@ const TENANT_ID = process.env.HR_TENANT_ID;
 const CLIENT_ID = process.env.HR_CLIENT_ID;
 const CLIENT_SECRET = process.env.HR_CLIENT_SECRET;
 const HR_GROUP_ID = process.env.HR_GROUP_ID;
-const AFDELINGSHOOFD_GROUP_ID = process.env.AFDELINGSHOOFD_GROUP_ID;
 
 const HR_ROLE = "hrbeheer";
 const AFDELINGSHOOFD_ROLE = "afdelingshoofd";
@@ -46,14 +46,32 @@ async function isLidVanGroep(context, accessToken, groupId, userId) {
 // claims van de gebruiker. Wat hier wordt teruggegeven bepaalt de rollen
 // van die gebruiker voor de rest van de sessie. Een gebruiker kan beide
 // rollen tegelijk hebben (bv. HR die ook afdelingshoofd is).
+//
+// De afdelingshoofd-rol komt bewust niet (meer) uit een Entra-groep, maar
+// rechtstreeks uit de Afdelingshoofden-koppeltabel die HR al beheert via
+// beheer/afdelingshoofden.html. Zo kan HR zelf iemand als leidinggevende
+// aanwijzen zonder dat daar een Entra-beheerder aan te pas hoeft te komen.
+// hrbeheer blijft wel aan de Entra-groep gekoppeld, dat is een zwaardere
+// rol (alle vacatures/sollicitaties) die bewust apart beheerd wordt.
 module.exports = async function (context, req) {
-  const { identityProvider, userId } = req.body || {};
+  const { identityProvider, userId, userDetails } = req.body || {};
 
   // Alleen Microsoft-logins (Entra ID) komen in aanmerking, geen andere
   // providers.
   if (identityProvider !== "aad" || !userId) {
     context.res = { status: 200, body: { roles: [] } };
     return;
+  }
+
+  const roles = [];
+
+  // Losse try/catch per rol: een fout in de ene check mag de andere rol
+  // niet laten vervallen (en een fout betekent hier altijd "geen rol",
+  // nooit "wel toegang").
+  try {
+    if (await heeftAfdelingskoppeling(userDetails)) roles.push(AFDELINGSHOOFD_ROLE);
+  } catch (error) {
+    context.log.error("Onverwachte fout bij afdelingshoofd-koppelcheck", error.message);
   }
 
   try {
@@ -77,22 +95,12 @@ module.exports = async function (context, req) {
         status: tokenResponse.status,
         tokenData
       });
-      context.res = { status: 200, body: { roles: [] } };
-      return;
+    } else if (await isLidVanGroep(context, tokenData.access_token, HR_GROUP_ID, userId)) {
+      roles.push(HR_ROLE);
     }
-
-    const [isHrLid, isAfdelingshoofdLid] = await Promise.all([
-      isLidVanGroep(context, tokenData.access_token, HR_GROUP_ID, userId),
-      isLidVanGroep(context, tokenData.access_token, AFDELINGSHOOFD_GROUP_ID, userId)
-    ]);
-
-    const roles = [];
-    if (isHrLid) roles.push(HR_ROLE);
-    if (isAfdelingshoofdLid) roles.push(AFDELINGSHOOFD_ROLE);
-
-    context.res = { status: 200, body: { roles } };
   } catch (error) {
     context.log.error("Onverwachte fout bij rollen-check", error.message);
-    context.res = { status: 200, body: { roles: [] } };
   }
+
+  context.res = { status: 200, body: { roles } };
 };

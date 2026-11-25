@@ -62,11 +62,28 @@ function toDto(entity) {
   };
 }
 
+// Gebruikt door GetRoles: de afdelingshoofd-rol komt niet (meer) uit een
+// Entra-groep, maar rechtstreeks uit deze koppeltabel. HR beheert dit zelf
+// via beheer/afdelingshoofden.html, zonder dat daar een Entra-beheerder
+// aan te pas hoeft te komen. Zonder koppeling: geen rol, dus ook geen
+// toegang tot de afdelingshoofd-endpoints (fail closed blijft gelden).
+async function heeftAfdelingskoppeling(email) {
+  const tableClient = await getAfdelingshoofdenTableClient();
+  try {
+    await tableClient.getEntity(PARTITION_KEY, normaliseerEmail(email));
+    return true;
+  } catch (error) {
+    if (error.statusCode === 404) return false;
+    throw error;
+  }
+}
+
 module.exports = {
   PARTITION_KEY,
   getAfdelingshoofdenTableClient,
   normaliseerEmail,
   naarAfdelingenCsv,
   naarAfdelingenArray,
+  heeftAfdelingskoppeling,
   toDto
 };
