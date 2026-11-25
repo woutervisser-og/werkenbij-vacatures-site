@@ -639,7 +639,14 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 .chat-bericht { max-width: 85%; padding: 10px 14px; border-radius: 10px; font-size: 14px; line-height: 1.5; }
 .chat-bericht p { margin: 0; white-space: pre-wrap; }
 .chat-bericht-meta { display: block; font-size: 11.5px; color: #767672; margin-top: 6px; }
-.chat-bericht-afdelingshoofd { background: #E8F4EA; align-self: flex-start; border: 1px solid rgba(19, 165, 56, 0.25); }
+.chat-bericht-afdelingshoofd { background: #E8F4EA; border: 1px solid rgba(19, 165, 56, 0.25); }
+
+/* Uitlijning staat los van de kleur: welke kant een bericht op staat
+   hangt af van wie er kijkt (eigen berichten rechts, net als WhatsApp
+   en deze Claude-chat), niet van de rol. Elk scherm bepaalt zelf welke
+   rol voor hem "eigen" is bij het opbouwen van de berichten. */
+.chat-bericht-eigen { align-self: flex-end; }
+.chat-bericht-ander { align-self: flex-start; }
 
 /* Chat-composer: smalle, afgeronde invoerbalk + rond verzend-icoon
    ernaast, i.p.v. een los grote textarea met een knop eronder. */
@@ -687,7 +694,7 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
 */
 .icoon { vertical-align: -3px; flex-shrink: 0; margin-right: 6px; }
 .dossier-sectie-kop .icoon { margin-right: 8px; vertical-align: -2px; }
-.chat-bericht-hr { background: var(--og-cream-2); align-self: flex-end; border: 1px solid rgba(241, 135, 0, 0.25); }
+.chat-bericht-hr { background: var(--og-cream-2); border: 1px solid rgba(241, 135, 0, 0.25); }
 
 .dossier-header-knoppen { display: flex; gap: 10px; flex-wrap: wrap; }
 

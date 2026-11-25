@@ -326,7 +326,10 @@
     }
     reacties.forEach(reactie => {
       const bericht = document.createElement("div");
-      bericht.className = "chat-bericht chat-bericht-" + (reactie.rol === "hr" ? "hr" : "afdelingshoofd");
+      // Dit is het HR-scherm: HR's eigen berichten rechts, de reactie van
+      // de leidinggevende links, net als in WhatsApp en deze Claude-chat.
+      bericht.className = "chat-bericht chat-bericht-" + (reactie.rol === "hr" ? "hr" : "afdelingshoofd")
+        + " chat-bericht-" + (reactie.rol === "hr" ? "eigen" : "ander");
 
       const tekstEl = document.createElement("p");
       tekstEl.textContent = reactie.tekst;

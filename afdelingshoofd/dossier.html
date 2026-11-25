@@ -227,7 +227,11 @@
     }
     reacties.forEach(reactie => {
       const bericht = document.createElement("div");
-      bericht.className = "chat-bericht chat-bericht-" + (reactie.rol === "hr" ? "hr" : "afdelingshoofd");
+      // Dit is het leidinggevende-scherm: hier is de omzetting precies
+      // andersom dan in het HR-dossier, de eigen reactie van de
+      // leidinggevende rechts, die van HR links.
+      bericht.className = "chat-bericht chat-bericht-" + (reactie.rol === "hr" ? "hr" : "afdelingshoofd")
+        + " chat-bericht-" + (reactie.rol === "hr" ? "ander" : "eigen");
 
       const tekstEl = document.createElement("p");
       tekstEl.textContent = reactie.tekst;
