@@ -100,7 +100,7 @@ te lezen zonder los in de data te duiken.
 
 | Feature | Wat ontbreekt nu | Prioriteit | Inschatting |
 |---|---|---|---|
-| ~~Bewaartermijn + automatische verwijdering van oude sollicitaties/CV's~~ ✅ | Afgerond: 28 dagen na de laatste statuswijziging (BEWAARTERMIJN_DAGEN, nog te bevestigen met Iska/juridisch), wekelijkse automatische opruiming na een handmatig geverifieerde proefdraai | Must | M |
+| ~~Bewaartermijn + automatische verwijdering van oude sollicitaties/CV's~~ ✅ | Afgerond: 6 maanden (183 dagen) na de laatste statuswijziging (BEWAARTERMIJN_DAGEN), juridisch goedgekeurde termijn uit de Duitse Datenschutzerklärung, overgenomen als standaard voor alle landen. Wekelijkse automatische opruiming na een handmatig geverifieerde proefdraai | Must | M |
 | ~~Toestemmingsvinkje bij solliciteren~~ ✅ | Zie categorie 3, hier als AVG-vereiste afgevinkt | Must | S |
 | Kandidaat kan zelf verzoek indienen tot verwijdering ("recht op vergetelheid") | Geen self-service mogelijkheid; nu alleen mogelijk als HR handmatig verwijdert na een verzoek per mail | Should | M |
 
