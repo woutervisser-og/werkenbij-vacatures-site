@@ -566,14 +566,6 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
   border: 1px solid #d8d8d4;
   border-radius: 8px;
 }
-.dossier-archiveer-rij select {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 13.5px;
-  padding: 8px 12px;
-  border: 1px solid #e5e5e2;
-  border-radius: 8px;
-  color: #767672;
-}
 .dossier-motivatie { font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
 
 /* Rich-text-werkbalk voor het notitieveld (contenteditable + execCommand,
@@ -696,7 +688,6 @@ fieldset.header-keuze legend { font-size: 13.5px; font-weight: 700; color: #4a4a
   .dossier-header-knoppen,
   #melding,
   .dossier-status-rij,
-  .dossier-archiveer-rij,
   .rte-werkbalk,
   #notities-opslaan-knop,
   .chat-composer,

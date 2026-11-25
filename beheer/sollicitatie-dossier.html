@@ -52,11 +52,6 @@
             <span id="aging-indicator"></span>
           </div>
           <p class="print-only" id="print-status-tekst"></p>
-          <div class="dossier-archiveer-rij">
-            <select id="archiveer-select">
-              <option value="" selected disabled>Verplaats naar archief...</option>
-            </select>
-          </div>
         </section>
 
         <section class="dossier-sectie">
@@ -119,7 +114,6 @@
 <script>
   const BORD_FASES = ["nieuw", "screening", "eerste_gesprek", "tweede_gesprek", "aanbod", "aangenomen"];
   const EXIT_STATUSSEN = ["afgewezen", "ingetrokken"];
-  const ALLE_STATUSSEN = [...BORD_FASES, ...EXIT_STATUSSEN];
   const FASE_LABELS = {
     nieuw: "Nieuw",
     screening: "Screening",
@@ -269,22 +263,37 @@
       bijlagenWrap.appendChild(briefLink);
     }
 
+    // 1 dropdown, 2 duidelijk gescheiden groepen (optgroup): "Fase" voor de
+    // normale voortgang, "Archief" voor de 2 exit-statussen. Eerst stond
+    // dit in 2 losse dropdowns die allebei naar afgewezen/ingetrokken
+    // konden zetten — zelfde actie, 2 plekken, verwarrend.
     const statusSelect = document.getElementById("status-select");
     statusSelect.innerHTML = "";
-    ALLE_STATUSSEN.forEach(status => {
+
+    const faseGroep = document.createElement("optgroup");
+    faseGroep.label = "Fase";
+    BORD_FASES.forEach(status => {
       const optie = document.createElement("option");
       optie.value = status;
       optie.textContent = FASE_LABELS[status];
       if (status === sollicitatie.status) optie.selected = true;
-      statusSelect.appendChild(optie);
+      faseGroep.appendChild(optie);
     });
+    statusSelect.appendChild(faseGroep);
+
+    const archiefGroep = document.createElement("optgroup");
+    archiefGroep.label = "Archief";
+    EXIT_STATUSSEN.forEach(status => {
+      const optie = document.createElement("option");
+      optie.value = status;
+      optie.textContent = FASE_LABELS[status];
+      if (status === sollicitatie.status) optie.selected = true;
+      archiefGroep.appendChild(optie);
+    });
+    statusSelect.appendChild(archiefGroep);
+
     statusSelect.onchange = () => wijzigStatus(sollicitatie.id, statusSelect.value);
     document.getElementById("print-status-tekst").textContent = FASE_LABELS[sollicitatie.status] || sollicitatie.status;
-
-    const archiveerSelect = document.getElementById("archiveer-select");
-    archiveerSelect.innerHTML = `<option value="" selected disabled>Verplaats naar archief...</option>` +
-      EXIT_STATUSSEN.map(status => `<option value="${status}">${FASE_LABELS[status]}</option>`).join("");
-    archiveerSelect.onchange = () => { if (archiveerSelect.value) wijzigStatus(sollicitatie.id, archiveerSelect.value); };
 
     const history = sollicitatie.statusHistory || [];
     const laatsteTijdstip = history.length ? history[history.length - 1].timestamp : sollicitatie.ingediendOp;
