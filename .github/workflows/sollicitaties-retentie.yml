@@ -1,9 +1,9 @@
 name: Sollicitaties AVG-bewaartermijn (afgewezen/ingetrokken opruimen)
 
-# Bewust (nog) geen "schedule"-trigger: dit verwijdert onomkeerbaar
-# kandidaatgegevens. Eerst een paar keer handmatig draaien (via "Run
-# workflow" hieronder, met proefdraai=true) om te zien wat er verwijderd
-# zou worden, voordat dit op een vaste planning gezet wordt.
+# Proefdraai (handmatig, "Run workflow" met proefdraai=true) is al een
+# paar keer gecontroleerd, daarom nu ook een wekelijkse schedule voor de
+# echte opruiming. Maandagnacht, niet op het hele of halve uur (minder
+# kans op vertraging bij GitHub's scheduler op drukke momenten).
 on:
   workflow_dispatch:
     inputs:
@@ -11,6 +11,8 @@ on:
         description: "true = alleen tonen wat verwijderd zou worden, niets echt verwijderen"
         type: boolean
         default: true
+  schedule:
+    - cron: '17 3 * * 1'
 
 jobs:
   tick:
@@ -18,6 +20,6 @@ jobs:
     steps:
       - name: Roep sollicitaties-tick endpoint aan
         run: |
-          curl -sS -X POST "https://${{ vars.SITE_URL }}/api/onderhoud/sollicitatiesTick?proefdraai=${{ inputs.proefdraai }}" \
+          curl -sS -X POST "https://${{ vars.SITE_URL }}/api/onderhoud/sollicitatiesTick?proefdraai=${{ github.event_name == 'workflow_dispatch' && inputs.proefdraai || 'false' }}" \
             -H "x-tick-secret: ${{ secrets.VACATURES_TICK_SECRET }}" \
             -L --fail
