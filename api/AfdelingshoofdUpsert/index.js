@@ -14,10 +14,9 @@ const EMAIL_REGEX = /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/;
 // al bestaat ("upsert", geen apart create/update-onderscheid nodig voor
 // zo'n kleine, handmatig beheerde tabel).
 //
-// Let op: dit regelt alleen WELKE afdeling(en) iemand ziet. Of iemand
-// de rol "afdelingshoofd" krijgt bij het inloggen hangt af van
-// lidmaatschap van de Entra-groep Afdelingshoofden-Toegang (zie
-// GetRoles) — dat moet apart in Entra geregeld worden.
+// Dit regelt zowel WELKE afdeling(en) iemand ziet als OF iemand de rol
+// "afdelingshoofd" krijgt bij het inloggen: GetRoles geeft die rol aan
+// iedereen met een rij hier, geen Entra-groep meer nodig (zie GetRoles).
 module.exports = async function (context, req) {
   const input = req.body || {};
   const email = normaliseerEmail(input.email);
