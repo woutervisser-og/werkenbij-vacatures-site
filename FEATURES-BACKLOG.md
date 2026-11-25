@@ -83,7 +83,7 @@ te lezen zonder los in de data te duiken.
 
 | Feature | Wat ontbreekt nu | Prioriteit | Inschatting |
 |---|---|---|---|
-| Onderscheid tussen rollen (bv. recruiter volledig vs. hiring manager alleen inzien/reageren op eigen afdeling) | Bewust 1 vlak rechtenniveau voor nu (zie architectuurdocument): iedereen met portaaltoegang mag alles. De Standard-SKU-afhankelijkheid is inmiddels weggenomen (zie hieronder, rolgebaseerde toegang staat al live). Iska noemt expliciet: een leidinggevende moet een sollicitant kunnen bekijken én erop kunnen reageren binnen het portaal ("iets wezenlijks") | **Must** | L |
+| ~~Onderscheid tussen rollen (bv. recruiter volledig vs. hiring manager alleen inzien/reageren op eigen afdeling)~~ ✅ | Afgerond: eigen rol "afdelingshoofd" via een 2e Entra-groep, server-side gescoped op de eigen afdeling(en) (fail closed), met een eigen `/afdelingshoofd`-scherm: inzien + reageren, geen statuswijziging. 2-richtingen chatlog met HR, los van HR's interne notities | ~~Must~~ | ~~L~~ |
 | Audit-log (wie wijzigde welke vacature/sollicitatie, wanneer) | Geen enkele wijzigingshistorie | Could | M |
 | Eigenaar/recruiter toewijzen aan een vacature | Geen "verantwoordelijke"-veld | Could | S |
 
