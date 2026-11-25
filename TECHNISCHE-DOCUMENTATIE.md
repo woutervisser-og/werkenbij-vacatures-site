@@ -427,52 +427,39 @@ de onderliggende CRUD-operatie laten falen).
 
 ```json
 { "route": "/beheer/*", "allowedRoles": ["authenticated"] },
-{ "route": "/api/vacatures*", "allowedRoles": ["authenticated"] },
-{ "route": "/api/media*", "allowedRoles": ["authenticated"] },
-{ "route": "/api/sollicitatiebeheer/*", "allowedRoles": ["authenticated"] }
+{ "route": "/afdelingshoofd/*", "allowedRoles": ["authenticated"] },
+{ "route": "/leidinggevende", "rewrite": "/afdelingshoofd/sollicitaties.html", "allowedRoles": ["authenticated"] },
+{ "route": "/api/afdelingshoofd*", "allowedRoles": ["afdelingshoofd"] },
+{ "route": "/api/vacatures*", "allowedRoles": ["hrbeheer"] },
+{ "route": "/api/media*", "allowedRoles": ["hrbeheer"] },
+{ "route": "/api/sollicitatiebeheer/*", "allowedRoles": ["hrbeheer"] }
 ```
 
-Een niet-ingelogde bezoeker op een beveiligde route krijgt een 401, die
-via `responseOverrides` doorstuurt naar de Microsoft/Entra-inlogpagina.
+De HTML-pagina's zelf (`/beheer/*`, `/afdelingshoofd/*`) staan open voor
+elk ingelogd tenant-account; de echte grens zit op de API-routes
+erachter, met `allowedRoles` op de daadwerkelijke rol (`hrbeheer` of
+`afdelingshoofd`). Zonder de juiste rol toont de pagina zelf een "Geen
+toegang"-melding (client-side, `beheer-auth.js`/`afdelingshoofd-auth.js`),
+maar dat is puur gebruiksvriendelijkheid — de API's weigeren de data
+sowieso. Een niet-ingelogde bezoeker op een beveiligde route krijgt een
+401, die via `responseOverrides` doorstuurt naar de Microsoft/Entra-
+inlogpagina.
 
-**Belangrijk, nog openstaand gat tussen ontwerp en werkelijkheid:**
-`ARCHITECTUUR-HR-PORTAAL.md` beschrijft 4 beveiligingslagen, waarvan de
-laatste 2 **nog niet actief** zijn:
+**Rolgebaseerde routebeveiliging is actief**, gekoppeld via
+`"auth": {"rolesSource": "/api/GetRoles"}` in `staticwebapp.config.json`.
+`api/GetRoles` kent 2 rollen toe, een gebruiker kan beide tegelijk
+hebben:
+- **hrbeheer**: lidmaatschap van de Entra-beveiligingsgroep
+  `HR_GROUP_ID`, gecheckt via Microsoft Graph.
+- **afdelingshoofd**: een rij voor de ingelogde gebruiker in de
+  `Afdelingshoofden`-tabel (beheerd via `beheer/afdelingshoofden.html`).
+  Bewust geen Entra-groep (meer): HR kent deze rol zelf toe, zonder dat
+  daar een Entra-beheerder voor nodig is.
 
-1. ✅ Entra ID-inlogpoort (ingebouwd in Static Web Apps).
-2. ✅ Tenant-restrictie (alleen accounts binnen de OG Clean Fuels tenant
-   kunnen inloggen — hoort bij de App Registration-configuratie).
-3. ⏳ **Groep-restrictie** (beveiligingsgroep "HR-Portaal-Toegang",
-   alleen echte HR-gebruikers) — bedoeld als dé echte grens van wie bij
-   het portaal mag, maar wordt nergens afgedwongen.
-4. ⏳ **Rolgebaseerde routebeveiliging**: `api/GetRoles` is volledig
-   geschreven (checkt via Microsoft Graph `checkMemberGroups` of de
-   ingelogde gebruiker in de groep zit, kent dan rol `hrbeheer` toe) —
-   maar is **niet gekoppeld**. `staticwebapp.config.json` mist de
-   `"auth": { "rolesSource": "/api/GetRoles" }`-instelling, en
-   `allowedRoles` staat nog op het generieke `["authenticated"]` i.p.v.
-   `["hrbeheer"]`. Reden (letterlijk uit de code-comment in
-   `api/GetRoles/index.js`, bevestigd in `VOORTGANG.md`): `rolesSource`
-   vereist de **Standard SKU** van Azure Static Web Apps, en die
-   upgrade is bewust uitgesteld (kosten).
-
-**Praktisch gevolg, nu:** elk account binnen de OG Clean Fuels Entra-
-tenant kan bij `/beheer/*` en alle beheer-API's — niet alleen leden van
-de groep "HR-Portaal-Toegang". Dit is een bewuste, bekende, tijdelijke
-situatie (geen bug), maar wel iets om in de gaten te houden zolang de
-SKU-upgrade niet is doorgevoerd.
-
-**Wat nodig is om dit alsnog te activeren** (uit `VOORTGANG.md`):
-Standard-SKU-upgrade → `"auth": {"rolesSource": "/api/GetRoles"}`
-toevoegen → `allowedRoles` naar `["hrbeheer"]` → 4 Application Settings
-instellen (`HR_TENANT_ID`, `HR_CLIENT_ID`, `HR_CLIENT_SECRET`,
-`HR_GROUP_ID`) → de App Registration de Graph-permissie
-`GroupMember.Read.All` geven (admin consent).
-
-**`VacaturesTick`** is de uitzondering: die wordt aangeroepen door een
-GitHub Actions-workflow, niet door een ingelogde browsersessie, en is
-dus beveiligd met een eigen gedeeld secret (`x-tick-secret`-header)
-i.p.v. de Entra ID/rollen-mechaniek.
+**`VacaturesTick`/`SollicitatiesTick`** zijn de uitzondering: die worden
+aangeroepen door een GitHub Actions-workflow, niet door een ingelogde
+browsersessie, en zijn dus beveiligd met een eigen gedeeld secret
+(`x-tick-secret`-header) i.p.v. de Entra ID/rollen-mechaniek.
 
 ## 11. Beheerportaal (`/beheer/*`)
 
@@ -553,9 +540,6 @@ om live te komen.
 
 ## 13. Bekende aandachtspunten
 
-- **Rolgebaseerde toegang nog niet actief** — zie sectie 10. Op dit
-  moment kan elk tenant-account bij het hele beheerportaal, niet alleen
-  HR.
 - **Sollicitatie-statusmodel wijkt af van het architectuurdocument.**
   `ARCHITECTUUR-HR-PORTAAL.md` beschrijft
   `Nieuw → In behandeling → Afgewezen/Aangenomen → Bewaard → Gearchiveerd`;

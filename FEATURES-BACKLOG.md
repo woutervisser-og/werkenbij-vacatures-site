@@ -33,7 +33,7 @@ te lezen zonder los in de data te duiken.
 | Filteren/zoeken in sollicitatie-overzicht (op vacature, status, naam, periode) | Geen enkel filter of zoekveld aanwezig, alles staat in 1 lange tabel | Must | S |
 | ~~Bulk-export van sollicitaties (CSV/Excel)~~ ✅ | Afgerond: "Exporteren (CSV)"-knop, respecteert actieve filters (vacature/zoekterm), puntkomma-gescheiden voor Excel NL | Must | S |
 | CV-voorbeeld direct in het dossier (i.p.v. alleen downloaden) | `/beheer/sollicitatie-dossier.html` toont naam, contactgegevens en motivatietekst al; CV/motivatiebrief zijn nog alleen als downloadlink te openen, geen voorvertoning in de browser zelf | Must | M |
-| Interne notities per sollicitatie (bv. interviewaantekeningen, indruk collega) | Geen notitieveld in het datamodel of de UI | Should | S |
+| ~~Interne notities per sollicitatie (bv. interviewaantekeningen, indruk collega)~~ ✅ | Afgerond: notitieveld (rich text) in het dossier, HR-only | Should | S |
 | Bulk-acties (meerdere sollicitaties tegelijk van status wijzigen of verwijderen) | Status wijzigen/verwijderen kan nu alleen 1-voor-1 | Should | M |
 | Paginering in het sollicitatie-overzicht | Alle sollicitaties worden in 1 keer geladen en getoond; wordt onwerkbaar bij groei | Should | S |
 | Dubbele-sollicitatie-detectie (zelfde e-mailadres, zelfde/andere vacature) | Geen controle; een kandidaat kan ongemerkt meerdere keren solliciteren | Should | M |
@@ -63,7 +63,7 @@ te lezen zonder los in de data te duiken.
 |---|---|---|---|
 | Bevestigingsmail naar kandidaat na solliciteren | Kandidaat krijgt nu geen enkele bevestiging dat de sollicitatie is aangekomen | Must | S |
 | Filteren/zoeken op de vacatures-pagina (afdeling, locatie, dienstverband) | `vacatures.html` toont alle vacatures onder elkaar, geen filter | Should | M |
-| Toestemmingsvinkje bij het sollicitatieformulier (AVG) | Geen consent-checkbox, terwijl er wel persoonsgegevens en CV/motivatiebrief worden verwerkt | Must | S |
+| ~~Toestemmingsvinkje bij het sollicitatieformulier (AVG)~~ ✅ | Afgerond: verplichte consent-checkbox, zowel op het publieke formulier als bij handmatig toevoegen door HR | Must | S |
 | Vacature delen (kopieer-link/social-knop) | Geen deelknop op de detailpagina | Could | S |
 | ~~E-mail- en telefoonnummer-validatie in het sollicitatieformulier~~ ✅ | Afgerond: internationaal telefoonformaat (optionele landcode + 7-15 cijfers), client- én server-side, in alle 6 talen | Must | S |
 | "Vergelijkbare vacatures" onderaan een detailpagina | Geen suggesties, kandidaat moet zelf terug naar het overzicht | Could | M |
@@ -100,8 +100,8 @@ te lezen zonder los in de data te duiken.
 
 | Feature | Wat ontbreekt nu | Prioriteit | Inschatting |
 |---|---|---|---|
-| Bewaartermijn + automatische verwijdering van oude sollicitaties/CV's | Sollicitaties en bijlagen blijven onbeperkt bewaard, geen retentiebeleid | Must | M |
-| Toestemmingsvinkje bij solliciteren | Zie ook categorie 3; hier expliciet als AVG-vereiste genoemd, niet alleen UX | Must | S |
+| ~~Bewaartermijn + automatische verwijdering van oude sollicitaties/CV's~~ ✅ | Afgerond: 28 dagen na de laatste statuswijziging (BEWAARTERMIJN_DAGEN, nog te bevestigen met Iska/juridisch), wekelijkse automatische opruiming na een handmatig geverifieerde proefdraai | Must | M |
+| ~~Toestemmingsvinkje bij solliciteren~~ ✅ | Zie categorie 3, hier als AVG-vereiste afgevinkt | Must | S |
 | Kandidaat kan zelf verzoek indienen tot verwijdering ("recht op vergetelheid") | Geen self-service mogelijkheid; nu alleen mogelijk als HR handmatig verwijdert na een verzoek per mail | Should | M |
 
 ## 8. Externe kanaal-integraties

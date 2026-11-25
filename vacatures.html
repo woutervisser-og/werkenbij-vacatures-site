@@ -123,6 +123,20 @@
       .replace(/^-+|-+$/g, "");
   }
 
+  // Zelfde aanpak als scripts/generate-vacatures/generate.js: elk
+  // dynamisch veld in de kaart gaat hierdoorheen voordat het in innerHTML
+  // terechtkomt, ook velden die server-side al een vaste lijst hebben
+  // (afdeling, locatie) — 1 plek die XSS via vacaturevelden afdekt, i.p.v.
+  // per veld te moeten onthouden of het al gevalideerd is.
+  function escapeHtml(tekst) {
+    return String(tekst || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   // Zoekt het eerste tekstuele body-blok op (intro of gewone tekst) en
   // knipt dat af op 100 tekens voor de tegel. Body-blokken bevatten
   // platte tekst (geen HTML), dus geen strip-stap meer nodig.
@@ -330,14 +344,14 @@
       kaart.innerHTML = `
         ${maakThumbnailHtml(vacature)}
         <div class="vacature-card-inhoud">
-          <div class="kaart-meta">${vacature.locatie || ""}</div>
-          <h3>${vertaling.title || ""}</h3>
+          <div class="kaart-meta">${escapeHtml(vacature.locatie)}</div>
+          <h3>${escapeHtml(vertaling.title)}</h3>
           <div class="meta-row">
-            <span class="meta-pill">${vacature.dienstverband || ""}</span>
-            <span class="meta-pill">${vacature.afdeling || ""}</span>
-            ${vacature.opleidingsniveau ? `<span class="meta-pill">${vacature.opleidingsniveau}</span>` : ""}
+            <span class="meta-pill">${escapeHtml(vacature.dienstverband)}</span>
+            <span class="meta-pill">${escapeHtml(vacature.afdeling)}</span>
+            ${vacature.opleidingsniveau ? `<span class="meta-pill">${escapeHtml(vacature.opleidingsniveau)}</span>` : ""}
           </div>
-          <p class="omschrijving">${maakSamenvatting(vertaling.bodyBlocks, 100)}</p>
+          <p class="omschrijving">${escapeHtml(maakSamenvatting(vertaling.bodyBlocks, 100))}</p>
           <span class="btn btn-secondary">${window.t("common.leesMeerSolliciteer")}</span>
         </div>
       `;
