@@ -19,6 +19,19 @@ const TELEFOON_REGEX = /^\+?[0-9]{7,15}$/;
 module.exports = async function (context, req) {
   const input = req.body || {};
 
+  // Honeypot (zie solliciteer.js): een onzichtbaar veld dat een mens nooit
+  // invult. Dit vangt ook bots die de pagina overslaan en dit endpoint
+  // rechtstreeks aanroepen met de veldnaam uit de HTML. Doe alsof het
+  // gelukt is, zonder iets op te slaan.
+  if (input.website) {
+    context.res = {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+      body: { id: randomUUID(), status: "nieuw" }
+    };
+    return;
+  }
+
   if (!input.vacatureId) {
     context.res = { status: 400, body: { error: "vacatureId is verplicht" } };
     return;

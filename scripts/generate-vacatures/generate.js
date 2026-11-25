@@ -562,6 +562,10 @@ ${renderBroodkruimel(vacature, taalcode, t)}
     <form id="sollicitatie-form">
       <input type="hidden" name="vacatureId" value="${escapeHtml(vacature.id)}">
       <fieldset id="sollicitatie-velden" style="border:0;padding:0;margin:0;">
+      <div class="form-veld" style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
       <div class="form-veld">
         <label for="first_name">${t("form.voornaam")}</label>
         <input type="text" id="first_name" name="first_name" required>

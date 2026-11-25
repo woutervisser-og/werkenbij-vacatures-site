@@ -67,6 +67,17 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     toonStatus("", null);
 
+    // Honeypot: onzichtbaar veld voor mensen (CSS), maar een simpele
+    // spambot vult vaak elk veld in dat hij tegenkomt. Niet leeg = spam:
+    // doe alsof het gelukt is (de bot leert er niets van), maar verstuur
+    // niets echt.
+    if (form.website.value.trim()) {
+      form.reset();
+      veldenset.hidden = true;
+      toonStatus(teksten.succes, "ok");
+      return;
+    }
+
     if (!isGeldigeEmail(form.email.value)) {
       toonStatus(teksten.emailOngeldig, "fout");
       return;
