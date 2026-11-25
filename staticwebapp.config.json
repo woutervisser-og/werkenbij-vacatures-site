@@ -35,6 +35,13 @@
       ]
     },
     {
+      "route": "/leidinggevende",
+      "rewrite": "/afdelingshoofd/sollicitaties.html",
+      "allowedRoles": [
+        "authenticated"
+      ]
+    },
+    {
       "route": "/api/afdelingshoofd*",
       "allowedRoles": [
         "afdelingshoofd"
