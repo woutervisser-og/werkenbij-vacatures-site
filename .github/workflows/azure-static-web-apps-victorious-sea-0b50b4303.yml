@@ -30,6 +30,7 @@ jobs:
           node generate.js
         env:
           VACATURES_API_URL: ${{ vars.SITE_URL }}/api/GetVacatures
+          CV_UPLOAD_TOKEN_SECRET: ${{ secrets.CV_UPLOAD_TOKEN_SECRET }}
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1

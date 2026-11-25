@@ -1,6 +1,11 @@
 const fetch = require("node-fetch");
 const fs = require("fs");
 const path = require("path");
+// Rechtstreeks gedeeld met de Azure Function (i.p.v. hier gedupliceerd,
+// zoals ALLOWED_AFDELINGEN elders wel is): dit is pure Node-crypto zonder
+// verdere afhankelijkheden, en de HMAC-logica moet exact gelijk blijven
+// aan wat CvUpload valideert.
+const { genereerUploadToken } = require("../../api/shared/uploadToken");
 
 // De live site zelf, ipv rechtstreeks SharePoint/Graph API. Wordt in
 // GitHub Actions gezet vanuit de repository variable SITE_URL (zodat een
@@ -648,6 +653,7 @@ ${renderBroodkruimel(vacature, taalcode, t)}
     succes: t("form.succes"),
     fout: t("form.fout")
   })};
+  window.OG_UPLOAD_TOKEN = ${JSON.stringify(genereerUploadToken())};
 </script>
 <script src="/animations.js"></script>
 <script src="/solliciteer.js"></script>

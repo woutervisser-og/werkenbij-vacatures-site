@@ -13,4 +13,19 @@ function huidigeGebruiker(req) {
   }
 }
 
-module.exports = { huidigeGebruiker };
+// Of de ingelogde gebruiker een bepaalde rol heeft (bv. "hrbeheer").
+// Gebruikt door endpoints die zelf open staan voor anonieme aanvragen
+// (zoals CvUpload) maar binnen diezelfde Function anders willen reageren
+// als de aanvraag toch al van een ingelogde HR-gebruiker komt.
+function heeftRol(req, rol) {
+  const header = req.headers && req.headers["x-ms-client-principal"];
+  if (!header) return false;
+  try {
+    const principal = JSON.parse(Buffer.from(header, "base64").toString("utf-8"));
+    return Array.isArray(principal.userRoles) && principal.userRoles.includes(rol);
+  } catch {
+    return false;
+  }
+}
+
+module.exports = { huidigeGebruiker, heeftRol };
