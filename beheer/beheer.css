@@ -30,6 +30,22 @@ body { background: var(--og-grey); }
 .beheer-gebruiker { font-size: 14px; color: #4a4a4a; }
 .beheer-gebruiker a { color: var(--og-orange-dark); text-decoration: none; font-weight: 600; margin-left: 14px; }
 
+/* Vaste navigatiebalk door het hele beheerportaal: vanaf elk scherm in 1
+   klik naar 1 van de 3 hoofdsecties, i.p.v. eerst terug te moeten naar
+   waar je vandaan kwam. */
+.beheer-nav { display: flex; gap: 4px; padding: 0 6%; background: var(--og-white); border-bottom: 1px solid #e5e5e2; }
+.beheer-nav-link {
+  padding: 14px 18px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #4a4a4a;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+}
+.beheer-nav-link:hover { color: var(--og-orange-dark); }
+.beheer-nav-link.beheer-nav-actief { color: var(--og-orange-dark); border-bottom-color: var(--og-orange); }
+
 .beheer-main {
   max-width: 1320px;
   margin: 0 auto;
