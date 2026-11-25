@@ -21,7 +21,7 @@
         // testen) kan zo wisselen zonder een URL te moeten onthouden.
         if (Array.isArray(principal.userRoles) && principal.userRoles.includes("afdelingshoofd")) {
           const wisselLink = document.createElement("a");
-          wisselLink.href = "/afdelingshoofd/sollicitaties.html";
+          wisselLink.href = "/leidinggevende";
           wisselLink.textContent = "Naar leidinggevende-weergave";
           gebruikerInfoEl.appendChild(wisselLink);
         }
