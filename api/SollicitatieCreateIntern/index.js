@@ -42,6 +42,13 @@ module.exports = async function (context, req) {
     };
     return;
   }
+  if (input.toestemmingGegeven !== true) {
+    context.res = {
+      status: 400,
+      body: { error: "Bevestig eerst dat er een geldige rechtsgrond is om deze gegevens te verwerken" }
+    };
+    return;
+  }
 
   try {
     const vacaturesTableClient = await getVacaturesTableClient();
@@ -58,6 +65,7 @@ module.exports = async function (context, req) {
     }
 
     const id = randomUUID();
+    const ingediendOp = new Date().toISOString();
     const entity = toEntity(
       id,
       {
@@ -74,7 +82,7 @@ module.exports = async function (context, req) {
         motivatiebriefNaam: input.motivatiebrief && input.motivatiebrief.naam,
         motivatiebriefOorspronkelijkeNaam: input.motivatiebrief && input.motivatiebrief.oorspronkelijkeNaam
       },
-      { ingediendOp: new Date().toISOString(), toegevoegdDoor: huidigeGebruiker(req) }
+      { ingediendOp, toegevoegdDoor: huidigeGebruiker(req), toestemmingGegevenOp: ingediendOp }
     );
 
     const sollicitatiesTableClient = await getSollicitatiesTableClient();

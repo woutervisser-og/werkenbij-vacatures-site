@@ -288,6 +288,8 @@
     "bestandTypeFout": "{{veld}}: sono ammessi solo file PDF o Word.",
     "bestandGrootteFout": "{{veld}}: il file supera i 5MB.",
     "emailOngeldig": "Inserisci un indirizzo e-mail valido.",
-    "telefoonOngeldig": "Inserisci un numero di telefono valido, incluso il prefisso internazionale (es. +31)."
+    "telefoonOngeldig": "Inserisci un numero di telefono valido, incluso il prefisso internazionale (es. +31).",
+    "consentLabel": "Accetto che OG Clean Fuels tratti i miei dati (CV e lettera di motivazione inclusi) per questa procedura di candidatura.",
+    "consentVerplicht": "Devi accettare il trattamento dei tuoi dati per poter candidarti."
   }
 }

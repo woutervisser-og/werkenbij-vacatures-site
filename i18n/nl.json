@@ -288,6 +288,8 @@
     "bestandTypeFout": "{{veld}}: alleen PDF of Word-bestanden zijn toegestaan.",
     "bestandGrootteFout": "{{veld}}: bestand is groter dan 5MB.",
     "emailOngeldig": "Vul een geldig e-mailadres in.",
-    "telefoonOngeldig": "Vul een geldig telefoonnummer in, inclusief landcode (bijv. +31)."
+    "telefoonOngeldig": "Vul een geldig telefoonnummer in, inclusief landcode (bijv. +31).",
+    "consentLabel": "Ik ga akkoord dat OG Clean Fuels mijn gegevens (incl. cv en motivatiebrief) verwerkt voor deze sollicitatieprocedure.",
+    "consentVerplicht": "Je moet akkoord gaan met de verwerking van je gegevens om te kunnen solliciteren."
   }
 }

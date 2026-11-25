@@ -95,6 +95,13 @@
       </div>
     </div>
 
+    <div class="form-rij">
+      <div class="form-veld form-veld-consent">
+        <input type="checkbox" id="veld-toestemming" required>
+        <label for="veld-toestemming">Ik bevestig dat er een geldige rechtsgrond is om deze gegevens te verwerken (bijv. toestemming via LinkedIn/Indeed, of telefonisch verkregen).</label>
+      </div>
+    </div>
+
     <button type="submit" class="btn" id="opslaan-knop"><svg class="icoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Sollicitatie toevoegen</button>
   </form>
 </main>
@@ -189,6 +196,10 @@
       toonMelding("Motivatiebrief: " + motivatiebriefFout, "fout");
       return;
     }
+    if (!document.getElementById("veld-toestemming").checked) {
+      toonMelding("Bevestig eerst dat er een geldige rechtsgrond is.", "fout");
+      return;
+    }
 
     const opslaanKnop = document.getElementById("opslaan-knop");
     opslaanKnop.disabled = true;
@@ -209,6 +220,7 @@
             telefoon,
             motivatie: document.getElementById("veld-notitie").value,
             status: document.getElementById("veld-status").value,
+            toestemmingGegeven: true,
             cv,
             motivatiebrief
           })

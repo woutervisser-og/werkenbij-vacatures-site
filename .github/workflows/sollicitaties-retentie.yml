@@ -1,0 +1,23 @@
+name: Sollicitaties AVG-bewaartermijn (afgewezen/ingetrokken opruimen)
+
+# Bewust (nog) geen "schedule"-trigger: dit verwijdert onomkeerbaar
+# kandidaatgegevens. Eerst een paar keer handmatig draaien (via "Run
+# workflow" hieronder, met proefdraai=true) om te zien wat er verwijderd
+# zou worden, voordat dit op een vaste planning gezet wordt.
+on:
+  workflow_dispatch:
+    inputs:
+      proefdraai:
+        description: "true = alleen tonen wat verwijderd zou worden, niets echt verwijderen"
+        type: boolean
+        default: true
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Roep sollicitaties-tick endpoint aan
+        run: |
+          curl -sS -X POST "https://${{ vars.SITE_URL }}/api/onderhoud/sollicitatiesTick?proefdraai=${{ inputs.proefdraai }}" \
+            -H "x-tick-secret: ${{ secrets.VACATURES_TICK_SECRET }}" \
+            -L --fail

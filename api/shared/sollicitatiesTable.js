@@ -28,6 +28,15 @@ const ALLOWED_STATUSSEN = [
 const BORD_FASES = ALLOWED_STATUSSEN.slice(0, 6);
 const EXIT_STATUSSEN = ALLOWED_STATUSSEN.slice(6);
 
+// AVG-bewaartermijn: hoe lang een afgewezen/ingetrokken sollicitatie (incl.
+// CV/motivatiebrief) bewaard blijft na de laatste statuswijziging, voordat
+// SollicitatiesTick 'm automatisch verwijdert. 4 weken is de gangbare
+// vuistregel (Autoriteit Persoonsgegevens) voor afgewezen sollicitanten
+// zonder expliciete toestemming voor langer bewaren — dit is een
+// beleidskeuze, geen technisch gegeven; pas aan in overleg met Iska/juridisch
+// als jullie een andere termijn willen hanteren.
+const BEWAARTERMIJN_DAGEN = 28;
+
 let tableClientPromise;
 
 function getSollicitatiesTableClient() {
@@ -65,7 +74,11 @@ function getSollicitatiesTableClient() {
 // aangemaakt (zie SollicitatieCreateIntern, voor kandidaten die buiten
 // het publieke formulier om binnenkomen); bij een normale sollicitatie
 // blijft dit leeg en is de audit trail-gebruiker gewoon "kandidaat".
-function toEntity(id, sollicitatie, { ingediendOp, toegevoegdDoor }) {
+// toestemmingGegevenOp is het AVG-bewijs dat er toestemming is gegeven
+// (publiek formulier: de kandidaat zelf via de verplichte checkbox;
+// handmatig toegevoegd: HR bevestigt zelf een rechtsgrond te hebben, zie
+// SollicitatieCreateIntern) — altijd gezet, nooit optioneel.
+function toEntity(id, sollicitatie, { ingediendOp, toegevoegdDoor, toestemmingGegevenOp }) {
   const status = sollicitatie.status || "nieuw";
   return {
     partitionKey: PARTITION_KEY,
@@ -87,6 +100,7 @@ function toEntity(id, sollicitatie, { ingediendOp, toegevoegdDoor }) {
     ]),
     notities: "",
     handmatigToegevoegdDoor: toegevoegdDoor || "",
+    toestemmingGegevenOp: toestemmingGegevenOp || "",
     ingediendOp
   };
 }
@@ -136,9 +150,20 @@ function toSollicitatieDto(entity) {
     statusHistory: JSON.parse(entity.statusHistoryJson || "[]"),
     notities: entity.notities || "",
     handmatigToegevoegdDoor: entity.handmatigToegevoegdDoor || "",
+    toestemmingGegevenOp: entity.toestemmingGegevenOp || "",
     reacties: JSON.parse(entity.reactiesJson || "[]"),
     ingediendOp: entity.ingediendOp
   };
+}
+
+// Tijdstip van de laatste statuswijziging (of, als die er nog niet is
+// geweest, het moment van indienen) — bepaalt voor EXIT_STATUSSEN de
+// AVG-bewaartermijn (zie BEWAARTERMIJN_DAGEN). Werkt op de DTO-vorm
+// (statusHistory als array), niet op de ruwe entity.
+function laatsteWijzigingTijdstip(dto) {
+  const history = dto.statusHistory || [];
+  if (history.length > 0) return history[history.length - 1].timestamp;
+  return dto.ingediendOp;
 }
 
 // Afdelingshoofden lezen mee ("inlezen op een kandidaat"), maar krijgen
@@ -158,10 +183,12 @@ module.exports = {
   ALLOWED_STATUSSEN,
   BORD_FASES,
   EXIT_STATUSSEN,
+  BEWAARTERMIJN_DAGEN,
   getSollicitatiesTableClient,
   toEntity,
   toSollicitatieDto,
   toSollicitatieDtoVoorAfdelingshoofd,
   metNieuweStatusHistory,
-  metNieuweReactie
+  metNieuweReactie,
+  laatsteWijzigingTijdstip
 };

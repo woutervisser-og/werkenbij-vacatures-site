@@ -52,6 +52,10 @@ module.exports = async function (context, req) {
     context.res = { status: 400, body: { error: "CV ontbreekt" } };
     return;
   }
+  if (input.toestemmingGegeven !== true) {
+    context.res = { status: 400, body: { error: "Toestemming voor verwerking van je gegevens is verplicht" } };
+    return;
+  }
 
   try {
     const vacaturesTableClient = await getVacaturesTableClient();
@@ -68,6 +72,7 @@ module.exports = async function (context, req) {
     }
 
     const id = randomUUID();
+    const ingediendOp = new Date().toISOString();
     const entity = toEntity(
       id,
       {
@@ -83,7 +88,7 @@ module.exports = async function (context, req) {
         motivatiebriefNaam: input.motivatiebrief && input.motivatiebrief.naam,
         motivatiebriefOorspronkelijkeNaam: input.motivatiebrief && input.motivatiebrief.oorspronkelijkeNaam
       },
-      { ingediendOp: new Date().toISOString() }
+      { ingediendOp, toestemmingGegevenOp: ingediendOp }
     );
 
     const sollicitatiesTableClient = await getSollicitatiesTableClient();

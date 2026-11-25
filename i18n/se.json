@@ -288,6 +288,8 @@
     "bestandTypeFout": "{{veld}}: endast PDF- eller Word-filer är tillåtna.",
     "bestandGrootteFout": "{{veld}}: filen är större än 5 MB.",
     "emailOngeldig": "Ange en giltig e-postadress.",
-    "telefoonOngeldig": "Ange ett giltigt telefonnummer, inklusive landskod (t.ex. +31)."
+    "telefoonOngeldig": "Ange ett giltigt telefonnummer, inklusive landskod (t.ex. +31).",
+    "consentLabel": "Jag godkänner att OG Clean Fuels behandlar mina uppgifter (inkl. CV och personligt brev) för denna ansökningsprocess.",
+    "consentVerplicht": "Du måste godkänna behandlingen av dina uppgifter för att kunna ansöka."
   }
 }

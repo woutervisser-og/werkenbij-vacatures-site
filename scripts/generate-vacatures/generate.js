@@ -512,6 +512,9 @@ ${bouwJsonLd(vacature)}
   #form-status.form-status-ok { color: var(--og-green-dark); }
   #form-status.form-status-fout { color: #b3261e; }
   .form-veld-fout { color: #b3261e; font-size: 13px; margin-top: 4px; }
+  .form-veld-consent { display: flex; align-items: flex-start; gap: 10px; }
+  .form-veld-consent input[type="checkbox"] { width: auto; margin-top: 3px; flex-shrink: 0; }
+  .form-veld-consent label { font-weight: 400; font-size: 13.5px; line-height: 1.5; margin-bottom: 0; }
   #sollicitatie-form fieldset[disabled] { opacity: 0.6; }
 </style>
 </head>
@@ -594,6 +597,10 @@ ${renderBroodkruimel(vacature, taalcode, t)}
         <label for="motivation_letter">${t("form.motivatiebriefLabel")}</label>
         <input type="file" id="motivation_letter" name="motivation_letter" accept=".pdf,.doc,.docx">
       </div>
+      <div class="form-veld form-veld-consent">
+        <input type="checkbox" id="consent" name="consent" required>
+        <label for="consent">${t("form.consentLabel")}</label>
+      </div>
       <button type="submit" class="btn btn-primary" id="submit-btn">${t("form.versturen")}</button>
       </fieldset>
       <div id="form-status" role="status" aria-live="polite"></div>
@@ -635,6 +642,7 @@ ${renderBroodkruimel(vacature, taalcode, t)}
     bestandGrootteFout: t("form.bestandGrootteFout"),
     emailOngeldig: t("form.emailOngeldig"),
     telefoonOngeldig: t("form.telefoonOngeldig"),
+    consentVerplicht: t("form.consentVerplicht"),
     versturen: t("form.versturen"),
     bezigMetVersturen: t("form.bezigMetVersturen"),
     succes: t("form.succes"),

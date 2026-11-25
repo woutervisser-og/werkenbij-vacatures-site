@@ -229,6 +229,9 @@ body.geen-toegang .beheer-geen-toegang { display: block; }
 .form-rij { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
 .form-veld { display: flex; flex-direction: column; gap: 6px; }
 .form-veld.volle-breedte { grid-column: 1 / -1; }
+.form-veld-consent { grid-column: 1 / -1; flex-direction: row; align-items: flex-start; gap: 10px; }
+.form-veld-consent input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; }
+.form-veld-consent label { font-weight: 400; }
 .form-veld label { font-size: 13.5px; font-weight: 700; color: #4a4a4a; }
 .form-veld input[type="text"],
 .form-veld input[type="number"],

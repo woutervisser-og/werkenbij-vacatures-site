@@ -86,6 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
       toonStatus(teksten.telefoonOngeldig, "fout");
       return;
     }
+    if (!form.consent.checked) {
+      toonStatus(teksten.consentVerplicht, "fout");
+      return;
+    }
 
     const cvBestand = document.getElementById("cv").files[0];
     const motivatiebriefBestand = document.getElementById("motivation_letter").files[0];
@@ -120,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             email: form.email.value,
             telefoon: form.tel.value,
             motivatie: form.motivation.value,
+            toestemmingGegeven: form.consent.checked,
             cv,
             motivatiebrief
           })
