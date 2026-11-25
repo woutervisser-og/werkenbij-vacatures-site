@@ -18,6 +18,7 @@ module.exports = async function (context, req) {
       body: afdelingshoofden
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon afdelingshoofden niet ophalen", debug: error.message } };
+    context.log.error("Kon afdelingshoofden niet ophalen", error.message);
+    context.res = { status: 500, body: { error: "Kon afdelingshoofden niet ophalen" } };
   }
 };

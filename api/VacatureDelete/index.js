@@ -22,6 +22,7 @@ module.exports = async function (context, req) {
       context.res = { status: 404, body: { error: "Vacature niet gevonden" } };
       return;
     }
-    context.res = { status: 500, body: { error: "Kon vacature niet verwijderen", debug: error.message } };
+    context.log.error("Kon vacature niet verwijderen", error.message);
+    context.res = { status: 500, body: { error: "Kon vacature niet verwijderen" } };
   }
 };

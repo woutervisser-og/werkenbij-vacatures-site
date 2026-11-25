@@ -49,6 +49,7 @@ module.exports = async function (context, req) {
       body: { naam: blobNaam, oorspronkelijkeNaam }
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon bestand niet uploaden", debug: error.message } };
+    context.log.error("Kon bestand niet uploaden", error.message);
+    context.res = { status: 500, body: { error: "Kon bestand niet uploaden" } };
   }
 };

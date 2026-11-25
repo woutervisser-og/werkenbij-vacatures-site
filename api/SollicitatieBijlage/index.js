@@ -44,6 +44,7 @@ module.exports = async function (context, req) {
       context.res = { status: 404, body: { error: "Sollicitatie niet gevonden" } };
       return;
     }
-    context.res = { status: 500, body: { error: "Kon bijlage niet ophalen", debug: error.message } };
+    context.log.error("Kon bijlage niet ophalen", error.message);
+    context.res = { status: 500, body: { error: "Kon bijlage niet ophalen" } };
   }
 };

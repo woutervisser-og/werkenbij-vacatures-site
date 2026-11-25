@@ -24,6 +24,7 @@ module.exports = async function (context, req) {
       body: bestanden
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon mediabibliotheek niet ophalen", debug: error.message } };
+    context.log.error("Kon mediabibliotheek niet ophalen", error.message);
+    context.res = { status: 500, body: { error: "Kon mediabibliotheek niet ophalen" } };
   }
 };

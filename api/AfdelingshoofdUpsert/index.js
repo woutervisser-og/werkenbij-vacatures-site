@@ -51,6 +51,7 @@ module.exports = async function (context, req) {
       body: toDto(entity)
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon afdelingshoofd niet opslaan", debug: error.message } };
+    context.log.error("Kon afdelingshoofd niet opslaan", error.message);
+    context.res = { status: 500, body: { error: "Kon afdelingshoofd niet opslaan" } };
   }
 };

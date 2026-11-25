@@ -23,6 +23,7 @@ module.exports = async function (context, req) {
       context.res = { status: 404, body: { error: "Sollicitatie niet gevonden" } };
       return;
     }
-    context.res = { status: 500, body: { error: "Kon sollicitatie niet verwijderen", debug: error.message } };
+    context.log.error("Kon sollicitatie niet verwijderen", error.message);
+    context.res = { status: 500, body: { error: "Kon sollicitatie niet verwijderen" } };
   }
 };

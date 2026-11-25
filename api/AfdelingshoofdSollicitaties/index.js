@@ -31,6 +31,7 @@ module.exports = async function (context, req) {
       body: sollicitaties
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon sollicitaties niet ophalen", debug: error.message } };
+    context.log.error("Kon sollicitaties niet ophalen", error.message);
+    context.res = { status: 500, body: { error: "Kon sollicitaties niet ophalen" } };
   }
 };

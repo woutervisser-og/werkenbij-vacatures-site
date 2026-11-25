@@ -13,6 +13,7 @@ module.exports = async function (context, req) {
       context.res = { status: 404, body: { error: "Afdelingshoofd niet gevonden" } };
       return;
     }
-    context.res = { status: 500, body: { error: "Kon afdelingshoofd niet verwijderen", debug: error.message } };
+    context.log.error("Kon afdelingshoofd niet verwijderen", error.message);
+    context.res = { status: 500, body: { error: "Kon afdelingshoofd niet verwijderen" } };
   }
 };

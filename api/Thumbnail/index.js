@@ -54,6 +54,7 @@ module.exports = async function (context, req) {
       body: thumbnail
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon thumbnail niet genereren", debug: error.message } };
+    context.log.error("Kon thumbnail niet genereren", error.message);
+    context.res = { status: 500, body: { error: "Kon thumbnail niet genereren" } };
   }
 };

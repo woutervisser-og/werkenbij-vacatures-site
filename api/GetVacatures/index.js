@@ -19,6 +19,7 @@ module.exports = async function (context, req) {
       body: vacatures
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon vacatures niet ophalen", debug: error.message } };
+    context.log.error("Kon vacatures niet ophalen", error.message);
+    context.res = { status: 500, body: { error: "Kon vacatures niet ophalen" } };
   }
 };

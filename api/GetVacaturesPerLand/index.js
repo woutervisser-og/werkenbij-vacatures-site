@@ -80,9 +80,10 @@ module.exports = async function (context, req) {
       body: { tellingen, niet_gematcht: nietGematcht }
     };
   } catch (error) {
+    context.log.error("Kon vacatures per land niet ophalen", error.message);
     context.res = {
       status: 500,
-      body: { error: "Kon vacatures per land niet ophalen", debug: error.message }
+      body: { error: "Kon vacatures per land niet ophalen" }
     };
   }
 };

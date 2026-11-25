@@ -67,6 +67,7 @@ module.exports = async function (context, req) {
       body: toVacatureDto(entity)
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon vacature niet aanmaken", debug: error.message } };
+    context.log.error("Kon vacature niet aanmaken", error.message);
+    context.res = { status: 500, body: { error: "Kon vacature niet aanmaken" } };
   }
 };

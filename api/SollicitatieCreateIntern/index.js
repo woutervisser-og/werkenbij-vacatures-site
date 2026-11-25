@@ -86,6 +86,7 @@ module.exports = async function (context, req) {
       body: toSollicitatieDto(entity)
     };
   } catch (error) {
-    context.res = { status: 500, body: { error: "Kon sollicitatie niet opslaan", debug: error.message } };
+    context.log.error("Kon sollicitatie niet opslaan", error.message);
+    context.res = { status: 500, body: { error: "Kon sollicitatie niet opslaan" } };
   }
 };

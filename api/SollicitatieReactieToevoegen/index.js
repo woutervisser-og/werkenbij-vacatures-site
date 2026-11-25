@@ -37,6 +37,7 @@ module.exports = async function (context, req) {
       context.res = { status: 404, body: { error: "Sollicitatie niet gevonden" } };
       return;
     }
-    context.res = { status: 500, body: { error: "Kon reactie niet opslaan", debug: error.message } };
+    context.log.error("Kon reactie niet opslaan", error.message);
+    context.res = { status: 500, body: { error: "Kon reactie niet opslaan" } };
   }
 };
