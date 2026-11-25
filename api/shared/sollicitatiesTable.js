@@ -30,12 +30,13 @@ const EXIT_STATUSSEN = ALLOWED_STATUSSEN.slice(6);
 
 // AVG-bewaartermijn: hoe lang een afgewezen/ingetrokken sollicitatie (incl.
 // CV/motivatiebrief) bewaard blijft na de laatste statuswijziging, voordat
-// SollicitatiesTick 'm automatisch verwijdert. 4 weken is de gangbare
-// vuistregel (Autoriteit Persoonsgegevens) voor afgewezen sollicitanten
-// zonder expliciete toestemming voor langer bewaren — dit is een
-// beleidskeuze, geen technisch gegeven; pas aan in overleg met Iska/juridisch
-// als jullie een andere termijn willen hanteren.
-const BEWAARTERMIJN_DAGEN = 28;
+// SollicitatiesTick 'm automatisch verwijdert. 6 maanden (183 dagen) is de
+// juridisch goedgekeurde termijn uit de Duitse Datenschutzerklärung
+// ("Bei erfolgloser Bewerbung werden Ihre Bewerbungsdaten sechs Monate nach
+// Mitteilung der Absage gelöscht."), op verzoek van Wouter overgenomen als
+// standaard voor alle landen (Duitsland is de strengste, dus die geldt nu
+// overal).
+const BEWAARTERMIJN_DAGEN = 183;
 
 let tableClientPromise;
 
